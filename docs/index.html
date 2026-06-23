@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="alpha-warning">
+        ⚠️ <strong>Note:</strong> Nebula Linux is currently in a very early stage of development (Alpha). Use with caution!
+    </div>
     <div class="background-wrapper">
         <div class="gradient-sphere"></div>
     </div>
@@ -68,8 +71,94 @@
         </div>
     </section>
 
+    <section id="software" class="features-section">
+        <h2 class="section-title">Everything You Need. Nothing You Don't.</h2>
+        <div class="software-grid">
+            <div class="software-item">
+                <span class="icon">🌐</span>
+                <h4>Firefox</h4>
+                <p>Fast, private web browsing.</p>
+            </div>
+            <div class="software-item">
+                <span class="icon">🎬</span>
+                <h4>VLC Media Player</h4>
+                <p>Plays everything out of the box.</p>
+            </div>
+            <div class="software-item">
+                <span class="icon">📝</span>
+                <h4>LibreOffice</h4>
+                <p>Full suite for all your documents.</p>
+            </div>
+            <div class="software-item">
+                <span class="icon">📦</span>
+                <h4>Flatpak Integration</h4>
+                <p>One-click installs for thousands of apps.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="hardware" class="features-section">
+        <h2 class="section-title">Hardware Requirements</h2>
+        <div class="hardware-container">
+            <div class="hw-box">
+                <h3>Minimum Specs</h3>
+                <ul>
+                    <li><strong>CPU:</strong> 64-bit Dual Core (2 GHz)</li>
+                    <li><strong>RAM:</strong> 2 GB</li>
+                    <li><strong>Storage:</strong> 25 GB free space</li>
+                    <li><strong>GPU:</strong> VGA capable of 1024x768</li>
+                </ul>
+            </div>
+            <div class="hw-box recommended">
+                <h3>Recommended Specs</h3>
+                <ul>
+                    <li><strong>CPU:</strong> 64-bit Quad Core (3 GHz)</li>
+                    <li><strong>RAM:</strong> 8 GB</li>
+                    <li><strong>Storage:</strong> 50+ GB SSD</li>
+                    <li><strong>GPU:</strong> Any modern AMD/Intel/NVIDIA</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="features-section">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <details class="faq-item">
+                <summary>What is Nebula Linux based on?</summary>
+                <div class="faq-content">Nebula Linux is built directly on top of the bleeding-edge Debian Testing branch ("Trixie"). This means you get the incredible stability of Debian, mixed with the absolute newest kernels and packages.</div>
+            </details>
+            <details class="faq-item">
+                <summary>How do I install it?</summary>
+                <div class="faq-content">Download the `.iso` file and use a tool like <strong>Rufus</strong> (Windows) or <strong>BalenaEtcher</strong> (Mac/Linux) to flash it to a USB drive. Boot your computer from the USB drive, and follow the Calamares installer!</div>
+            </details>
+            <details class="faq-item">
+                <summary>Is this ready for daily use?</summary>
+                <div class="faq-content">Nebula Linux is currently in an <strong>Alpha</strong> stage of development. While it is fully functional and incredibly fast, you may encounter bugs. We recommend testing it in a Virtual Machine (like VirtualBox) or on a secondary computer first.</div>
+            </details>
+        </div>
+    </section>
+
     <footer>
-        <p>Built with ❤️ by the Nebula OS Team.</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>🌌 Nebula Linux</h3>
+                <p>The Linux Desktop, Reimagined.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Community</h4>
+                <a href="https://github.com/AshishYadavStudio/Nebula-Linux" target="_blank">GitHub Repository</a>
+                <a href="https://github.com/AshishYadavStudio/Nebula-Linux/issues" target="_blank">Report a Bug</a>
+            </div>
+            <div class="footer-links">
+                <h4>Project</h4>
+                <a href="#features">Features</a>
+                <a href="https://github.com/AshishYadavStudio/Nebula-Linux/releases/latest" target="_blank">Download</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Built with ❤️ by <a href="https://github.com/AshishYadavStudio" target="_blank">AshishYadavStudio</a>.</p>
+        </div>
     </footer>
 </body>
 </html>

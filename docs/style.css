@@ -281,3 +281,180 @@ footer {
     position: relative;
     box-shadow: 0 15px 40px var(--accent-glow);
 }
+
+/* Alpha Warning */
+.alpha-warning {
+    background: linear-gradient(90deg, #ff4500, #ff8c00);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 200;
+    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4);
+}
+
+/* Software Grid */
+.software-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+.software-item {
+    background: var(--surface-color);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.3s ease;
+}
+.software-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+}
+.software-item .icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+.software-item h4 {
+    color: white;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+/* Hardware Box */
+.hardware-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+.hw-box {
+    background: var(--surface-color);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+}
+.hw-box.recommended {
+    border: 1px solid var(--cyan);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.1);
+    position: relative;
+}
+.hw-box.recommended::before {
+    content: "Best Experience";
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background: var(--cyan);
+    color: black;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+.hw-box h3 {
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+}
+.hw-box ul {
+    list-style: none;
+}
+.hw-box li {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+.hw-box li strong {
+    color: white;
+    display: inline-block;
+    width: 80px;
+}
+
+/* FAQ Accordion */
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.faq-item {
+    background: var(--surface-color);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+.faq-item summary {
+    padding: 1.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    color: var(--cyan);
+}
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+.faq-item summary::after {
+    content: "+";
+    position: absolute;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    transition: transform 0.3s;
+}
+.faq-item[open] summary::after {
+    transform: rotate(45deg);
+}
+.faq-content {
+    padding: 0 1.5rem 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+/* Footer Expansion */
+footer {
+    padding: 4rem 5% 2rem;
+    border-top: none;
+    margin-top: 5rem;
+}
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    text-align: left;
+}
+.footer-brand h3 {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+.footer-links h4 {
+    color: white;
+    margin-bottom: 1rem;
+}
+.footer-links a {
+    display: block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s;
+}
+.footer-links a:hover {
+    color: var(--cyan);
+}
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+.footer-bottom a {
+    color: var(--cyan);
+    text-decoration: none;
+}
