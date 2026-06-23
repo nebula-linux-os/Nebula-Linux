@@ -2,7 +2,10 @@
 
 > Fast, Minimalist, and Beautiful. A custom, bleeding-edge Linux Distribution powered by Debian Trixie and KDE Plasma 6.
 
-![Nebula Linux](assets/wallpaper.png)
+### Screenshots
+![Desktop](docs/assets/screenshot1.png)
+![Start Menu](docs/assets/screenshot2.png)
+![Store](docs/assets/screenshot3.png)
 
 ## ✨ Features
 - **Plasma 6 Architecture**: Built on the latest KDE Qt6 framework with native Wayland integration.
