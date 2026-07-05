@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap - Nebula Linux</title>
+    <meta name="description" content="Development roadmap and changelog for Nebula Linux.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="alpha-warning">
+        ⚠️ <strong>Note:</strong> Nebula Linux is currently in a very early stage of development (Alpha). Use with caution!
+    </div>
+    <div class="background-wrapper">
+        <div class="gradient-sphere"></div>
+    </div>
+    
+    <nav>
+        <div class="logo">
+            <a href="index.html" style="display:flex; align-items:center; text-decoration:none; color:white;">
+                <img src="assets/splash.png" alt="Nebula Logo" id="nav-logo">
+                <span>Nebula Linux</span>
+            </a>
+        </div>
+        <div class="links">
+            <a href="index.html#features">Features</a>
+            <a href="docs.html">Docs</a>
+            <a href="roadmap.html" style="color: var(--accent-blue);">Roadmap</a>
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux" target="_blank">GitHub</a>
+            <button id="theme-toggle" class="theme-btn">☀️</button>
+        </div>
+    </nav>
+
+    <div class="docs-container" style="max-width: 900px; margin: 0 auto; margin-top: 100px; padding: 2rem; position: relative; z-index: 10;">
+        <h1 class="gradient-text" style="font-size: 3rem; text-align: center; margin-bottom: 3rem;">Development Roadmap</h1>
+        
+        <div class="timeline">
+            <!-- Planned -->
+            <div class="timeline-item planned">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content glass-card">
+                    <h3 style="color: var(--accent-purple);">🚀 Planned Next: Custom Features</h3>
+                    <span class="timeline-date" style="color: #a0aec0; font-size: 0.9rem; margin-bottom: 1rem; display: block;">Upcoming</span>
+                    <p style="color: var(--text-color);">We are currently working on developing bespoke tools for Nebula Linux, including a custom system updater, custom icon packs, and enhanced Wayland performance tweaks.</p>
+                </div>
+            </div>
+
+            <!-- Today -->
+            <div class="timeline-item completed">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content glass-card">
+                    <h3 style="color: var(--accent-blue);">✅ Alpha v1.0 Polish & Theming</h3>
+                    <span class="timeline-date" style="color: #a0aec0; font-size: 0.9rem; margin-bottom: 1rem; display: block;">June 25, 2026</span>
+                    <p style="color: var(--text-color);">Implemented automatic Global Dark Mode for all new users, pre-installed the Plasma Discover App Store with native Flatpak support, and finalized the system "Alpha v1.0" branding.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item completed">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content glass-card">
+                    <h3 style="color: var(--accent-green);">✅ Calamares & Wayland Integration</h3>
+                    <span class="timeline-date" style="color: #a0aec0; font-size: 0.9rem; margin-bottom: 1rem; display: block;">June 24, 2026</span>
+                    <p style="color: var(--text-color);">Successfully integrated the Calamares graphical installer with KDE Plasma 6 Wayland. Fixed the fatal Qt6/Wayland root crashing bugs and rebuilt the YAML installer branding.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item completed">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content glass-card">
+                    <h3 style="color: var(--accent-pink);">✅ The Birth of Nebula Linux</h3>
+                    <span class="timeline-date" style="color: #a0aec0; font-size: 0.9rem; margin-bottom: 1rem; display: block;">June 23, 2026</span>
+                    <p style="color: var(--text-color);">The core Debian Trixie (Debian 13) Live OS was successfully bootstrapped. We set up the initial custom KDE desktop and built the very first bootable ISO image.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Nebula Linux</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="background-wrapper">
+        <div class="gradient-sphere"></div>
+    </div>
+    
+    <nav>
+        <div class="logo">
+            <a href="index.html" style="display:flex; align-items:center; text-decoration:none; color:white;">
+                <img src="assets/splash.png" alt="Nebula Logo" id="nav-logo">
+                <span>Nebula Linux</span>
+            </a>
+        </div>
+        <div class="links">
+            <a href="index.html#features">Features</a>
+            <a href="docs.html">Docs</a>
+            <a href="roadmap.html">Roadmap</a>
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux" target="_blank">GitHub</a>
+            <button id="theme-toggle" class="theme-btn">☀️</button>
+        </div>
+    </nav>
+
+    <div class="docs-container">
+        <aside class="docs-sidebar">
+            <h3>Getting Started</h3>
+            <ul>
+                <li><a href="#installation">Installation Guide</a></li>
+                <li><a href="#post-install">Post-Install Setup</a></li>
+                <li><a href="#gestures">Wayland Gestures</a></li>
+            </ul>
+        </aside>
+        <main class="docs-content">
+            <h1>Documentation</h1>
+            <p>Welcome to the official documentation for Nebula Linux.</p>
+
+            <section id="installation">
+                <h2>Installation Guide</h2>
+                <p>Follow the instructions below depending on how you plan to test or install Nebula Linux.</p>
+
+                <h3 style="margin-top: 2rem; color: var(--accent-blue);">🖥️ Virtual Machine (Recommended for Testing)</h3>
+                <ol style="line-height: 1.8;">
+                    <li>Download the latest Nebula Linux <code>.iso</code> file.</li>
+                    <li>Open <strong>VirtualBox</strong> or <strong>VMware</strong> and click <strong>New</strong> to create a new Virtual Machine.</li>
+                    <li>Select <strong>Linux</strong> as the Type, and <strong>Debian (64-bit)</strong> as the Version.</li>
+                    <li>Allocate at least <strong>4GB of RAM</strong> and <strong>2 CPU Cores</strong> for a smooth Wayland experience.</li>
+                    <li>In the VM Settings, go to <strong>Storage</strong>, click the empty CD icon, and choose the Nebula <code>.iso</code> file.</li>
+                    <li>Under <strong>Display</strong> settings, make sure to enable <strong>3D Acceleration</strong> and max out Video Memory to 128MB.</li>
+                    <li>Start the VM! Once booted to the live desktop, double-click the <strong>Install Nebula Linux</strong> icon to install it permanently.</li>
+                </ol>
+
+                <h3 style="margin-top: 2rem; color: var(--accent-green);">💻 Bare Metal (Real Computer)</h3>
+                <ol style="line-height: 1.8;">
+                    <li>Download the latest Nebula Linux <code>.iso</code> file.</li>
+                    <li>Plug in an empty USB Flash Drive (at least 8GB).</li>
+                    <li>Download and open <a href="https://rufus.ie/" target="_blank" style="color: var(--accent-purple);">Rufus</a> (Windows) or <a href="https://etcher.balena.io/" target="_blank" style="color: var(--accent-purple);">BalenaEtcher</a> (Mac/Linux).</li>
+                    <li>Select your USB drive, select the Nebula <code>.iso</code>, and click <strong>Flash</strong>. <em>(Note: This will erase everything on the USB drive!)</em></li>
+                    <li>Restart your computer and rapidly press your Boot Menu key (usually <code>F12</code>, <code>F8</code>, <code>F2</code>, or <code>Del</code>).</li>
+                    <li>Select your USB drive from the boot list to boot into Nebula Linux.</li>
+                    <li>Once on the live desktop, double-click the <strong>Install Nebula Linux</strong> icon to launch the Calamares Installer and install it to your hard drive!</li>
+                </ol>
+            </section>
+
+            <section id="post-install">
+                <h2>Post-Install Setup</h2>
+                <p>Nebula Linux comes pre-configured with everything you need, but you may want to update the system repository on your first boot:</p>
+                <pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+            </section>
+            
+            <section id="gestures">
+                <h2>Wayland Gestures</h2>
+                <p>Because Nebula Linux ships with KDE Plasma 6 on Wayland, you have access to native touchpad gestures:</p>
+                <ul>
+                    <li><strong>Swipe up with 4 fingers:</strong> Open Overview / Desktop Grid</li>
+                    <li><strong>Swipe down with 4 fingers:</strong> Show Desktop</li>
+                    <li><strong>Swipe left/right with 3 fingers:</strong> Switch between virtual desktops</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>Built with ❤️ by <a href="https://github.com/AshishYadavStudio" target="_blank">AshishYadavStudio</a>.</p>
+        </div>
+    </footer>
+</body>
+</html>
