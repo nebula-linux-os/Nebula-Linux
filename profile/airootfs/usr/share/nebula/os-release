@@ -1,0 +1,11 @@
+NAME="Nebula Linux"
+PRETTY_NAME="Nebula Linux"
+ID=nebula
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;149;128;255"
+HOME_URL="https://github.com/nebula-linux"
+DOCUMENTATION_URL="https://danklinux.com/docs/"
+SUPPORT_URL="https://github.com/nebula-linux"
+BUG_REPORT_URL="https://github.com/nebula-linux"
+LOGO=nebula-linux

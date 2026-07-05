@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Path
+Target = usr/lib/os-release
+
+[Action]
+Description = Applying Nebula Linux branding to os-release...
+When = PostTransaction
+Exec = /usr/bin/install -m644 /usr/share/nebula/os-release /usr/lib/os-release

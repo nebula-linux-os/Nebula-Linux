@@ -1,0 +1,145 @@
+#!/bin/bash
+# nebula — Nebula Linux control center CLI.
+set -u
+
+PUR='\e[1;35m'; DIM='\e[2m'; OFF='\e[0m'
+
+banner() { printf "${PUR}Nebula Linux${OFF} — %s\n\n" "$1"; }
+
+have_snapper() { command -v snapper >/dev/null && snapper --no-dbus list-configs 2>/dev/null | grep -q '^root'; }
+
+cmd_update() {
+    banner "system update"
+    if have_snapper; then
+        echo "snap-pac will create pre/post snapshots automatically."
+    fi
+    sudo pacman -Syu
+    if command -v flatpak >/dev/null && flatpak remotes 2>/dev/null | grep -q .; then
+        echo; echo ">> Updating Flatpaks..."
+        flatpak update -y --noninteractive || true
+    fi
+}
+
+cmd_snapshots() {
+    banner "snapshots"
+    if have_snapper; then
+        snapper list
+    else
+        echo "Snapper is not configured (this system may not use btrfs)."
+        echo "Snapshots are set up automatically on btrfs installs."
+    fi
+}
+
+cmd_rollback() {
+    banner "rollback"
+    if ! have_snapper; then
+        echo "Snapper is not configured — nothing to roll back to."; exit 1
+    fi
+    if [[ $# -lt 1 ]]; then
+        snapper list
+        echo
+        echo "Usage: nebula rollback <snapshot-number>"
+        echo "Rolls the root filesystem back to that snapshot, then reboot."
+        echo "Tip: you can also boot old snapshots directly from the GRUB menu."
+        exit 0
+    fi
+    sudo snapper rollback "$1" && echo "Rolled back. Reboot to use the restored system."
+}
+
+cmd_drivers() {
+    banner "hardware / drivers"
+    virt=$(systemd-detect-virt 2>/dev/null || echo none)
+    if [[ "$virt" != "none" ]]; then
+        echo "Virtual machine detected: $virt (guest tools auto-start at boot)."
+    fi
+    gpus=$(lspci 2>/dev/null | grep -Ei 'vga|3d|display' || true)
+    echo "GPU(s):"
+    echo "${gpus:-  none detected}"
+    echo
+    if grep -qi nvidia <<<"$gpus"; then
+        echo "NVIDIA GPU found. Install the proprietary driver with:"
+        echo "    nebula drivers install-nvidia"
+    elif grep -qiE 'amd|ati' <<<"$gpus"; then
+        echo "AMD GPU: open-source Mesa drivers are already installed."
+    elif grep -qi intel <<<"$gpus"; then
+        echo "Intel GPU: open-source Mesa drivers are already installed."
+    fi
+    if [[ "${1:-}" == "install-nvidia" ]]; then
+        sudo pacman -S --needed nvidia nvidia-utils lib32-nvidia-utils 2>/dev/null \
+            || sudo pacman -S --needed nvidia nvidia-utils
+        echo "Reboot to load the NVIDIA driver."
+    fi
+}
+
+cmd_doctor() {
+    banner "doctor"
+    echo "── Failed services ──────────────────────────"
+    systemctl --failed --no-pager --no-legend || true
+    echo
+    echo "── Disk usage ───────────────────────────────"
+    df -h / /home 2>/dev/null | grep -v '^Filesystem' || true
+    echo
+    echo "── Last system update ───────────────────────"
+    grep -E 'starting full system upgrade' /var/log/pacman.log 2>/dev/null | tail -1 || echo "no record"
+    echo
+    if command -v dms >/dev/null; then
+        echo "── DankMaterialShell doctor ─────────────────"
+        dms doctor 2>/dev/null || true
+    fi
+}
+
+cmd_greeter() {
+    banner "login greeter"
+    case "${1:-}" in
+        dms)
+            src=/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter
+            [[ -f "$src" ]] || { echo "dms-greeter asset not found."; exit 1; }
+            sudo install -Dm755 "$src" /usr/local/bin/dms-greeter
+            sudo mkdir -p /var/cache/dms-greeter
+            sudo chown greeter:greeter /var/cache/dms-greeter 2>/dev/null || true
+            sudo tee /etc/greetd/config.toml >/dev/null <<'EOF'
+[terminal]
+vt = 1
+
+[default_session]
+command = "dms-greeter --command niri"
+user = "greeter"
+EOF
+            echo "Switched to the DMS graphical greeter (takes effect next boot)."
+            echo "If it misbehaves: Ctrl+Alt+F3, log in, run: nebula greeter text"
+            ;;
+        text)
+            sudo tee /etc/greetd/config.toml >/dev/null <<'EOF'
+[terminal]
+vt = 1
+
+[default_session]
+command = "agreety --cmd niri-session"
+user = "greeter"
+EOF
+            echo "Switched to the text greeter (takes effect next boot)."
+            ;;
+        *)
+            echo "Usage: nebula greeter <dms|text>"
+            ;;
+    esac
+}
+
+case "${1:-help}" in
+    update)    shift; cmd_update "$@" ;;
+    snapshots) shift; cmd_snapshots "$@" ;;
+    rollback)  shift; cmd_rollback "$@" ;;
+    drivers)   shift; cmd_drivers "$@" ;;
+    doctor)    shift; cmd_doctor "$@" ;;
+    greeter)   shift; cmd_greeter "$@" ;;
+    *)
+        printf "${PUR}nebula${OFF} — Nebula Linux control center\n\n"
+        echo "  nebula update                 update system (auto-snapshots on btrfs)"
+        echo "  nebula snapshots              list filesystem snapshots"
+        echo "  nebula rollback [N]           roll back to snapshot N"
+        echo "  nebula drivers                detect hardware, suggest drivers"
+        echo "  nebula drivers install-nvidia install NVIDIA driver"
+        echo "  nebula doctor                 health check"
+        echo "  nebula greeter <dms|text>     switch login screen style"
+        ;;
+esac

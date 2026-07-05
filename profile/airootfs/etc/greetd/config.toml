@@ -1,0 +1,12 @@
+[terminal]
+vt = 1
+
+# Live session: log the nebula user straight into the desktop.
+[initial_session]
+command = "niri-session"
+user = "nebula"
+
+# Fallback if the graphical session exits.
+[default_session]
+command = "agreety --cmd /bin/bash"
+user = "greeter"

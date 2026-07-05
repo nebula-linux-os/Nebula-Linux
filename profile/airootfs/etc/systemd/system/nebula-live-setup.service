@@ -1,0 +1,11 @@
+[Unit]
+Description=Create Nebula Linux live session user
+Before=greetd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/nebula-live-setup
+
+[Install]
+WantedBy=multi-user.target

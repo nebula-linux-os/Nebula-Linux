@@ -1,0 +1,4 @@
+#!/bin/bash
+# Launches the graphical Nebula Linux installer from the live session.
+# sudo is passwordless in the live session; -E keeps the Wayland session env.
+exec sudo -E calamares "$@"

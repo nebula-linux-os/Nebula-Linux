@@ -1,0 +1,7 @@
+/* Nebula Linux live session only — removed by the installer.
+ * Members of wheel act as administrator without a password prompt. */
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});

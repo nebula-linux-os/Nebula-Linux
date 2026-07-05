@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nebula Welcome
+Comment=Get started with Nebula Linux
+Exec=/usr/local/bin/nebula-welcome
+Icon=nebula-linux
+Terminal=false
+Categories=Utility;
+Keywords=welcome;start;setup;tour;help;

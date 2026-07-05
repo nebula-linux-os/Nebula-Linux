@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#221540"/>
+      <stop offset="1" stop-color="#0b0b18"/>
+    </linearGradient>
+    <linearGradient id="arm1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9580ff"/>
+      <stop offset="1" stop-color="#3fa9f5"/>
+    </linearGradient>
+    <linearGradient id="arm2" x1="1" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#9580ff"/>
+      <stop offset="1" stop-color="#ff5ea8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.35" stop-color="#cbb8ff" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#cbb8ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+
+  <!-- spiral galaxy arms -->
+  <path d="M128 44 a84 84 0 0 1 84 84" stroke="url(#arm1)" stroke-width="17"
+        fill="none" stroke-linecap="round"/>
+  <path d="M128 212 a84 84 0 0 1 -84 -84" stroke="url(#arm2)" stroke-width="17"
+        fill="none" stroke-linecap="round"/>
+  <path d="M128 82 a46 46 0 0 1 46 46" stroke="#cbb8ff" stroke-width="11"
+        fill="none" stroke-linecap="round" opacity="0.85"/>
+  <path d="M128 174 a46 46 0 0 1 -46 -46" stroke="#cbb8ff" stroke-width="11"
+        fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- core -->
+  <circle cx="128" cy="128" r="38" fill="url(#glow)"/>
+  <circle cx="128" cy="128" r="13" fill="#ffffff"/>
+
+  <!-- stars -->
+  <circle cx="70" cy="62" r="4" fill="#ffffff" opacity="0.9"/>
+  <circle cx="196" cy="190" r="4" fill="#ffffff" opacity="0.9"/>
+  <circle cx="190" cy="70" r="2.5" fill="#cfd6ff" opacity="0.8"/>
+  <circle cx="62" cy="186" r="2.5" fill="#cfd6ff" opacity="0.8"/>
+  <circle cx="152" cy="52" r="2" fill="#cfd6ff" opacity="0.7"/>
+  <circle cx="104" cy="204" r="2" fill="#cfd6ff" opacity="0.7"/>
+</svg>

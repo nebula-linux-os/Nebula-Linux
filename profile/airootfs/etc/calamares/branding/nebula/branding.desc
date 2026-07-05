@@ -1,0 +1,38 @@
+---
+componentName: nebula
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+
+windowExpanding: normal
+windowSize: 1024px,640px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+  productName: "Nebula Linux"
+  shortProductName: "Nebula"
+  version: "rolling"
+  shortVersion: "rolling"
+  versionedName: "Nebula Linux (rolling)"
+  shortVersionedName: "Nebula"
+  bootloaderEntryName: "Nebula Linux"
+  productUrl: "https://github.com/nebula-linux"
+  supportUrl: "https://danklinux.com/docs/"
+  releaseNotesUrl: "https://github.com/nebula-linux"
+
+images:
+  productLogo: "logo.png"
+  productIcon: "logo.png"
+  productWelcome: "welcome.png"
+
+slideshow: "show.qml"
+slideshowAPI: 2
+
+style:
+  SidebarBackground: "#161226"
+  SidebarText: "#efe6ff"
+  SidebarTextCurrent: "#0b0b16"
+  SidebarBackgroundCurrent: "#9580ff"

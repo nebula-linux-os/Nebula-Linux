@@ -1,0 +1,18 @@
+#!/bin/bash
+# Starts the right guest tools for the hypervisor we are running under.
+# Runs at every boot (idempotent, no-op on bare metal).
+set -u
+
+virt=$(systemd-detect-virt 2>/dev/null || echo none)
+case "$virt" in
+    kvm|qemu)
+        systemctl start qemu-guest-agent.service 2>/dev/null || true
+        ;;
+    oracle)
+        systemctl start vboxservice.service 2>/dev/null || true
+        ;;
+    vmware)
+        systemctl start vmtoolsd.service vmware-vmblock-fuse.service 2>/dev/null || true
+        ;;
+esac
+exit 0

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Install Nebula Linux
+GenericName=System Installer
+Comment=Install Nebula Linux to your computer
+Exec=/usr/local/bin/nebula-installer
+Icon=nebula-linux
+Terminal=false
+Categories=System;
+Keywords=installer;calamares;install;setup;

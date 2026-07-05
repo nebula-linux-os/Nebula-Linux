@@ -1,0 +1,141 @@
+#!/bin/bash
+# Nebula Linux installer.
+#
+# Phase 1: run the official archinstall (guided).
+# Phase 2: "nebula-ize" the freshly installed system — add the DMS/niri
+#          desktop stack, greetd, branding, and desktop defaults.
+#
+# archinstall mounts the target at /mnt/archinstall by default.
+set -u
+
+TARGET=/mnt/archinstall
+
+DESKTOP_PKGS=(
+    dms-shell-niri niri xwayland-satellite greetd
+    xdg-desktop-portal-gtk xdg-desktop-portal-gnome
+    pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber sof-firmware
+    networkmanager bluez bluez-utils
+    matugen cliphist wl-clipboard cava qt6-multimedia
+    brightnessctl playerctl power-profiles-daemon
+    foot firefox nautilus
+    libreoffice-fresh celluloid loupe evince file-roller
+    gnome-calculator gnome-text-editor
+    adw-gtk-theme papirus-icon-theme qt6ct
+    inter-font ttf-firacode-nerd noto-fonts noto-fonts-emoji
+    fastfetch git htop unzip
+)
+
+if [[ $EUID -ne 0 ]]; then
+    exec sudo "$0" "$@"
+fi
+
+# --nebulaize: skip archinstall, only apply the Nebula stack to an
+# already-installed system mounted at /mnt/archinstall.
+if [[ "${1:-}" == "--nebulaize" ]]; then
+    SKIP_ARCHINSTALL=1
+else
+    SKIP_ARCHINSTALL=0
+fi
+
+if [[ -f /usr/share/nebula/ascii-logo.txt ]]; then
+    printf '\e[1;35m'
+    cat /usr/share/nebula/ascii-logo.txt
+    printf '\e[0m\n'
+fi
+cat <<'EOF'
+
+  ╔══════════════════════════════════════════════════════════╗
+  ║                 Nebula Linux Installer                    ║
+  ╠══════════════════════════════════════════════════════════╣
+  ║ Step 1: the official Arch guided installer (archinstall). ║
+  ║   Tips:                                                   ║
+  ║   - Profile: you can pick "Minimal" — the Nebula desktop  ║
+  ║     is added automatically afterwards.                    ║
+  ║   - Network: choose "Use NetworkManager".                 ║
+  ║   - Create a regular user account for yourself.           ║
+  ║   - When asked to chroot at the end, answer "no".         ║
+  ║                                                            ║
+  ║ Step 2: Nebula desktop + branding are installed onto the  ║
+  ║   target system automatically.                            ║
+  ╚══════════════════════════════════════════════════════════╝
+
+EOF
+if [[ $SKIP_ARCHINSTALL -eq 0 ]]; then
+    read -rp "Press Enter to start archinstall..."
+    archinstall || { echo "archinstall did not complete; aborting."; exit 1; }
+fi
+
+if [[ ! -d "$TARGET/etc" ]]; then
+    echo
+    echo "!! Could not find the installed system at $TARGET."
+    echo "   If archinstall unmounted it, remount your root partition there"
+    echo "   and re-run: nebula-install --nebulaize"
+    exit 1
+fi
+
+echo
+echo ">> Nebula-izing the installed system at $TARGET ..."
+
+echo ">> Installing desktop packages..."
+pacstrap -c "$TARGET" "${DESKTOP_PKGS[@]}"
+
+echo ">> Applying branding and desktop defaults..."
+mkdir -p "$TARGET/usr/share/nebula"
+cp -rT /usr/share/nebula "$TARGET/usr/share/nebula"
+install -Dm644 /etc/pacman.d/hooks/zz-nebula-branding.hook "$TARGET/etc/pacman.d/hooks/zz-nebula-branding.hook"
+install -Dm644 /usr/share/nebula/os-release "$TARGET/usr/lib/os-release"
+install -Dm644 /etc/issue "$TARGET/etc/issue"
+install -Dm644 /usr/share/pixmaps/nebula-linux.png "$TARGET/usr/share/pixmaps/nebula-linux.png"
+for f in /usr/share/icons/hicolor/*/apps/nebula-linux.*; do
+    [[ -f "$f" ]] && install -Dm644 "$f" "$TARGET$f"
+done
+mkdir -p "$TARGET/etc/skel/.config" "$TARGET/etc/skel/.local"
+cp -rT /etc/skel/.config "$TARGET/etc/skel/.config"
+cp -rT /etc/skel/.local  "$TARGET/etc/skel/.local"
+mkdir -p "$TARGET/usr/share/backgrounds"
+cp -rT /usr/share/backgrounds/nebula "$TARGET/usr/share/backgrounds/nebula"
+
+# Copy the niri/DMS config to every existing human user (skel only helps new ones).
+for home in "$TARGET"/home/*; do
+    [[ -d "$home" ]] || continue
+    u=$(basename "$home")
+    mkdir -p "$home/.config" "$home/.local"
+    cp -rT /etc/skel/.config "$home/.config"
+    cp -rT /etc/skel/.local  "$home/.local"
+    arch-chroot "$TARGET" chown -R "$u:$u" "/home/$u/.config" "/home/$u/.local" 2>/dev/null || true
+    # Nebula avatar on the lock screen via AccountsService.
+    install -Dm644 /usr/share/nebula/avatar.png "$TARGET/var/lib/AccountsService/icons/$u"
+    mkdir -p "$TARGET/var/lib/AccountsService/users"
+    printf '[User]\nIcon=/var/lib/AccountsService/icons/%s\n' "$u" > "$TARGET/var/lib/AccountsService/users/$u"
+done
+
+echo ">> Branding the bootloader..."
+if compgen -G "$TARGET/boot/loader/entries/*.conf" > /dev/null; then
+    sed -i 's/Arch Linux/Nebula Linux/g' "$TARGET"/boot/loader/entries/*.conf
+fi
+if [[ -f "$TARGET/etc/default/grub" ]]; then
+    sed -i 's/^GRUB_DISTRIBUTOR=.*/GRUB_DISTRIBUTOR="Nebula"/' "$TARGET/etc/default/grub"
+    arch-chroot "$TARGET" grub-mkconfig -o /boot/grub/grub.cfg || true
+fi
+
+# greetd with the DMS greeter-style tty prompt (no autologin on installed systems).
+mkdir -p "$TARGET/etc/greetd"
+cat > "$TARGET/etc/greetd/config.toml" <<'GREETD'
+[terminal]
+vt = 1
+
+[default_session]
+command = "agreety --cmd niri-session"
+user = "greeter"
+GREETD
+
+echo ">> Enabling services..."
+arch-chroot "$TARGET" systemctl enable greetd NetworkManager bluetooth
+arch-chroot "$TARGET" systemctl set-default graphical.target
+
+echo
+echo "════════════════════════════════════════════════════════"
+echo " Nebula Linux installed successfully."
+echo " Reboot, remove the live medium, and log in — niri +"
+echo " DankMaterialShell will start automatically."
+echo "════════════════════════════════════════════════════════"

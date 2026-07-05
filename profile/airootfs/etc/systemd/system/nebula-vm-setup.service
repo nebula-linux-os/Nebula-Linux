@@ -1,0 +1,10 @@
+[Unit]
+Description=Nebula Linux VM guest tools auto-setup
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/nebula-vm-setup
+
+[Install]
+WantedBy=multi-user.target

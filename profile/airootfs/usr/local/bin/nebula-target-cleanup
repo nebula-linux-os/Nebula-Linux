@@ -1,0 +1,98 @@
+#!/bin/bash
+# Runs inside the installed system (chroot) via Calamares' shellprocess module,
+# after unpackfs copied the live image. Strips live-only pieces and finishes
+# system setup. Must never hard-fail: partial cleanup beats a failed install.
+set -u
+
+echo "nebula-target-cleanup: removing live-session pieces"
+rm -f /etc/systemd/system/multi-user.target.wants/nebula-live-setup.service
+rm -f /etc/systemd/system/nebula-live-setup.service
+rm -f /usr/local/bin/nebula-live-setup
+rm -f /etc/sudoers.d/10-nebula-live
+rm -f /etc/polkit-1/rules.d/49-nebula-live.rules
+rm -f /usr/share/applications/install-nebula.desktop
+rm -f /usr/local/bin/nebula-installer
+rm -f /usr/local/bin/nebula-install
+
+# Real login instead of live autologin: DMS graphical greeter when available,
+# text greeter otherwise. (Switch any time with: nebula greeter <dms|text>)
+DMS_GREETER_SRC=/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter
+if [[ -f "$DMS_GREETER_SRC" ]]; then
+    install -Dm755 "$DMS_GREETER_SRC" /usr/local/bin/dms-greeter
+    mkdir -p /var/cache/dms-greeter
+    cat > /var/cache/dms-greeter/session.json <<'EOF'
+{
+  "wallpaperPath": "/usr/share/backgrounds/nebula/nebula.png",
+  "wallpaperFillMode": "PreserveAspectCrop"
+}
+EOF
+    chown -R greeter:greeter /var/cache/dms-greeter 2>/dev/null || true
+    cat > /etc/greetd/config.toml <<'EOF'
+[terminal]
+vt = 1
+
+[default_session]
+command = "dms-greeter --command niri"
+user = "greeter"
+EOF
+else
+    cat > /etc/greetd/config.toml <<'EOF'
+[terminal]
+vt = 1
+
+[default_session]
+command = "agreety --cmd niri-session"
+user = "greeter"
+EOF
+fi
+
+# Friendly MOTD for installed systems.
+cat > /etc/motd <<'EOF'
+
+    Welcome to Nebula Linux.
+    Docs: https://danklinux.com/docs/    Keybindings: Super+Shift+/
+
+EOF
+
+echo "nebula-target-cleanup: removing archiso live machinery"
+# Must happen BEFORE the initcpio module regenerates the initramfs.
+pacman -Rns --noconfirm mkinitcpio-archiso 2>/dev/null || true
+rm -f /etc/mkinitcpio.conf.d/archiso.conf
+rm -f /etc/systemd/system/choose-mirror.service
+rm -f /etc/systemd/system/pacman-init.service
+rm -f /etc/systemd/system/etc-pacman.d-gnupg.mount
+rm -f /etc/systemd/system/multi-user.target.wants/choose-mirror.service
+rm -f /etc/systemd/system/multi-user.target.wants/pacman-init.service
+
+# The installer itself does not belong on the installed system.
+pacman -Rns --noconfirm calamares 2>/dev/null || true
+
+echo "nebula-target-cleanup: GRUB background"
+if ! grep -q '^GRUB_BACKGROUND=' /etc/default/grub 2>/dev/null; then
+    echo 'GRUB_BACKGROUND="/usr/share/backgrounds/nebula/nebula-grub.png"' >> /etc/default/grub
+fi
+
+echo "nebula-target-cleanup: snapshots & maintenance"
+# Snapshot/rollback stack — only when the root filesystem is btrfs.
+if findmnt -n -o FSTYPE / 2>/dev/null | grep -q btrfs; then
+    if command -v snapper >/dev/null && ! snapper --no-dbus list-configs 2>/dev/null | grep -q '^root'; then
+        snapper --no-dbus -c root create-config / || true
+        # snap-pac drives pacman pre/post snapshots; keep timeline snapshots modest.
+        sed -i -e 's/^TIMELINE_CREATE=.*/TIMELINE_CREATE="no"/' \
+               -e 's/^ALLOW_GROUPS=.*/ALLOW_GROUPS="wheel"/' \
+               /etc/snapper/configs/root 2>/dev/null || true
+    fi
+    systemctl enable snapper-cleanup.timer >/dev/null 2>&1 || true
+    # Boot old snapshots straight from the GRUB menu.
+    systemctl enable grub-btrfsd.service >/dev/null 2>&1 || true
+fi
+systemctl enable fstrim.timer >/dev/null 2>&1 || true
+
+echo "nebula-target-cleanup: initializing pacman keyring (may take a moment)"
+pacman-key --init >/dev/null 2>&1 || true
+pacman-key --populate archlinux >/dev/null 2>&1 || true
+
+systemctl set-default graphical.target >/dev/null 2>&1 || true
+
+echo "nebula-target-cleanup: done"
+exit 0

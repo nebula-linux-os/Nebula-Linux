@@ -1,0 +1,91 @@
+
+# ─── Nebula Linux desktop stack (appended to releng packages) ───────────────
+
+# Dank Material Shell + niri compositor
+dms-shell-niri
+niri
+xwayland-satellite
+
+# Login manager (autologin in live session)
+greetd
+
+# Desktop portals (niri recommends the GNOME portal for screencasting)
+xdg-desktop-portal-gtk
+xdg-desktop-portal-gnome
+
+# Audio
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+sof-firmware
+
+# Networking / Bluetooth (DMS widgets use NetworkManager + bluez)
+networkmanager
+bluez
+bluez-utils
+
+# DMS integrations & widgets
+matugen
+cliphist
+wl-clipboard
+cava
+qt6-multimedia
+brightnessctl
+playerctl
+power-profiles-daemon
+
+# Applications
+foot
+firefox
+nautilus
+libreoffice-fresh
+celluloid
+loupe
+evince
+file-roller
+gnome-calculator
+gnome-text-editor
+
+# GTK/Qt theming (Material-style dark baseline; DMS matugen recolors on top)
+adw-gtk-theme
+papirus-icon-theme
+qt6ct
+
+# Bootloader for installed systems (Calamares runs grub-install in the target)
+grub
+efibootmgr
+
+# Snapshot & rollback stack (btrfs default installs)
+snapper
+snap-pac
+grub-btrfs
+
+# Performance defaults
+zram-generator
+
+# VM guest support (auto-enabled by nebula-vm-setup based on detected hypervisor)
+qemu-guest-agent
+spice-vdagent
+open-vm-tools
+virtualbox-guest-utils
+
+# Nebula Welcome app runtime
+python-gobject
+libadwaita
+
+# Flatpak (Flathub can be enabled from the Welcome app)
+flatpak
+
+# Fonts
+inter-font
+ttf-firacode-nerd
+noto-fonts
+noto-fonts-emoji
+
+# Tools
+fastfetch
+git
+htop
+unzip

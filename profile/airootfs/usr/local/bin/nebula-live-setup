@@ -1,0 +1,20 @@
+#!/bin/bash
+# Creates the live-session user before greetd starts.
+# The live root filesystem is fresh on every boot, so this always runs.
+set -eu
+
+if ! id nebula &>/dev/null; then
+    useradd -m -G wheel -s /bin/bash nebula
+fi
+# Empty password for the live session.
+passwd -d nebula >/dev/null
+
+echo "nebula ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/10-nebula-live
+chmod 440 /etc/sudoers.d/10-nebula-live
+
+# Nebula avatar on the lock screen (DMS reads it via AccountsService).
+if [[ -f /usr/share/nebula/avatar.png ]]; then
+    install -Dm644 /usr/share/nebula/avatar.png /var/lib/AccountsService/icons/nebula
+    mkdir -p /var/lib/AccountsService/users
+    printf '[User]\nIcon=/var/lib/AccountsService/icons/nebula\n' > /var/lib/AccountsService/users/nebula
+fi
