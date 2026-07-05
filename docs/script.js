@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cursorSpan = document.querySelector(".cursor");
     
     if (typedTextSpan && cursorSpan) {
-        const textArray = ["sudo systemctl start nebula-linux", "Initializing Plasma 6...", "Welcome to the future."];
+        const textArray = ["sudo systemctl start nebula-linux", "Two editions. One nebula.", "Initializing desktop...", "Welcome to the future."];
         const typingDelay = 100;
         const erasingDelay = 50;
         const newTextDelay = 2000;

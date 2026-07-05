@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nebula Linux</title>
-    <meta name="description" content="Fast, Minimalist, and Beautiful. A bleeding-edge Linux Distribution powered by Debian Trixie and KDE Plasma 6.">
+    <meta name="description" content="Fast, Minimalist, and Beautiful. One Linux distribution, two editions: Debian + KDE Plasma 6, or Arch + Dank Linux (DankMaterialShell).">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
@@ -16,13 +16,14 @@
     <div class="background-wrapper">
         <div class="gradient-sphere"></div>
     </div>
-    
+
     <nav>
         <div class="logo">
             <img src="assets/splash.png" alt="Nebula Logo" id="nav-logo">
             <span>Nebula Linux</span>
         </div>
         <div class="links">
+            <a href="#editions">Editions</a>
             <a href="#features">Features</a>
             <a href="docs.html">Docs</a>
             <a href="roadmap.html">Roadmap</a>
@@ -45,9 +46,9 @@
                 </div>
             </div>
             <h1 class="fade-in-up delay-1">The Linux Desktop,<br><span class="gradient-text">Reimagined.</span></h1>
-            <p class="fade-in-up delay-1">Fast, Minimalist, and Beautiful. Built on Debian Trixie and KDE Plasma 6 for the ultimate bleeding-edge experience.</p>
+            <p class="fade-in-up delay-1">Fast, Minimalist, and Beautiful. One distribution, two personalities — the stability of Debian with KDE Plasma 6, or the cutting edge of Arch with the Dank Linux Material desktop.</p>
             <div class="cta-buttons fade-in-up delay-2">
-                <a href="https://archive.org/details/nebula-v1.0" class="btn-primary" id="download-btn" target="_blank">Download ISO</a>
+                <a href="#editions" class="btn-primary" id="download-btn">Choose Your Edition</a>
                 <a href="#features" class="btn-secondary">Explore Features</a>
             </div>
         </div>
@@ -56,8 +57,46 @@
         </div>
     </header>
 
+    <section id="editions" class="features-section">
+        <h2 class="section-title">Two Editions. One Nebula.</h2>
+        <div class="editions-grid">
+            <div class="card hover-effect edition-card">
+                <span class="edition-badge">Stable</span>
+                <h3>Nebula Debian</h3>
+                <p class="edition-tagline">Familiar. Polished. Dependable.</p>
+                <ul class="edition-list">
+                    <li>Debian Trixie base</li>
+                    <li>KDE Plasma 6 on Wayland (Qt6)</li>
+                    <li>Ultra-flat Arc theme &amp; deep-space look</li>
+                    <li>Flatpak + Flathub out of the box</li>
+                    <li>Custom Nebula Welcome app</li>
+                </ul>
+                <div class="cta-buttons">
+                    <a href="https://archive.org/details/nebula-v1.0" class="btn-primary" target="_blank">Download ISO</a>
+                    <a href="https://github.com/nebula-linux-os/Nebula-Linux" class="btn-secondary" target="_blank">Source (main)</a>
+                </div>
+            </div>
+            <div class="card hover-effect edition-card">
+                <span class="edition-badge badge-rolling">Rolling</span>
+                <h3>Nebula Arch <span class="dank-accent">· Dank Edition</span></h3>
+                <p class="edition-tagline">Material You. Bleeding edge. Unbreakable.</p>
+                <ul class="edition-list">
+                    <li>Arch Linux base — always up to date</li>
+                    <li>DankMaterialShell on the niri compositor</li>
+                    <li>Material 3 theming generated from your wallpaper</li>
+                    <li>Btrfs snapshots — roll back updates from GRUB</li>
+                    <li>Branded Calamares installer &amp; <code>nebula</code> CLI</li>
+                </ul>
+                <div class="cta-buttons">
+                    <a href="https://github.com/nebula-linux-os/Nebula-Linux/tree/arch" class="btn-primary" target="_blank">Get It (ISO soon)</a>
+                    <a href="https://github.com/nebula-linux-os/Nebula-Linux/tree/arch#building-the-iso" class="btn-secondary" target="_blank">Build Guide</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="gallery" class="features-section">
-        <h2 class="section-title">See it in Action</h2>
+        <h2 class="section-title">See it in Action — Debian Edition</h2>
         <div class="gallery-grid">
             <img src="assets/screenshot1.png" alt="Nebula OS Desktop" class="gallery-img">
             <img src="assets/screenshot2.png" alt="Nebula OS App Menu" class="gallery-img">
@@ -72,16 +111,16 @@
         <h2 class="section-title">Why Nebula?</h2>
         <div class="grid">
             <div class="card hover-effect">
-                <h3>Plasma 6 Architecture</h3>
-                <p>Built completely on the brand new Qt6 framework, providing native Wayland support and incredibly smooth multi-touch trackpad gestures.</p>
-            </div>
-            <div class="card hover-effect">
-                <h3>Minimalist Design</h3>
-                <p>We ditched the bloat. Ships exclusively with the ultra-flat Arc theme, dark modes, and deep space aesthetics out of the box.</p>
+                <h3>Beautiful by Default</h3>
+                <p>No theming homework. Debian edition ships a hand-tuned Plasma 6 Arc look; Arch edition generates a full Material 3 palette from your wallpaper with matugen — lock screen included.</p>
             </div>
             <div class="card hover-effect">
                 <h3>Blazing Fast</h3>
-                <p>All UI animations are custom-tuned to 0.5x speed. Menus and windows snap open instantly, making your computer feel twice as fast.</p>
+                <p>Native Wayland on both editions, tuned animations, zram compressed memory, and zero bloat. Menus and windows snap open instantly.</p>
+            </div>
+            <div class="card hover-effect">
+                <h3>Safe to Break</h3>
+                <p>The Arch edition installs on btrfs with automatic snapshots before every update — if anything goes wrong, boot the previous state straight from the GRUB menu.</p>
             </div>
         </div>
     </section>
@@ -96,8 +135,8 @@
             </div>
             <div class="software-item">
                 <span class="icon">🎬</span>
-                <h4>VLC Media Player</h4>
-                <p>Plays everything out of the box.</p>
+                <h4>Media Player</h4>
+                <p>VLC or Celluloid — plays everything out of the box.</p>
             </div>
             <div class="software-item">
                 <span class="icon">📝</span>
@@ -119,7 +158,7 @@
                 <h3>Minimum Specs</h3>
                 <ul>
                     <li><strong>CPU:</strong> 64-bit Dual Core (2 GHz)</li>
-                    <li><strong>RAM:</strong> 2 GB</li>
+                    <li><strong>RAM:</strong> 2 GB (4 GB for Arch edition)</li>
                     <li><strong>Storage:</strong> 25 GB free space</li>
                     <li><strong>GPU:</strong> VGA capable of 1024x768</li>
                 </ul>
@@ -142,15 +181,22 @@
             <div class="timeline-item completed">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                    <h3>Alpha 1.0 (Current)</h3>
+                    <h3>Alpha 1.0 — Debian Edition</h3>
                     <p>Core Debian Trixie base, Plasma 6 integration, Custom Themes, Initial Installer.</p>
+                </div>
+            </div>
+            <div class="timeline-item completed">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Arch · Dank Edition (New!)</h3>
+                    <p>DankMaterialShell on niri, branded Calamares, btrfs snapshot rollback, Nebula Welcome, nebula CLI, VM guest support.</p>
                 </div>
             </div>
             <div class="timeline-item active">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
                     <h3>Beta 1.0</h3>
-                    <p>Native Bug Reporter, Hardware Driver Manager, Custom Nebula Icon Pack.</p>
+                    <p>Public Arch-edition ISO downloads, Native Bug Reporter, Hardware Driver Manager, Custom Nebula Icon Pack.</p>
                 </div>
             </div>
             <div class="timeline-item">
@@ -168,11 +214,15 @@
         <div class="faq-container">
             <details class="faq-item">
                 <summary>What is Nebula Linux based on?</summary>
-                <div class="faq-content">Nebula Linux is built directly on top of the bleeding-edge Debian Testing branch ("Trixie"). This means you get the incredible stability of Debian, mixed with the absolute newest kernels and packages.</div>
+                <div class="faq-content">Nebula Linux comes in two editions. The <strong>Debian edition</strong> is built on the bleeding-edge Debian Testing branch ("Trixie") with KDE Plasma 6. The <strong>Arch edition</strong> is built on Arch Linux with the Dank Linux desktop — DankMaterialShell running on the niri Wayland compositor.</div>
+            </details>
+            <details class="faq-item">
+                <summary>Which edition should I pick?</summary>
+                <div class="faq-content">Pick <strong>Debian</strong> if you want a familiar desktop (KDE) and slower-moving, well-tested packages. Pick <strong>Arch · Dank</strong> if you want the newest software, a Material You desktop that themes itself from your wallpaper, and snapshot rollback that makes a rolling release safe to run.</div>
             </details>
             <details class="faq-item">
                 <summary>How do I install it?</summary>
-                <div class="faq-content">Download the `.iso` file and use a tool like <strong>Rufus</strong> (Windows) or <strong>BalenaEtcher</strong> (Mac/Linux) to flash it to a USB drive. Boot your computer from the USB drive, and follow the Calamares installer!</div>
+                <div class="faq-content">Download the `.iso` file and use a tool like <strong>Rufus</strong> (Windows) or <strong>BalenaEtcher</strong> (Mac/Linux) to flash it to a USB drive. Boot your computer from the USB drive, and follow the Calamares installer — both editions use it!</div>
             </details>
             <details class="faq-item">
                 <summary>Is this ready for daily use?</summary>
@@ -194,8 +244,9 @@
             </div>
             <div class="footer-links">
                 <h4>Project</h4>
+                <a href="#editions">Editions</a>
                 <a href="#features">Features</a>
-                <a href="https://archive.org/details/nebula-v1.0" target="_blank">Download</a>
+                <a href="#editions">Download</a>
             </div>
         </div>
         <div class="footer-bottom">
