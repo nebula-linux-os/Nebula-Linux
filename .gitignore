@@ -1,2 +1,5 @@
 out/
 *.iso
+.claude/
+__pycache__/
+*.pyc
