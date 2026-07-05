@@ -15,6 +15,17 @@ Wayland compositor.
               L  I  N  U  X
 ```
 
+## Screenshots
+
+| | |
+|---|---|
+| ![Desktop](screenshots/desktop.png) | ![Welcome app](screenshots/welcome.png) |
+| The live desktop — DMS bar on niri | Nebula Welcome onboarding |
+| ![Installer](screenshots/installer.png) | ![DMS settings](screenshots/settings-about.png) |
+| Branded Calamares installer | DankMaterialShell settings |
+| ![Desktop apps](screenshots/desktop-1.png) | ![Boot menu](screenshots/bootloader.png) |
+| Apps on the scrollable-tiling desktop | Boot menu with nebula background |
+
 ## What you get
 
 - **Live ISO** that boots straight into a full Dank Material Shell desktop
