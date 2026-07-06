@@ -15,6 +15,15 @@ Wayland compositor.
               L  I  N  U  X
 ```
 
+## Download
+
+**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.07.06-x86_64.iso/download)** (~2.2 GB)
+
+`SHA256: ae7df8c707ec608c08fb8438d2f7847a07ebedf627a881baed7dafd247723b3a`
+
+Flash it with [Rufus](https://rufus.ie) or [BalenaEtcher](https://etcher.balena.io), or boot it
+in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
+
 ## Screenshots
 
 | | |
