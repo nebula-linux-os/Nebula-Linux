@@ -19,9 +19,9 @@ strings:
   versionedName: "Nebula Linux (rolling)"
   shortVersionedName: "Nebula"
   bootloaderEntryName: "Nebula Linux"
-  productUrl: "https://github.com/nebula-linux"
-  supportUrl: "https://danklinux.com/docs/"
-  releaseNotesUrl: "https://github.com/nebula-linux"
+  productUrl: "https://nebula-linux-os.github.io/Nebula-Linux/"
+  supportUrl: "https://github.com/nebula-linux-os/Nebula-Linux/issues"
+  releaseNotesUrl: "https://github.com/nebula-linux-os/Nebula-Linux/releases"
 
 images:
   productLogo: "logo.png"

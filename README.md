@@ -59,7 +59,8 @@ Wayland compositor.
 | Snapshots     | btrfs by default + snapper + snap-pac + grub-btrfs (boot old snapshots from GRUB) |
 | Login         | DMS graphical greeter on installed systems (`nebula greeter <dms\|text>` to switch) |
 | Onboarding    | Nebula Welcome app (install, niri tour, app bundles, Flathub) |
-| Control       | `nebula` CLI: update / snapshots / rollback / drivers / doctor |
+| Control       | `nebula` CLI: update / snapshots / rollback / drivers / doctor / windows |
+| Window modes  | scrollable tiling by default; `nebula windows floating` for classic windows (also a switch in Nebula Welcome) |
 | VM support    | guest tools auto-start under QEMU/KVM, VirtualBox, VMware |
 | Performance   | zram swap (zstd), fstrim timer |
 

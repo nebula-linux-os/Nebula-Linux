@@ -88,6 +88,49 @@ cmd_doctor() {
     fi
 }
 
+cmd_windows() {
+    banner "window mode"
+    local cfg="${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl"
+    [[ -f "$cfg" ]] || { echo "niri config not found: $cfg"; exit 1; }
+    if ! grep -q 'NEBULA-WINDOW-MODE-START' "$cfg"; then
+        echo "This config has no managed window-mode block; edit it manually."; exit 1
+    fi
+    local mode="${1:-status}"
+    case "$mode" in
+        floating|tiling)
+            local tmp
+            tmp=$(mktemp)
+            awk -v mode="$mode" '
+                /NEBULA-WINDOW-MODE-START/ {
+                    print; inblock=1
+                    if (mode == "floating") {
+                        print "// Floating mode: new windows open floating (classic desktop)."
+                        print "window-rule {"
+                        print "    open-floating true"
+                        print "}"
+                    } else {
+                        print "// Tiling mode: windows tile into scrollable columns (default)."
+                    }
+                    next
+                }
+                /NEBULA-WINDOW-MODE-END/ { inblock=0; print; next }
+                inblock { next }
+                { print }
+            ' "$cfg" > "$tmp" && mv "$tmp" "$cfg"
+            echo "Window mode set to: $mode (applies immediately — niri reloads its config)."
+            echo "Tip: Super+Shift+Space toggles any single window between modes."
+            ;;
+        status|*)
+            if sed -n '/NEBULA-WINDOW-MODE-START/,/NEBULA-WINDOW-MODE-END/p' "$cfg" | grep -q 'open-floating true'; then
+                echo "Current mode: floating (classic windows)"
+            else
+                echo "Current mode: tiling (scrollable columns, default)"
+            fi
+            echo "Usage: nebula windows <tiling|floating>"
+            ;;
+    esac
+}
+
 cmd_greeter() {
     banner "login greeter"
     case "${1:-}" in
@@ -132,6 +175,7 @@ case "${1:-help}" in
     drivers)   shift; cmd_drivers "$@" ;;
     doctor)    shift; cmd_doctor "$@" ;;
     greeter)   shift; cmd_greeter "$@" ;;
+    windows)   shift; cmd_windows "$@" ;;
     *)
         printf "${PUR}nebula${OFF} — Nebula Linux control center\n\n"
         echo "  nebula update                 update system (auto-snapshots on btrfs)"
@@ -141,5 +185,6 @@ case "${1:-help}" in
         echo "  nebula drivers install-nvidia install NVIDIA driver"
         echo "  nebula doctor                 health check"
         echo "  nebula greeter <dms|text>     switch login screen style"
+        echo "  nebula windows <tiling|floating>  tiled columns or classic floating windows"
         ;;
 esac

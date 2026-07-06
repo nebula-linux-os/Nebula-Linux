@@ -13,6 +13,9 @@ FLAG_DIR = os.path.expanduser("~/.config/nebula-welcome")
 FLAG = os.path.join(FLAG_DIR, "autostart-disabled")
 IS_LIVE = os.path.exists("/run/archiso")
 LOGO = "/usr/share/nebula/logo.svg"
+NIRI_CONFIG = os.path.expanduser("~/.config/niri/config.kdl")
+REPO_URL = "https://github.com/nebula-linux-os/Nebula-Linux"
+SITE_URL = "https://nebula-linux-os.github.io/Nebula-Linux/"
 
 BUNDLES = {
     "Development": ["git", "base-devel", "code", "python"],
@@ -45,6 +48,17 @@ def run_detached(argv):
 def run_in_terminal(shell_cmd):
     run_detached(["foot", "-e", "bash", "-lc",
                   shell_cmd + "; echo; read -rp 'Finished. Press Enter to close.'"])
+
+
+def window_mode_is_floating():
+    try:
+        with open(NIRI_CONFIG, encoding="utf-8") as f:
+            text = f.read()
+        start = text.find("NEBULA-WINDOW-MODE-START")
+        end = text.find("NEBULA-WINDOW-MODE-END")
+        return start != -1 and "open-floating true" in text[start:end]
+    except OSError:
+        return False
 
 
 class WelcomeWindow(Adw.ApplicationWindow):
@@ -93,6 +107,19 @@ class WelcomeWindow(Adw.ApplicationWindow):
                 "echo 'Flathub enabled.'")))
         page.add(start)
 
+        # ── Window behavior ─────────────────────────────────────
+        windows = Adw.PreferencesGroup(
+            title="Window behavior",
+            description="Tiling is the Nebula default, but it's your desktop.")
+        float_row = Adw.SwitchRow(
+            title="Classic floating windows",
+            subtitle="Open new windows floating instead of tiling them "
+                     "(Super+Shift+Space toggles a single window any time)")
+        float_row.set_active(window_mode_is_floating())
+        float_row.connect("notify::active", self._on_float_toggle)
+        windows.add(float_row)
+        page.add(windows)
+
         # ── Learn niri ──────────────────────────────────────────
         learn = Adw.PreferencesGroup(
             title="Learn the desktop",
@@ -117,13 +144,16 @@ class WelcomeWindow(Adw.ApplicationWindow):
         # ── Links ───────────────────────────────────────────────
         links = Adw.PreferencesGroup(title="Help & community")
         links.add(self._button_row(
-            "DankMaterialShell documentation", "danklinux.com/docs",
-            "docs", lambda: run_detached(["xdg-open", "https://danklinux.com/docs/"]),
+            "Nebula Linux website", "nebula-linux-os.github.io/Nebula-Linux",
+            "website", lambda: run_detached(["xdg-open", SITE_URL]),
             button_label="Open"))
         links.add(self._button_row(
             "Nebula Linux on GitHub", "Report issues, contribute",
-            "github", lambda: run_detached(
-                ["xdg-open", "https://github.com/nebula-linux"]),
+            "github", lambda: run_detached(["xdg-open", REPO_URL]),
+            button_label="Open"))
+        links.add(self._button_row(
+            "DankMaterialShell documentation", "danklinux.com/docs",
+            "docs", lambda: run_detached(["xdg-open", "https://danklinux.com/docs/"]),
             button_label="Open"))
         page.add(links)
 
@@ -152,6 +182,16 @@ class WelcomeWindow(Adw.ApplicationWindow):
         row.add_suffix(btn)
         row.set_activatable_widget(btn)
         return row
+
+    @staticmethod
+    def _on_float_toggle(row, _pspec):
+        mode = "floating" if row.get_active() else "tiling"
+        try:
+            subprocess.run(["/usr/local/bin/nebula", "windows", mode],
+                           check=False, timeout=10,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
 
     @staticmethod
     def _on_toggle(row, _pspec):

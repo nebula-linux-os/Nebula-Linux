@@ -65,6 +65,10 @@ window-rule {
     clip-to-geometry true
 }
 
+// NEBULA-WINDOW-MODE-START (managed by: nebula windows <tiling|floating>)
+// Tiling mode: windows tile into scrollable columns (default).
+// NEBULA-WINDOW-MODE-END
+
 binds {
     // ── Essentials ─────────────────────────────────────────────
     Mod+Shift+Slash { show-hotkey-overlay; }

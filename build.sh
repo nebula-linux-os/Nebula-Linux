@@ -64,7 +64,7 @@ echo ">> Rebranding profile..."
 sed -i \
     -e 's|^iso_name=.*|iso_name="nebula-linux"|' \
     -e 's|ARCH_|NEBULA_|g' \
-    -e 's|^iso_publisher=.*|iso_publisher="Nebula Linux <https://github.com/nebula-linux>"|' \
+    -e 's|^iso_publisher=.*|iso_publisher="Nebula Linux <https://nebula-linux-os.github.io/Nebula-Linux/>"|' \
     -e 's|^iso_application=.*|iso_application="Nebula Linux Live/Installer"|' \
     "$PROFILE/profiledef.sh"
 
