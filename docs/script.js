@@ -3,9 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('theme-toggle');
     const body = document.body;
     
-    // Check local storage for theme
+    // Light is the default theme; only go dark if the user chose it.
     const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'light') {
+    if (currentTheme === 'dark') {
+        body.classList.remove('light-mode');
+        if (toggleBtn) toggleBtn.textContent = '☀️';
+    } else {
         body.classList.add('light-mode');
         if (toggleBtn) toggleBtn.textContent = '🌙';
     }

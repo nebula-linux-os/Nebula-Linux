@@ -747,6 +747,12 @@ body.light-mode .timeline-content, body.light-mode .glass-card {
 body.light-mode .terminal-container { background: rgba(255,255,255,0.9); }
 body.light-mode .terminal-body { color: #40915f; }
 body.light-mode .docs-content pre { color: #2f7d4f; }
+body.light-mode nav.scrolled {
+    background: rgba(255, 255, 255, 0.82);
+    border-bottom-color: var(--border);
+}
+body.light-mode .btn-secondary { background: rgba(20, 16, 40, 0.03); }
+body.light-mode .hero-badge { background: rgba(149, 128, 255, 0.1); }
 
 /* ---- Responsive ------------------------------------------------- */
 @media (max-width: 768px) {
