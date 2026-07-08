@@ -6,7 +6,9 @@
     <title>Nebula Linux</title>
     <meta name="description" content="Fast, Minimalist, and Beautiful. One Linux distribution, two editions: Debian + KDE Plasma 6, or Arch + Dank Linux (DankMaterialShell).">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -45,6 +47,7 @@
                     <span class="prompt">$ </span><span class="typed-text"></span><span class="cursor">&nbsp;</span>
                 </div>
             </div>
+            <div class="hero-badge fade-in-up"><span class="dot-live"></span> Arch · Dank Edition — Alpha out now</div>
             <h1 class="fade-in-up delay-1">The Linux Desktop,<br><span class="gradient-text">Reimagined.</span></h1>
             <p class="fade-in-up delay-1">Fast, Minimalist, and Beautiful. One distribution, two personalities — the stability of Debian with KDE Plasma 6, or the cutting edge of Arch with the Dank Linux Material desktop.</p>
             <div class="cta-buttons fade-in-up delay-2">
@@ -99,6 +102,7 @@
         <h2 class="section-title">See it in Action — Arch · Dank Edition</h2>
         <div class="gallery-grid">
             <img src="assets/arch-desktop.png" alt="Nebula Arch desktop with DankMaterialShell" class="gallery-img">
+            <img src="assets/arch-fastfetch.png" alt="fastfetch on Nebula Linux — Arch base, niri compositor" class="gallery-img">
             <img src="assets/arch-welcome.png" alt="Nebula Welcome onboarding app" class="gallery-img">
             <img src="assets/arch-installer.png" alt="Branded Calamares installer" class="gallery-img">
             <img src="assets/arch-settings.png" alt="DankMaterialShell settings" class="gallery-img">
@@ -293,8 +297,17 @@
         </div>
         <div class="footer-bottom">
             <p>Built with ❤️ by <a href="https://github.com/AshishYadavStudio" target="_blank">AshishYadavStudio</a>.</p>
-            <p style="margin-top: 0.6rem;"><img src="https://hits.sh/nebula-linux-os.github.io/Nebula-Linux.svg?style=flat-square&label=visitors&color=8a2be2&labelColor=0b0c10" alt="visitor counter" style="vertical-align: middle; border-radius: 4px;"></p>
+            <p style="margin-top: 0.6rem;"><img src="https://hits.sh/nebula-linux-os.github.io/Nebula-Linux.svg?style=flat-square&label=visitors&color=9580ff&labelColor=07060f" alt="visitor counter" style="vertical-align: middle; border-radius: 4px;"></p>
         </div>
     </footer>
+
+    <!-- Lightbox: click any gallery screenshot to enlarge -->
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
+        <img src="" alt="" id="lightbox-img">
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next">&#8250;</button>
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
 </body>
 </html>

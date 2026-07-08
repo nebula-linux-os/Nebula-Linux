@@ -26,6 +26,8 @@ in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
 
 ## Screenshots
 
+![Nebula Linux — fastfetch showing the Arch base on the niri compositor](screenshots/Homescreen.png)
+
 | | |
 |---|---|
 | ![Desktop](screenshots/desktop.png) | ![Welcome app](screenshots/welcome.png) |
