@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Nebula
+Description=Nebula Linux boot splash — orbiting singularity on deep space
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/nebula
+ScriptFile=/usr/share/plymouth/themes/nebula/nebula.script

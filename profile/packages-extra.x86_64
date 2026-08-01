@@ -57,6 +57,9 @@ qt6ct
 grub
 efibootmgr
 
+# Animated boot splash (Nebula plymouth theme is baked in below)
+plymouth
+
 # Snapshot & rollback stack (btrfs default installs)
 snapper
 snap-pac

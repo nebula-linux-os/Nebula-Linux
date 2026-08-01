@@ -1,4 +1,18 @@
 {
-  "wallpaperPath": "/usr/share/backgrounds/nebula/nebula.png",
-  "wallpaperFillMode": "PreserveAspectCrop"
+  "wallpaperPath": "/usr/share/backgrounds/nebula/themes/cosmic-blue.png",
+  "wallpaperFillMode": "PreserveAspectCrop",
+  "lockScreenWallpaperPath": "/usr/share/backgrounds/nebula/themes/cosmic-blue.png",
+  "matugenScheme": "TonalSpot",
+  "matugenDarkMode": true,
+  "xrayBlurEnabled": true,
+  "topBarPosition": "top",
+  "topBarShowNotch": true,
+  "notificationPosition": "top-right",
+  "launcherStyle": "spotlight",
+  "clockFormat": "HH:mm",
+  "showWeather": true,
+  "showBattery": true,
+  "roundedCorners": true,
+  "cornerRadius": 12,
+  "hyprBlurBehind": true
 }

@@ -1,0 +1,74 @@
+# Nebula Linux — GRUB theme
+# Deep space background, Material accent, hostname-style title.
+
+desktop-image:  "background.png"
+desktop-color:  "#0A0715"
+title-text:     "Nebula Linux"
+title-color:    "#B5C4FF"
+title-font:     "Unifont Regular 16"
+message-color:  "#8A98C7"
+message-font:   "Unifont Regular 14"
+terminal-font:  "Unifont Regular 16"
+terminal-box:   "terminal_box_*.png"
+
++ image {
+    id       = "logo"
+    file     = "logo.png"
+    left     = 50%-64
+    top      = 12%
+    width    = 128
+    height   = 128
+}
+
++ label {
+    id       = "wordmark"
+    text     = "NEBULA  LINUX"
+    color    = "#B5C4FF"
+    align    = "center"
+    left     = 0
+    top      = 12%+140
+    width    = 100%
+    height   = 30
+    font     = "Unifont Bold 18"
+}
+
++ boot_menu {
+    left            = 25%
+    top             = 32%
+    width           = 50%
+    height          = 50%
+    item_height     = 32
+    item_padding    = 6
+    item_spacing    = 4
+    item_color      = "#8A98C7"
+    selected_item_color = "#ffffff"
+    item_pixmap_style       = "menu_bkg_*.png"
+    selected_item_pixmap_style  = "menu_selected_*.png"
+    scrollbar       = false
+    item_font       = "Unifont Regular 16"
+    selected_item_font = "Unifont Bold 16"
+}
+
++ label {
+    id       = "help"
+    text     = "↑↓  select    Enter  boot    e  edit    c  console"
+    color    = "#5A6B99"
+    align    = "center"
+    left     = 0
+    top      = 90%
+    width    = 100%
+    height   = 20
+    font     = "Unifont Regular 12"
+}
+
++ progress_bar {
+    id       = "__timeout__"
+    left     = 25%
+    top      = 86%
+    width    = 50%
+    height   = 6
+    fg_color = "#5AAFFF"
+    bg_color = "#1A1830"
+    border_color = "#3B3B4D"
+    text     = ""
+}

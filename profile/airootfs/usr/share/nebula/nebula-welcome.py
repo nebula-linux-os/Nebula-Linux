@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Nebula Welcome — first-boot onboarding for Nebula Linux."""
+import json
 import os
 import subprocess
 import sys
@@ -7,7 +8,7 @@ import sys
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk  # noqa: E402
 
 FLAG_DIR = os.path.expanduser("~/.config/nebula-welcome")
 FLAG = os.path.join(FLAG_DIR, "autostart-disabled")
@@ -16,6 +17,8 @@ LOGO = "/usr/share/nebula/logo.svg"
 NIRI_CONFIG = os.path.expanduser("~/.config/niri/config.kdl")
 REPO_URL = "https://github.com/nebula-linux-os/Nebula-Linux"
 SITE_URL = "https://nebula-linux-os.github.io/Nebula-Linux/"
+THEMES_MANIFEST = "/usr/share/backgrounds/nebula/themes/themes.json"
+THEMES_DIR = "/usr/share/backgrounds/nebula/themes"
 
 BUNDLES = {
     "Development": ["git", "base-devel", "code", "python"],
@@ -107,6 +110,29 @@ class WelcomeWindow(Adw.ApplicationWindow):
                 "echo 'Flathub enabled.'")))
         page.add(start)
 
+        # ── Wallpaper & theme ───────────────────────────────────
+        themes = self._load_themes()
+        if themes:
+            theme_group = Adw.PreferencesGroup(
+                title="Choose your theme",
+                description="Wallpapers retune the whole desktop — bar, "
+                            "launcher, apps and lock screen all recolor.")
+            grid = Gtk.FlowBox(
+                selection_mode=Gtk.SelectionMode.NONE,
+                homogeneous=True,
+                max_children_per_line=4,
+                min_children_per_line=2,
+                column_spacing=10,
+                row_spacing=10,
+                margin_top=6, margin_bottom=6,
+                margin_start=6, margin_end=6)
+            for t in themes:
+                grid.append(self._theme_card(t))
+            wrap = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            wrap.append(grid)
+            theme_group.add(wrap)
+            page.add(theme_group)
+
         # ── Window behavior ─────────────────────────────────────
         windows = Adw.PreferencesGroup(
             title="Window behavior",
@@ -182,6 +208,50 @@ class WelcomeWindow(Adw.ApplicationWindow):
         row.add_suffix(btn)
         row.set_activatable_widget(btn)
         return row
+
+    @staticmethod
+    def _load_themes():
+        try:
+            with open(THEMES_MANIFEST, encoding="utf-8") as f:
+                return json.load(f).get("themes", [])
+        except (OSError, ValueError):
+            return []
+
+    def _theme_card(self, theme):
+        card = Gtk.Button()
+        card.add_css_class("card")
+        card.set_size_request(180, 140)
+
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                      margin_top=6, margin_bottom=6,
+                      margin_start=6, margin_end=6)
+        path = os.path.join(THEMES_DIR, theme["file"])
+        if os.path.exists(path):
+            pic = Gtk.Picture.new_for_filename(path)
+            pic.set_content_fit(Gtk.ContentFit.COVER)
+            pic.set_size_request(-1, 80)
+            pic.add_css_class("card")
+            box.append(pic)
+        label = Gtk.Label(label=theme["name"])
+        label.add_css_class("caption-heading")
+        box.append(label)
+        sub = Gtk.Label(label=f"[{theme.get('mode', 'dark')}]")
+        sub.add_css_class("caption")
+        sub.add_css_class("dim-label")
+        box.append(sub)
+
+        card.set_child(box)
+        card.connect("clicked", lambda *_: self._apply_theme(theme["id"]))
+        return card
+
+    @staticmethod
+    def _apply_theme(theme_id):
+        try:
+            subprocess.Popen(
+                ["/usr/local/bin/nebula", "wallpaper", "set", theme_id],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except OSError:
+            pass
 
     @staticmethod
     def _on_float_toggle(row, _pspec):

@@ -1,7 +1,10 @@
 NAME="Nebula Linux"
-PRETTY_NAME="Nebula Linux"
+PRETTY_NAME="Nebula Linux Beta 1.0"
 ID=nebula
 ID_LIKE=arch
+VERSION="Beta 1.0"
+VERSION_ID="1.0-beta"
+VERSION_CODENAME="stellar"
 BUILD_ID=rolling
 ANSI_COLOR="38;2;149;128;255"
 HOME_URL="https://nebula-linux-os.github.io/Nebula-Linux/"

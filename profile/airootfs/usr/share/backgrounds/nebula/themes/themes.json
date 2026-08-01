@@ -1,0 +1,39 @@
+{
+  "$schema": "https://nebula-linux-os.github.io/schemas/themes-v1.json",
+  "version": 1,
+  "default": "cosmic-blue",
+  "themes": [
+    {
+      "id": "cosmic-blue",
+      "name": "Cosmic Blue",
+      "tagline": "Deep space, ringed singularity",
+      "file": "cosmic-blue.png",
+      "mode": "dark",
+      "accent_hint": "#5A8CFF"
+    },
+    {
+      "id": "stellar-ember",
+      "name": "Stellar Ember",
+      "tagline": "Warm fractal in a red dwarf",
+      "file": "stellar-ember.png",
+      "mode": "dark",
+      "accent_hint": "#FF5A6E"
+    },
+    {
+      "id": "aurora-light",
+      "name": "Aurora Light",
+      "tagline": "Bright morning, pearl on the horizon",
+      "file": "aurora-light.png",
+      "mode": "light",
+      "accent_hint": "#B39DDB"
+    },
+    {
+      "id": "void-green",
+      "name": "Void Green",
+      "tagline": "Eclipse over a green sea",
+      "file": "void-green.png",
+      "mode": "dark",
+      "accent_hint": "#7FFF9A"
+    }
+  ]
+}

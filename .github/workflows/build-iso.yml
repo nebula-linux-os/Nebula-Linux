@@ -1,0 +1,66 @@
+name: build-iso
+
+on:
+  push:
+    tags:
+      - 'v*'
+  schedule:
+    # Every Monday at 03:00 UTC — weekly rolling ISO refresh.
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute build metadata
+        id: meta
+        run: |
+          date=$(date -u +'%Y.%m.%d')
+          iso="nebula-linux-${date}-x86_64.iso"
+          echo "date=$date" >> "$GITHUB_OUTPUT"
+          echo "iso=$iso" >> "$GITHUB_OUTPUT"
+
+      - name: Build ISO inside archlinux container
+        run: |
+          mkdir -p out
+          docker run --rm --privileged \
+            -v "$PWD:/src:ro" \
+            -v "$PWD/out:/out" \
+            archlinux:latest \
+            /src/build.sh
+
+      - name: List artifacts
+        run: ls -lh out/
+
+      - name: Compute checksum
+        working-directory: out
+        run: |
+          iso=$(ls nebula-linux-*.iso | head -1)
+          sha256sum "$iso" > "${iso}.sha256"
+          cat "${iso}.sha256"
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nebula-linux-iso-${{ steps.meta.outputs.date }}
+          path: |
+            out/nebula-linux-*.iso
+            out/nebula-linux-*.sha256
+          retention-days: 30
+
+      - name: Publish to release (tag pushes only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            out/nebula-linux-*.iso
+            out/nebula-linux-*.sha256
+          generate_release_notes: true

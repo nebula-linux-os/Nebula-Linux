@@ -1,9 +1,14 @@
-# Nebula Linux
+# Nebula Linux — Beta 1.0
 
 An Arch-based Linux distribution featuring the **Dank Linux** UI —
 [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (Material 3
 desktop shell built on Quickshell) running on the **niri** scrollable-tiling
 Wayland compositor.
+
+**New in Beta 1.0:** 4 curated wallpaper themes with instant matugen retuning,
+Plymouth animated boot splash, full GRUB theme for installed systems,
+`nebula wallpaper` and `nebula bugreport` CLI subcommands, wallpaper picker
+in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
 ```
  ███╗   ██╗███████╗██████╗ ██╗   ██╗██╗      █████╗
@@ -70,7 +75,10 @@ in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
 | Snapshots     | btrfs by default + snapper + snap-pac + grub-btrfs (boot old snapshots from GRUB) |
 | Login         | DMS graphical greeter on installed systems (`nebula greeter <dms\|text>` to switch) |
 | Onboarding    | Nebula Welcome app (install, niri tour, app bundles, Flathub) |
-| Control       | `nebula` CLI: update / snapshots / rollback / drivers / doctor / windows |
+| Control       | `nebula` CLI: update / snapshots / rollback / drivers / doctor / windows / wallpaper / bugreport |
+| Themes        | 4 bundled wallpaper themes (`nebula wallpaper list`) — matugen retunes the whole desktop on switch |
+| Boot splash   | Plymouth "nebula" theme with orbiting singularity animation (installed systems, silent boot) |
+| GRUB theme    | Branded GRUB menu for installed systems (background, logo, wordmark, selection pixmaps) |
 | Window modes  | scrollable tiling by default; `nebula windows floating` for classic windows (also a switch in Nebula Welcome) |
 | VM support    | guest tools auto-start under QEMU/KVM, VirtualBox, VMware |
 | Performance   | zram swap (zstd), fstrim timer |

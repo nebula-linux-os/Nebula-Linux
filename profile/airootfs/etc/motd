@@ -1,6 +1,6 @@
 
-        Welcome to Nebula Linux (live session)
-        ---------------------------------------
+        Welcome to Nebula Linux Beta 1.0 (live session)
+        -----------------------------------------------
         Desktop : DankMaterialShell on niri (Wayland)
         User    : nebula (no password, passwordless sudo)
 
@@ -8,4 +8,6 @@
         "Install Nebula Linux", or run:  nebula-installer
 
         Press Super+Shift+/ to see all keybindings.
+        New in Beta 1.0: Plymouth splash, GRUB theme,
+        `nebula wallpaper`, `nebula bugreport`, 4 default themes.
 

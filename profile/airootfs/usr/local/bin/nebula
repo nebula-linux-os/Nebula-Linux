@@ -131,6 +131,135 @@ cmd_windows() {
     esac
 }
 
+cmd_wallpaper() {
+    banner "wallpaper & theme"
+    local manifest=/usr/share/backgrounds/nebula/themes/themes.json
+    local themes_dir=/usr/share/backgrounds/nebula/themes
+    [[ -f "$manifest" ]] || { echo "themes manifest missing: $manifest"; exit 1; }
+
+    local action="${1:-current}"
+    case "$action" in
+        list)
+            printf "${DIM}Bundled Nebula themes:${OFF}\n\n"
+            python3 -c '
+import json
+m = json.load(open("'"$manifest"'"))
+for t in m["themes"]:
+    tag = " (default)" if t["id"] == m["default"] else ""
+    print(f"  {t[\"id\"]:<16}  {t[\"name\"]}{tag}")
+    print(f"  {\"\":<16}  {t[\"tagline\"]}  [{t[\"mode\"]}]")
+    print()
+print("Usage: nebula wallpaper set <id>       apply a bundled theme")
+print("       nebula wallpaper set <path>     apply an arbitrary image file")
+'
+            ;;
+        set)
+            local target="${2:-}"
+            [[ -z "$target" ]] && { echo "Usage: nebula wallpaper set <id-or-path>"; exit 1; }
+            local wp
+            if [[ -f "$themes_dir/$target.png" ]]; then
+                wp="$themes_dir/$target.png"
+            elif [[ -f "$target" ]]; then
+                wp="$(readlink -f "$target")"
+            else
+                echo "No such theme or file: $target"
+                echo "Try:  nebula wallpaper list"
+                exit 1
+            fi
+            echo "Applying wallpaper: $wp"
+            # 1. Regenerate Material palette from the wallpaper.
+            if command -v matugen >/dev/null; then
+                matugen image "$wp" >/dev/null 2>&1 && echo "  ✓ matugen palette regenerated"
+            fi
+            # 2. Update DMS wallpaper via IPC (also drives the lock screen).
+            if command -v dms >/dev/null; then
+                dms ipc call wallpaper set "$wp" >/dev/null 2>&1 && echo "  ✓ DMS wallpaper updated"
+            fi
+            # 3. Persist the choice so nebula-live-setup / new sessions can restore it.
+            mkdir -p "$HOME/.config/nebula"
+            printf '%s\n' "$wp" > "$HOME/.config/nebula/wallpaper.path"
+            echo "Theme applied. Colors ripple through bar, launcher, lock screen and apps."
+            ;;
+        current)
+            if [[ -r "$HOME/.config/nebula/wallpaper.path" ]]; then
+                cat "$HOME/.config/nebula/wallpaper.path"
+            else
+                python3 -c '
+import json
+m = json.load(open("'"$manifest"'"))
+print("'"$themes_dir"'/" + m["default"] + ".png  (default)")
+'
+            fi
+            ;;
+        *)
+            echo "Usage: nebula wallpaper <list|set <id-or-path>|current>"
+            ;;
+    esac
+}
+
+cmd_bugreport() {
+    banner "bug report"
+    local tmp
+    tmp=$(mktemp -d)
+    local report="$tmp/report.md"
+    {
+        echo "### Environment"
+        echo
+        echo '```'
+        . /etc/os-release 2>/dev/null && printf 'Distro:  %s %s\n' "$NAME" "$VERSION"
+        echo    "Kernel:  $(uname -sr)"
+        echo    "CPU:     $(lscpu 2>/dev/null | awk -F: '/Model name/ {sub(/^ +/,"",$2); print $2; exit}')"
+        echo    "Memory:  $(free -h | awk '/^Mem:/ {print $2}')"
+        echo    "GPU:     $(lspci 2>/dev/null | grep -Ei 'vga|3d|display' | sed 's/^[0-9a-f:.]* //' | paste -sd '; ')"
+        virt=$(systemd-detect-virt 2>/dev/null || echo none)
+        echo    "Virt:    $virt"
+        if command -v dms >/dev/null; then
+            echo "DMS:     $(dms --version 2>/dev/null || echo unknown)"
+        fi
+        if command -v niri >/dev/null; then
+            echo "niri:    $(niri --version 2>/dev/null | head -1)"
+        fi
+        echo '```'
+        echo
+        echo "### Failed services"
+        echo
+        echo '```'
+        systemctl --failed --no-pager --no-legend 2>/dev/null || echo "(none)"
+        echo '```'
+        echo
+        echo "### Recent pacman errors"
+        echo
+        echo '```'
+        grep -iE 'error|failed' /var/log/pacman.log 2>/dev/null | tail -15 || echo "(no log)"
+        echo '```'
+        echo
+        echo "### What went wrong?"
+        echo
+        echo "<!-- Describe what you were doing and what you expected. -->"
+        echo
+        echo "### Steps to reproduce"
+        echo
+        echo "1."
+        echo "2."
+    } > "$report"
+
+    echo "Report written: $report"
+    echo
+    cat "$report"
+    echo
+    if [[ "${1:-}" == "--open" ]]; then
+        local title="[bug] "
+        # URL-encode the report body (very light: enough for GitHub's ?body=).
+        local body
+        body=$(python3 -c 'import urllib.parse, sys; print(urllib.parse.quote(sys.stdin.read()))' < "$report")
+        local url="https://github.com/nebula-linux-os/Nebula-Linux/issues/new?title=$(python3 -c 'import urllib.parse; print(urllib.parse.quote("'"$title"'"))')&body=$body"
+        echo "Opening browser..."
+        xdg-open "$url" >/dev/null 2>&1 || echo "Could not open browser. Visit: $url"
+    else
+        echo "Tip: 'nebula bugreport --open' pre-fills a GitHub issue in your browser."
+    fi
+}
+
 cmd_greeter() {
     banner "login greeter"
     case "${1:-}" in
@@ -176,6 +305,8 @@ case "${1:-help}" in
     doctor)    shift; cmd_doctor "$@" ;;
     greeter)   shift; cmd_greeter "$@" ;;
     windows)   shift; cmd_windows "$@" ;;
+    wallpaper|theme) shift; cmd_wallpaper "$@" ;;
+    bugreport) shift; cmd_bugreport "$@" ;;
     *)
         printf "${PUR}nebula${OFF} — Nebula Linux control center\n\n"
         echo "  nebula update                 update system (auto-snapshots on btrfs)"
@@ -186,5 +317,8 @@ case "${1:-help}" in
         echo "  nebula doctor                 health check"
         echo "  nebula greeter <dms|text>     switch login screen style"
         echo "  nebula windows <tiling|floating>  tiled columns or classic floating windows"
+        echo "  nebula wallpaper list         list bundled Nebula themes"
+        echo "  nebula wallpaper set <id>     apply a theme (retunes matugen palette)"
+        echo "  nebula bugreport [--open]     collect system info, optionally open GitHub issue"
         ;;
 esac
