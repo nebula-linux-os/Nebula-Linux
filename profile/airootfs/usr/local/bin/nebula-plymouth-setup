@@ -1,0 +1,43 @@
+#!/bin/bash
+# Nebula Linux — first-boot Plymouth splash setup.
+# Runs once on a fully-booted installed system, where /proc /sys /dev are
+# all properly mounted, so mkinitcpio's autodetect hook works normally.
+# The equivalent step in Calamares' shellprocess stage fails with
+# "==> ERROR: /proc must be mounted!" so we defer to here.
+set -u
+
+MARKER=/var/lib/nebula/plymouth-setup.done
+LOG=/var/log/nebula-plymouth-setup.log
+mkdir -p "$(dirname "$MARKER")"
+
+exec >>"$LOG" 2>&1
+echo "===== nebula-plymouth-setup $(date -Iseconds) ====="
+
+# 1. Set the Plymouth theme (writes /etc/plymouth/plymouthd.conf).
+if command -v plymouth-set-default-theme >/dev/null; then
+    plymouth-set-default-theme nebula || true
+fi
+
+# 2. Add the plymouth mkinitcpio hook right after 'udev'.
+if [[ -f /etc/mkinitcpio.conf ]] && ! grep -q 'plymouth' /etc/mkinitcpio.conf; then
+    sed -i 's/^HOOKS=(base udev/HOOKS=(base udev plymouth/' /etc/mkinitcpio.conf
+fi
+
+# 3. Add `quiet splash` to the kernel cmdline for a silent boot.
+if [[ -f /etc/default/grub ]] && ! grep -q 'quiet splash' /etc/default/grub; then
+    sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet splash"/' /etc/default/grub || true
+fi
+
+# 4. Regenerate the initramfs so plymouth is included on the next boot.
+#    On a fully-booted system this works without /proc issues.
+if command -v mkinitcpio >/dev/null; then
+    mkinitcpio -P || echo "mkinitcpio failed — plymouth will not display, but the system is unaffected."
+fi
+
+# 5. Rewrite grub.cfg so the new cmdline takes effect on next boot.
+if command -v grub-mkconfig >/dev/null && [[ -d /boot/grub ]]; then
+    grub-mkconfig -o /boot/grub/grub.cfg || true
+fi
+
+touch "$MARKER"
+echo "===== done ====="

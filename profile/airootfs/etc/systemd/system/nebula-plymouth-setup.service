@@ -1,0 +1,15 @@
+[Unit]
+Description=Nebula Linux — one-shot Plymouth splash setup on first boot
+# Wait until basic system is up; we need pacman/mkinitcpio to work.
+After=multi-user.target
+ConditionPathExists=!/var/lib/nebula/plymouth-setup.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/nebula-plymouth-setup
+# The script writes the completion marker itself, so we don't need to
+# re-run on every boot.
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
