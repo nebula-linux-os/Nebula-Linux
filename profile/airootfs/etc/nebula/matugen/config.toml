@@ -1,0 +1,24 @@
+# Nebula Linux — matugen config for `nebula wallpaper set`.
+# Renders a small color-scheme JSON that DankMaterialShell picks up
+# alongside its own matugen integration, so third-party integrations
+# (widgets, custom scripts) can read a canonical palette.
+
+[config]
+# Non-interactive; do not try to reload apps directly from matugen.
+# We drive reloads from `nebula wallpaper set` itself.
+reload_apps = false
+set_wallpaper = false
+
+# ----- Output: canonical Material 3 palette JSON ------------------------
+# Written to /run/user/UID/nebula-colors.json so it is per-session and
+# ephemeral. Any script or widget can read the current palette from here.
+[templates.nebula-json]
+input_path = '/etc/nebula/matugen/templates/colors.json'
+output_path = '~/.config/nebula/colors.json'
+
+# ----- Output: DMS colors.qml fragment ---------------------------------
+# DMS reads its own palette internally, but we also drop a colors.qml
+# here so any custom Quickshell widget can import Material colors.
+[templates.dms-qml]
+input_path = '/etc/nebula/matugen/templates/dms-colors.qml'
+output_path = '~/.local/state/DankMaterialShell/nebula-colors.qml'

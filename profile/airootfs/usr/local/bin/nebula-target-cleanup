@@ -81,17 +81,19 @@ if [[ -f /usr/share/grub/themes/nebula/theme.txt ]]; then
 fi
 
 echo "nebula-target-cleanup: Plymouth boot splash"
+# NOTE: we only edit config here — we do NOT run mkinitcpio ourselves.
+# Calamares' initcpio module runs immediately after this script and will
+# regenerate the initramfs with the plymouth hook we added, using its
+# own /proc bind-mount (which shellprocess doesn't guarantee).
 if command -v plymouth-set-default-theme >/dev/null 2>&1; then
-    plymouth-set-default-theme -R nebula >/dev/null 2>&1 || plymouth-set-default-theme nebula >/dev/null 2>&1 || true
-    # Wire the plymouth hook into mkinitcpio (before 'udev' hook, per Arch wiki).
+    plymouth-set-default-theme nebula >/dev/null 2>&1 || true
+    # Wire the plymouth hook into mkinitcpio (right after 'udev', per Arch wiki).
     if [[ -f /etc/mkinitcpio.conf ]] && ! grep -q 'plymouth' /etc/mkinitcpio.conf; then
         sed -i 's/^HOOKS=(base udev/HOOKS=(base udev plymouth/' /etc/mkinitcpio.conf
-        mkinitcpio -P 2>/dev/null || true
     fi
     # Silent, splash-friendly kernel command line.
     if ! grep -q 'quiet splash' /etc/default/grub 2>/dev/null; then
         sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet splash"/' /etc/default/grub 2>/dev/null || true
-        grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || true
     fi
 fi
 

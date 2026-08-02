@@ -220,38 +220,67 @@ class WelcomeWindow(Adw.ApplicationWindow):
     def _theme_card(self, theme):
         card = Gtk.Button()
         card.add_css_class("card")
-        card.set_size_request(180, 140)
+        card.set_size_request(200, 160)
 
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
-                      margin_top=6, margin_bottom=6,
-                      margin_start=6, margin_end=6)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                      margin_top=8, margin_bottom=8,
+                      margin_start=8, margin_end=8)
+
         path = os.path.join(THEMES_DIR, theme["file"])
         if os.path.exists(path):
-            pic = Gtk.Picture.new_for_filename(path)
-            pic.set_content_fit(Gtk.ContentFit.COVER)
-            pic.set_size_request(-1, 80)
-            pic.add_css_class("card")
-            box.append(pic)
+            # Gtk.Picture with Gdk.Texture is the most reliable way to render
+            # a bitmap thumbnail inside a Gtk4 Button — Gtk.Picture alone
+            # collapses to zero size without a strong content-fit hint.
+            try:
+                texture = Gdk.Texture.new_from_filename(path)
+                pic = Gtk.Picture.new_for_paintable(texture)
+                pic.set_content_fit(Gtk.ContentFit.COVER)
+                pic.set_size_request(180, 90)
+                pic.set_can_shrink(True)
+                pic.add_css_class("card")
+                box.append(pic)
+            except GLib.Error:
+                placeholder = Gtk.Label(label="🖼️")
+                placeholder.set_size_request(180, 90)
+                box.append(placeholder)
         label = Gtk.Label(label=theme["name"])
         label.add_css_class("caption-heading")
         box.append(label)
-        sub = Gtk.Label(label=f"[{theme.get('mode', 'dark')}]")
+        sub = Gtk.Label(label=theme.get("tagline", ""))
         sub.add_css_class("caption")
         sub.add_css_class("dim-label")
+        sub.set_wrap(True)
+        sub.set_max_width_chars(24)
         box.append(sub)
 
         card.set_child(box)
-        card.connect("clicked", lambda *_: self._apply_theme(theme["id"]))
+        card.connect("clicked", lambda btn, t=theme: self._apply_theme(btn, t))
         return card
 
-    @staticmethod
-    def _apply_theme(theme_id):
+    def _apply_theme(self, button, theme):
+        # Provide visible feedback so the user knows the click landed.
+        original = button.get_child()
+        toast_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4,
+                            margin_top=20, margin_bottom=20)
+        toast_box.append(Gtk.Label(label=f"Applying {theme['name']}…"))
+        spinner = Gtk.Spinner(spinning=True)
+        toast_box.append(spinner)
+        button.set_child(toast_box)
+        button.set_sensitive(False)
+
+        def finished(*_):
+            button.set_child(original)
+            button.set_sensitive(True)
+            return False
+
         try:
             subprocess.Popen(
-                ["/usr/local/bin/nebula", "wallpaper", "set", theme_id],
+                ["/usr/local/bin/nebula", "wallpaper", "set", theme["id"]],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except OSError:
             pass
+        # Restore the card after 1.5s so subsequent clicks work.
+        GLib.timeout_add(1500, finished)
 
     @staticmethod
     def _on_float_toggle(row, _pspec):
@@ -277,12 +306,15 @@ class WelcomeWindow(Adw.ApplicationWindow):
 
 class WelcomeApp(Adw.Application):
     def __init__(self):
+        # NON_UNIQUE so every `nebula-welcome` invocation is a fresh window,
+        # even if a previous instance's app registration is still lingering
+        # in the DBus session. This is what makes "close then re-open" work.
         super().__init__(application_id="org.nebulalinux.Welcome",
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
+                         flags=Gio.ApplicationFlags.NON_UNIQUE)
 
     def do_activate(self):
-        win = self.get_active_window() or WelcomeWindow(self)
-        win.present()
+        # Always present a fresh window — never reuse a torn-down one.
+        WelcomeWindow(self).present()
 
 
 if __name__ == "__main__":

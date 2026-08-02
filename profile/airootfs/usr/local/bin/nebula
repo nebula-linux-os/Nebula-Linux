@@ -168,13 +168,14 @@ print("       nebula wallpaper set <path>     apply an arbitrary image file")
             fi
             echo "Applying wallpaper: $wp"
 
-            # DMS's session.json is the source of truth — DMS watches it and
-            # re-derives the whole Material palette when wallpaperPath changes.
+            # 1) Persist the choice into DMS's own state file. DMS reads
+            #    wallpaperPath from here on startup — this makes the change
+            #    survive logout/reboot.
             local dms_state="$HOME/.local/state/DankMaterialShell"
             local dms_json="$dms_state/session.json"
             mkdir -p "$dms_state"
             [[ -f "$dms_json" ]] || echo '{}' > "$dms_json"
-            python3 - "$dms_json" "$wp" <<'PY' && echo "  ✓ DMS session.json updated (wallpaper + lock screen)"
+            python3 - "$dms_json" "$wp" <<'PY' && echo "  ✓ DMS session.json updated"
 import json, sys
 path, wp = sys.argv[1], sys.argv[2]
 try:
@@ -187,18 +188,44 @@ data.setdefault("wallpaperFillMode", "PreserveAspectCrop")
 with open(path, "w") as f: json.dump(data, f, indent=2)
 PY
 
-            # If DMS is running, nudge it to reload immediately. Different DMS
-            # builds expose different IPC verbs — try a few, don't require any.
-            if command -v dms >/dev/null; then
-                for verb in "wallpapers set" "wallpaper set" "theme reload" "settings reload"; do
-                    dms ipc call $verb "$wp" >/dev/null 2>&1 && break
+            # 2) Also generate the Material palette right now via matugen using
+            #    our bundled DMS templates. This produces colors.json that DMS
+            #    picks up on its next tick / redraw.
+            if command -v matugen >/dev/null 2>&1; then
+                matugen --config /etc/nebula/matugen/config.toml image "$wp" >/dev/null 2>&1 \
+                    && echo "  ✓ matugen palette regenerated"
+            fi
+
+            # 3) Ask DMS to reload live. DMS' IPC subcommand names differ across
+            #    versions — try the common ones, first match wins.
+            local ipc_ok=0
+            if command -v dms >/dev/null 2>&1; then
+                for verb in "wallpaper set" "wallpapers set" "theme reload" "settings reload"; do
+                    if dms ipc call $verb "$wp" >/dev/null 2>&1; then
+                        ipc_ok=1; echo "  ✓ DMS reloaded via '$verb'"; break
+                    fi
                 done
             fi
 
-            # Persist the choice for scripts / next login.
+            # 4) Final fallback: if DMS is running but no IPC worked, restart
+            #    it. session.json will be re-read on startup. This is the
+            #    guaranteed path — brief flash but the whole shell recolors.
+            if [[ $ipc_ok -eq 0 ]] && pgrep -x dms >/dev/null 2>&1; then
+                if [[ "${NEBULA_NO_RESTART:-0}" != "1" ]]; then
+                    echo "  ↻ Restarting DMS to pick up new theme..."
+                    pkill -x dms 2>/dev/null || true
+                    sleep 0.4
+                    (setsid dms run </dev/null >/dev/null 2>&1 &)
+                    echo "  ✓ DMS restarted"
+                else
+                    echo "  ⚠ IPC didn't respond; run 'pkill dms && dms run &' to reload"
+                fi
+            fi
+
+            # 5) Persist for other scripts / next login.
             mkdir -p "$HOME/.config/nebula"
             printf '%s\n' "$wp" > "$HOME/.config/nebula/wallpaper.path"
-            echo "Theme applied. If DMS was already running, the palette retunes within a second or two."
+            echo "Theme applied."
             ;;
         current)
             if [[ -r "$HOME/.config/nebula/wallpaper.path" ]]; then
