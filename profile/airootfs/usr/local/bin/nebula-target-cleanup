@@ -58,6 +58,34 @@ echo "nebula-target-cleanup: removing archiso live machinery"
 # Must happen BEFORE the initcpio module regenerates the initramfs.
 pacman -Rns --noconfirm mkinitcpio-archiso 2>/dev/null || true
 rm -f /etc/mkinitcpio.conf.d/archiso.conf
+
+# archiso's releng profile overwrites /etc/mkinitcpio.d/linux.preset with a
+# live-only version (PRESETS=('archiso'), pointing at archiso.conf and
+# /run/archiso paths). unpackfs copies the whole live filesystem verbatim,
+# so the installed target inherits this same broken preset. Uninstalling
+# mkinitcpio-archiso does NOT restore it — archiso's build process writes
+# this file directly, it isn't owned/reinstallable via that package. Must
+# be restored to the standard linux-package preset BEFORE Calamares' own
+# "initcpio" module runs mkinitcpio -P, or that module fails with
+# "Invalid option -k -- '/boot/vmlinuz-linux' must be readable" (it's
+# trying to use archiso.conf's expectations against a normal install).
+cat > /etc/mkinitcpio.d/linux.preset <<'EOF'
+# mkinitcpio preset file for the 'linux' package
+
+#ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-linux"
+
+PRESETS=('default' 'fallback')
+
+#default_config="/etc/mkinitcpio.conf"
+default_image="/boot/initramfs-linux.img"
+#default_options=""
+
+#fallback_config="/etc/mkinitcpio.conf"
+fallback_image="/boot/initramfs-linux-fallback.img"
+fallback_options="-S autodetect"
+EOF
+
 rm -f /etc/systemd/system/choose-mirror.service
 rm -f /etc/systemd/system/pacman-init.service
 rm -f /etc/systemd/system/etc-pacman.d-gnupg.mount
