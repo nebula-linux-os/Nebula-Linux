@@ -92,6 +92,27 @@ rm -f /etc/systemd/system/etc-pacman.d-gnupg.mount
 rm -f /etc/systemd/system/multi-user.target.wants/choose-mirror.service
 rm -f /etc/systemd/system/multi-user.target.wants/pacman-init.service
 
+# archiso strips /boot/vmlinuz-linux from the airootfs squashfs — the live
+# kernel is served from the ISO's own boot directory, not from inside the
+# squashfs, so the copied-out target has an EMPTY /boot. That breaks two
+# things: (1) mkinitcpio's preset reads the kernel version from
+# ALL_kver=/boot/vmlinuz-linux and fails "must be readable"; (2) more
+# importantly, GRUB needs /boot/vmlinuz-linux to boot the installed system
+# at all. Restore it exactly the way the linux package's own ALPM install
+# hook does: copy /usr/lib/modules/<kver>/vmlinuz to /boot/vmlinuz-<pkgbase>.
+# Must run BEFORE Calamares' initcpio module.
+echo "nebula-target-cleanup: restoring kernel image(s) into /boot"
+for kdir in /usr/lib/modules/*/; do
+    [[ -f "${kdir}vmlinuz" ]] || continue
+    if [[ -f "${kdir}pkgbase" ]]; then
+        pkgbase=$(<"${kdir}pkgbase")
+    else
+        pkgbase=linux
+    fi
+    install -Dm644 "${kdir}vmlinuz" "/boot/vmlinuz-${pkgbase}"
+    echo "  restored /boot/vmlinuz-${pkgbase} from ${kdir}vmlinuz"
+done
+
 # The installer itself does not belong on the installed system.
 pacman -Rns --noconfirm calamares 2>/dev/null || true
 
