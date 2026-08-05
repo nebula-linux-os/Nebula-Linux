@@ -92,6 +92,23 @@ rm -f /etc/systemd/system/etc-pacman.d-gnupg.mount
 rm -f /etc/systemd/system/multi-user.target.wants/choose-mirror.service
 rm -f /etc/systemd/system/multi-user.target.wants/pacman-init.service
 
+# GRUB's btrfs driver cannot reliably read zstd-COMPRESSED kernels and
+# initramfs — at boot it fails with "premature end of file /@/boot/vmlinuz-
+# linux" (decompression stream ends before the expected length; an
+# uncompressed file can never produce that error). Our root is btrfs mounted
+# compress=zstd and /boot lives inside the root subvolume, so the kernel gets
+# compressed. Fix: mark /boot NOCOW (+C) NOW, while it is still empty. On
+# btrfs, NOCOW files are stored uncompressed, and the flag is inherited by
+# files created in the directory afterwards — so both the kernel we copy just
+# below and the initramfs Calamares generates later land uncompressed and
+# GRUB-readable, while the rest of the system keeps its zstd compression.
+# Must run BEFORE the kernel copy (NOCOW only applies to not-yet-written files).
+if findmnt -n -o FSTYPE / 2>/dev/null | grep -q btrfs; then
+    echo "nebula-target-cleanup: marking /boot NOCOW so GRUB can read the kernel"
+    mkdir -p /boot
+    chattr +C /boot 2>/dev/null || true
+fi
+
 # archiso strips /boot/vmlinuz-linux from the airootfs squashfs — the live
 # kernel is served from the ISO's own boot directory, not from inside the
 # squashfs, so the copied-out target has an EMPTY /boot. That breaks two
