@@ -11,13 +11,22 @@ message-font:   "Unifont Regular 14"
 terminal-font:  "Unifont Regular 16"
 terminal-box:   "terminal_box_*.png"
 
+# Top cluster (logo + wordmark) uses FIXED PIXEL positions rather than
+# percent, and boot_menu's top is percent-based starting well clear of it.
+# The earlier layout mixed "12%+140"-style pixel-offset-from-percent math
+# for the wordmark with a plain percent top for boot_menu — the two units
+# scale differently across resolutions, so at anything below ~900px tall
+# (e.g. a VM's default 640x480 or 800x600 framebuffer) the wordmark ended
+# up INSIDE the boot_menu's vertical span, and its text visually collided
+# with the actual menu entries. Verified by direct computation clear of
+# overlap from 480p through 1440p before shipping this.
 + image {
     id       = "logo"
     file     = "logo.png"
-    left     = 50%-64
-    top      = 12%
-    width    = 128
-    height   = 128
+    left     = 50%-50
+    top      = 24
+    width    = 100
+    height   = 100
 }
 
 + label {
@@ -26,17 +35,17 @@ terminal-box:   "terminal_box_*.png"
     color    = "#B5C4FF"
     align    = "center"
     left     = 0
-    top      = 12%+140
+    top      = 134
     width    = 100%
-    height   = 30
+    height   = 24
     font     = "Unifont Bold 18"
 }
 
 + boot_menu {
     left            = 25%
-    top             = 32%
+    top             = 36%
     width           = 50%
-    height          = 50%
+    height          = 40%
     item_height     = 32
     item_padding    = 6
     item_spacing    = 4
