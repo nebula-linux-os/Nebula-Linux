@@ -92,25 +92,6 @@ rm -f /etc/systemd/system/etc-pacman.d-gnupg.mount
 rm -f /etc/systemd/system/multi-user.target.wants/choose-mirror.service
 rm -f /etc/systemd/system/multi-user.target.wants/pacman-init.service
 
-# Mark /boot NOCOW (+C) while it is still empty. NOCOW files are stored
-# uncompressed and not copy-on-write, which is standard btrfs practice for
-# /boot: it avoids fragmenting the initramfs that gets rewritten on every
-# kernel update. The flag is inherited by files created afterwards, so it
-# must be set BEFORE the kernel copy below.
-#
-# NOTE: this is a hygiene measure, NOT a fix for the GRUB "premature end of
-# file" error. That was investigated and compression was ruled out as the
-# cause — btrfs's compress=zstd already skips kernel images (they are
-# internally compressed, so its heuristic stores them uncompressed anyway),
-# and GRUB's btrfs driver was verified via grub-fstest to read a 17MB kernel
-# from a compress=zstd subvolume byte-perfectly. Do not assume this line
-# fixes boot failures.
-if findmnt -n -o FSTYPE / 2>/dev/null | grep -q btrfs; then
-    echo "nebula-target-cleanup: marking /boot NOCOW so GRUB can read the kernel"
-    mkdir -p /boot
-    chattr +C /boot 2>/dev/null || true
-fi
-
 # archiso strips /boot/vmlinuz-linux from the airootfs squashfs — the live
 # kernel is served from the ISO's own boot directory, not from inside the
 # squashfs, so the copied-out target has an EMPTY /boot. That breaks two
