@@ -3,7 +3,11 @@
 
 desktop-image:  "background.png"
 desktop-color:  "#0A0715"
-title-text:     "Nebula Linux"
+# title-text is intentionally EMPTY. GRUB renders this string at its own
+# built-in position near the top of the screen, which landed directly on
+# top of the logo image — that was the "Nebula Linux" text overlapping the
+# logo in the boot menu. Our own wordmark label below covers this need.
+title-text:     ""
 title-color:    "#B5C4FF"
 title-font:     "Unifont Regular 16"
 message-color:  "#8A98C7"
@@ -20,13 +24,15 @@ terminal-box:   "terminal_box_*.png"
 # up INSIDE the boot_menu's vertical span, and its text visually collided
 # with the actual menu entries. Verified by direct computation clear of
 # overlap from 480p through 1440p before shipping this.
+# width/height here MUST equal the size build.sh renders logo.png at (96x96),
+# otherwise GRUB draws it at native size and it overlaps the wordmark below.
 + image {
     id       = "logo"
     file     = "logo.png"
-    left     = 50%-50
-    top      = 24
-    width    = 100
-    height   = 100
+    left     = 50%-48
+    top      = 20
+    width    = 96
+    height   = 96
 }
 
 + label {
@@ -35,7 +41,7 @@ terminal-box:   "terminal_box_*.png"
     color    = "#B5C4FF"
     align    = "center"
     left     = 0
-    top      = 134
+    top      = 128
     width    = 100%
     height   = 24
     font     = "Unifont Bold 18"
@@ -43,9 +49,9 @@ terminal-box:   "terminal_box_*.png"
 
 + boot_menu {
     left            = 25%
-    top             = 36%
+    top             = 40%
     width           = 50%
-    height          = 40%
+    height          = 36%
     item_height     = 32
     item_padding    = 6
     item_spacing    = 4

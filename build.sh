@@ -141,7 +141,11 @@ echo ">> Rendering GRUB theme assets..."
 GRUB_THEME="$PROFILE/airootfs/usr/share/grub/themes/nebula"
 mkdir -p "$GRUB_THEME"
 rsvg-convert -w 1920 -h 1080 -o "$GRUB_THEME/background.png" "$BG/nebula.svg"
-rsvg-convert -w 128  -h 128  -o "$GRUB_THEME/logo.png"       "$NEB/logo.svg"
+# NOTE: this size MUST match the width/height declared for the "logo" image
+# component in theme.txt. GRUB does not reliably scale image components to the
+# declared box, so a mismatch makes the logo render at its native size and
+# overlap whatever sits below it (this is what buried the wordmark).
+rsvg-convert -w 96   -h 96   -o "$GRUB_THEME/logo.png"       "$NEB/logo.svg"
 
 echo ">> Running mkarchiso (grab a coffee)..."
 mkdir -p "$OUT"
