@@ -14,11 +14,39 @@ rm -f /usr/share/applications/install-nebula.desktop
 rm -f /usr/local/bin/nebula-installer
 rm -f /usr/local/bin/nebula-install
 
+# The greetd package's sysusers.d config leaves the "greeter" system user
+# with HOME=/ (filesystem root) rather than a real home directory. Every
+# write dms-greeter/Quickshell attempts relative to $HOME (config, cache,
+# state dirs) would fail against a root-owned "/" — fix it to the
+# standard, ArchWiki-recommended greeter home.
+if id greeter >/dev/null 2>&1; then
+    mkdir -p /var/lib/greeter
+    chown greeter:greeter /var/lib/greeter
+    usermod -d /var/lib/greeter greeter 2>/dev/null || true
+fi
+
 # Real login instead of live autologin: DMS graphical greeter when available,
 # text greeter otherwise. (Switch any time with: nebula greeter <dms|text>)
 DMS_GREETER_SRC=/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter
 if [[ -f "$DMS_GREETER_SRC" ]]; then
     install -Dm755 "$DMS_GREETER_SRC" /usr/local/bin/dms-greeter
+
+    # dms-greeter's locate_dms_config() looks for a Quickshell config
+    # directory literally named "dms-greeter" (/usr/share/quickshell/
+    # dms-greeter/shell.qml), but the package only ships the real shell.qml
+    # under "dms" (/usr/share/quickshell/dms/shell.qml) — a naming mismatch
+    # between what the greeter script expects and what the package provides.
+    # Without this, dms-greeter's config lookup fails, its `set -e` causes
+    # an immediate silent exit (code 1, zero output), and greetd just
+    # restarts it in a loop until systemd's start-limit-hit kills it —
+    # observed as an indefinite hang on the Plymouth splash with no error
+    # ever reaching the console. Confirmed via bash -x trace on a real
+    # install. A symlink is enough; it also survives dms-shell package
+    # updates naturally since it just points at whatever "dms" contains.
+    if [[ ! -e /usr/share/quickshell/dms-greeter ]]; then
+        ln -s /usr/share/quickshell/dms /usr/share/quickshell/dms-greeter
+    fi
+
     mkdir -p /var/cache/dms-greeter
     cat > /var/cache/dms-greeter/session.json <<'EOF'
 {

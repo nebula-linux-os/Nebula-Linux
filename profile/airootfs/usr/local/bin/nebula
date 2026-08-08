@@ -314,6 +314,18 @@ cmd_greeter() {
             src=/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter
             [[ -f "$src" ]] || { echo "dms-greeter asset not found."; exit 1; }
             sudo install -Dm755 "$src" /usr/local/bin/dms-greeter
+            # dms-greeter looks for its Quickshell config under a directory
+            # literally named "dms-greeter"; the package only ships it under
+            # "dms". Without this symlink it fails its config lookup and
+            # exits instantly (silent, no error) every time it's launched.
+            if [[ ! -e /usr/share/quickshell/dms-greeter ]]; then
+                sudo ln -s /usr/share/quickshell/dms /usr/share/quickshell/dms-greeter
+            fi
+            if id greeter >/dev/null 2>&1; then
+                sudo mkdir -p /var/lib/greeter
+                sudo chown greeter:greeter /var/lib/greeter
+                sudo usermod -d /var/lib/greeter greeter 2>/dev/null || true
+            fi
             sudo mkdir -p /var/cache/dms-greeter
             sudo chown greeter:greeter /var/cache/dms-greeter 2>/dev/null || true
             sudo tee /etc/greetd/config.toml >/dev/null <<'EOF'
