@@ -30,9 +30,9 @@ in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
 ## Download
 
-**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.07.16-x86_64.iso/download)** (~2.2 GB)
+**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.08.11-x86_64.iso/download)** (~2.2 GB)
 
-`SHA256: 5df854291b5efb2050d0379ae9e01fe250dfd0c1e7e8a32c6671d6a9e79c94a0`
+`SHA256: d06345f24d7a6f84f1546e7fe035daad98421d75f5004e3e725fed851090f588`
 
 Flash it with [Rufus](https://rufus.ie) or [BalenaEtcher](https://etcher.balena.io), or boot it
 in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
