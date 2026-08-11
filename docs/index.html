@@ -131,7 +131,7 @@
             </div>
             <div class="card hover-effect">
                 <h3>🌌 4 Curated Themes (new)</h3>
-                <p>Ships with <em>Cosmic Blue</em>, <em>Stellar Ember</em>, <em>Aurora Light</em> and <em>Void Green</em>. Switch with <code>nebula wallpaper set &lt;name&gt;</code> — matugen retunes the whole desktop instantly.</p>
+                <p>Ships with <em>Cosmic Blue</em>, <em>Stellar Ember</em>, <em>Aurora Light</em> and <em>Void Green</em>, with Auto (wallpaper-derived) color mode on by default. Switch with <code>nebula wallpaper set &lt;name&gt;</code> — matugen retunes the whole desktop instantly, no toggle needed.</p>
             </div>
             <div class="card hover-effect">
                 <h3>🚀 Plymouth Splash (new)</h3>
@@ -271,14 +271,16 @@
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
                     <h3>Beta 1.0 (New!)</h3>
-                    <p>4 curated wallpaper themes with instant matugen retuning, Plymouth animated boot splash, full GRUB theme for installed systems, <code>nebula wallpaper</code> and <code>nebula bugreport</code> CLI, wallpaper picker in Nebula Welcome, weekly auto-built ISOs via GitHub Actions.</p>
+                    <p>4 curated wallpaper themes, defaulting to Auto (wallpaper-derived) Material color mode — no manual toggle needed. Plymouth animated boot splash, redesigned overlap-free GRUB theme, <code>nebula wallpaper</code> and <code>nebula bugreport</code> CLI, wallpaper picker in Nebula Welcome, weekly auto-built ISOs via GitHub Actions.</p>
+                    <p style="margin-top:0.6rem;">Reliability: dedicated ext4 <code>/boot</code> partition for snapshot-safe booting, fixed graphical login crashing on every boot, fixed the full install→boot chain end to end.</p>
+                    <p style="margin-top:0.6rem; color: var(--cyan);">⚠️ UEFI required — legacy BIOS boot isn't supported this release (confirmed GRUB bug); the installer detects and warns.</p>
                 </div>
             </div>
             <div class="timeline-item active">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
                     <h3>Beta 2.0</h3>
-                    <p>Own package repository (prebuilt AUR), custom Nebula icon pack, Hyprland flavor of the Dank Edition, Hardware Driver Manager UI.</p>
+                    <p>Own package repository (prebuilt AUR), custom Nebula icon pack, Hyprland flavor of the Dank Edition, Hardware Driver Manager UI, and investigating a fix for legacy BIOS boot support.</p>
                 </div>
             </div>
             <div class="timeline-item">
