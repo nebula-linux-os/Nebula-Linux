@@ -1,4 +1,41 @@
 #!/bin/bash
 # Launches the graphical Nebula Linux installer from the live session.
 # sudo is passwordless in the live session; -E keeps the Wayland session env.
+
+# Legacy BIOS boot is not supported in Beta 1.0: grub-install's device-path
+# canonicalization has a confirmed bug in this GRUB build when /boot is on
+# its own partition (required for reliable btrfs booting — see README), so
+# BIOS installs fail at the very end of the bootloader step. UEFI installs
+# use a different GRUB target (x86_64-efi) that doesn't hit this bug.
+# /sys/firmware/efi only exists when booted via UEFI.
+if [[ ! -d /sys/firmware/efi ]]; then
+    warn_file=$(mktemp)
+    cat > "$warn_file" <<'EOF'
+Nebula Linux Beta 1.0 requires UEFI boot mode.
+
+This machine/VM booted in legacy BIOS mode. Installing now will very
+likely fail at the bootloader step (a known GRUB issue with our
+partition layout on BIOS systems).
+
+Fix: reboot into your firmware/VM settings and enable UEFI boot,
+then boot this ISO again.
+
+Continue anyway? (not recommended) [y/N]
+EOF
+    prompt_script=$(mktemp)
+    cat > "$prompt_script" <<EOF
+#!/bin/bash
+cat "$warn_file"
+read -r ans
+rm -f "$warn_file" "$prompt_script"
+[[ "\$ans" =~ ^[Yy]\$ ]] && exec sudo -E calamares $*
+EOF
+    chmod +x "$prompt_script"
+    if command -v foot >/dev/null; then
+        exec foot bash "$prompt_script"
+    else
+        exec bash "$prompt_script"
+    fi
+fi
+
 exec sudo -E calamares "$@"

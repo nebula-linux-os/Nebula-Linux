@@ -10,6 +10,14 @@ Plymouth animated boot splash, full GRUB theme for installed systems,
 `nebula wallpaper` and `nebula bugreport` CLI subcommands, wallpaper picker
 in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
+> ⚠️ **UEFI required.** Legacy BIOS boot is not supported in Beta 1.0 —
+> `grub-install`'s device-path canonicalization has a confirmed bug in this
+> GRUB build when `/boot` is on its own partition (required for reliable
+> btrfs booting; see [Desktop stack](#desktop-stack) below). UEFI installs
+> use a different GRUB target (`x86_64-efi`) that doesn't hit this bug.
+> The installer detects legacy BIOS mode and warns you before proceeding.
+> Enable UEFI in your firmware/VM settings first.
+
 ```
  ███╗   ██╗███████╗██████╗ ██╗   ██╗██╗      █████╗
  ████╗  ██║██╔════╝██╔══██╗██║   ██║██║     ██╔══██╗
