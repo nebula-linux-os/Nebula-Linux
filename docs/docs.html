@@ -45,7 +45,7 @@
             <ul>
                 <li><a href="#installation">Installation Guide</a></li>
                 <li><a href="#post-install">Post-Install Setup</a></li>
-                <li><a href="#gestures">Wayland Gestures</a></li>
+                <li><a href="#keybinds">Keyboard Shortcuts</a></li>
             </ul>
         </aside>
         <main class="docs-content">
@@ -60,11 +60,12 @@
                 <ol style="line-height: 1.8;">
                     <li>Download the latest Nebula Linux <code>.iso</code> file.</li>
                     <li>Open <strong>VirtualBox</strong> or <strong>VMware</strong> and click <strong>New</strong> to create a new Virtual Machine.</li>
-                    <li>Select <strong>Linux</strong> as the Type, and <strong>Debian (64-bit)</strong> as the Version.</li>
+                    <li>Select <strong>Linux</strong> as the Type, and <strong>Arch Linux (64-bit)</strong> as the Version.</li>
                     <li>Allocate at least <strong>4GB of RAM</strong> and <strong>2 CPU Cores</strong> for a smooth Wayland experience.</li>
-                    <li>In the VM Settings, go to <strong>Storage</strong>, click the empty CD icon, and choose the Nebula <code>.iso</code> file.</li>
+                    <li>In the VM Settings, make sure the firmware is set to <strong>EFI</strong> — Nebula Linux requires UEFI boot mode.</li>
+                    <li>Go to <strong>Storage</strong>, click the empty CD icon, and choose the Nebula <code>.iso</code> file.</li>
                     <li>Under <strong>Display</strong> settings, make sure to enable <strong>3D Acceleration</strong> and max out Video Memory to 128MB.</li>
-                    <li>Start the VM! Once booted to the live desktop, double-click the <strong>Install Nebula Linux</strong> icon to install it permanently.</li>
+                    <li>Start the VM! Once booted to the live desktop, launch <strong>Install Nebula Linux</strong> from the app launcher (Super+Space) to install it permanently.</li>
                 </ol>
 
                 <h3 style="margin-top: 2rem; color: var(--accent-green);">💻 Bare Metal (Real Computer)</h3>
@@ -73,26 +74,34 @@
                     <li>Plug in an empty USB Flash Drive (at least 8GB).</li>
                     <li>Download and open <a href="https://rufus.ie/" target="_blank" style="color: var(--accent-purple);">Rufus</a> (Windows) or <a href="https://etcher.balena.io/" target="_blank" style="color: var(--accent-purple);">BalenaEtcher</a> (Mac/Linux).</li>
                     <li>Select your USB drive, select the Nebula <code>.iso</code>, and click <strong>Flash</strong>. <em>(Note: This will erase everything on the USB drive!)</em></li>
+                    <li>Enable <strong>UEFI boot mode</strong> in your computer's firmware/BIOS settings — Nebula Linux does not support legacy BIOS boot.</li>
                     <li>Restart your computer and rapidly press your Boot Menu key (usually <code>F12</code>, <code>F8</code>, <code>F2</code>, or <code>Del</code>).</li>
                     <li>Select your USB drive from the boot list to boot into Nebula Linux.</li>
-                    <li>Once on the live desktop, double-click the <strong>Install Nebula Linux</strong> icon to launch the Calamares Installer and install it to your hard drive!</li>
+                    <li>Once on the live desktop, launch <strong>Install Nebula Linux</strong> from the app launcher (Super+Space) to install it to your hard drive!</li>
                 </ol>
             </section>
 
             <section id="post-install">
                 <h2>Post-Install Setup</h2>
-                <p>Nebula Linux comes pre-configured with everything you need, but you may want to update the system repository on your first boot:</p>
-                <pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+                <p>Nebula Linux comes pre-configured with everything you need, but you'll want to keep the rolling-release system up to date. The <code>nebula</code> CLI takes an automatic btrfs snapshot before every update, so it's always safe to roll back:</p>
+                <pre><code>nebula update</code></pre>
+                <p>Or update with plain pacman if you prefer:</p>
+                <pre><code>sudo pacman -Syu</code></pre>
             </section>
-            
-            <section id="gestures">
-                <h2>Wayland Gestures</h2>
-                <p>Because Nebula Linux ships with KDE Plasma 6 on Wayland, you have access to native touchpad gestures:</p>
+
+            <section id="keybinds">
+                <h2>Keyboard Shortcuts</h2>
+                <p>Nebula Linux runs <strong>niri</strong>, a scrollable-tiling Wayland compositor, with DankMaterialShell. The essentials:</p>
                 <ul>
-                    <li><strong>Swipe up with 4 fingers:</strong> Open Overview / Desktop Grid</li>
-                    <li><strong>Swipe down with 4 fingers:</strong> Show Desktop</li>
-                    <li><strong>Swipe left/right with 3 fingers:</strong> Switch between virtual desktops</li>
+                    <li><strong>Super+Space:</strong> App launcher (Spotlight)</li>
+                    <li><strong>Super+Return:</strong> Terminal (foot)</li>
+                    <li><strong>Super+O:</strong> Overview</li>
+                    <li><strong>Super+Q:</strong> Close window</li>
+                    <li><strong>Super+,:</strong> DMS settings</li>
+                    <li><strong>Super+Escape:</strong> Lock screen</li>
+                    <li><strong>Super+Shift+/:</strong> Show all keybindings</li>
                 </ul>
+                <p>Prefer classic floating windows over scrollable tiling? Run <code>nebula windows floating</code> (or toggle it in Nebula Welcome) to switch.</p>
             </section>
         </main>
     </div>
