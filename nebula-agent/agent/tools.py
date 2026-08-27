@@ -15,7 +15,10 @@ from pathlib import Path
 
 # Tools in here require user confirmation before running (see executor.py).
 # Read-only tools (read_file, list_dir) are not in this set.
-RISKY_TOOLS = {"run_command", "install_package", "write_file", "edit_file"}
+RISKY_TOOLS = {
+    "run_command", "install_package", "write_file", "edit_file",
+    "open_app", "write_clipboard",
+}
 
 
 def _package_manager_command(name: str) -> list[str]:

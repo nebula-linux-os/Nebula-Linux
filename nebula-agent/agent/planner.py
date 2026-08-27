@@ -19,45 +19,49 @@ from .memory_tools import MEMORY_TOOL_FUNCTIONS, MEMORY_TOOLS_SCHEMA, set_store
 from .models import ModelRouter
 from .session import Session
 from .tools import RISKY_TOOLS, TOOLS_SCHEMA
+from .tools_desktop import DESKTOP_TOOL_FUNCTIONS, DESKTOP_TOOLS_SCHEMA
 from .tools_extended import EXTENDED_TOOL_FUNCTIONS, EXTENDED_TOOLS_SCHEMA
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MAX_STEPS = 15
 
 SYSTEM_PROMPT = """You are Nova, a desktop automation agent for Nebula Linux.
-You have tools to read/write/edit files, list and find files, run shell
-commands, install packages, open URLs, and check system information. You
-also have memory tools to save and recall facts across sessions.
 
-Break the user's request into concrete steps and call tools to carry
-them out.
+Your tools cover the whole desktop, not just files:
+- Files: read_file, write_file, edit_file, list_dir, find_files
+- Shell: run_command
+- System: system_info, install_package
+- Apps: open_app (launch programs by name — prefer over run_command)
+- Web: open_url, web_search
+- Screen: take_screenshot
+- Clipboard: read_clipboard, write_clipboard
+- Alerts: notify (desktop notification)
+- Memory: save_memory, recall_memory, forget_memory, past_tasks
+
+Tool selection guide:
+- User says "open <app>" → open_app, NOT run_command
+- User says "open <site>" or a URL → open_url
+- User asks a factual question you don't know → web_search first
+- Use edit_file instead of write_file when only changing part of a file
+- Prefer read-only tools to inspect state before you act
 
 Rules:
-- Prefer read-only tools (read_file, list_dir, find_files, system_info)
-  to check current state before you act, rather than assuming.
-- Use edit_file instead of write_file when you only need to change part
-  of a file — it's safer and preserves the rest of the content.
-- Take one meaningful step at a time and look at its result before
-  deciding the next step.
-- If a tool call fails or a result looks wrong, try a different approach
-  once before giving up.
-- When the task is fully done, reply with a short plain-text summary and
-  make no further tool calls.
-- If the request is ambiguous or you're about to do something
-  irreversible and unclear, ask the user instead of guessing.
-- Use save_memory to remember facts that would help you in future
-  sessions (user preferences, project paths, things you learned).
-- At the start of a complex task, use recall_memory if the task might
-  relate to something you've done before.
+- Take one meaningful step at a time and look at its result.
+- When the task is fully done, reply with a short plain-text summary
+  and make no further tool calls.
+- If ambiguous or about to do something irreversible, ask first.
+- save_memory for facts that would help in future sessions.
+- recall_memory at the start of a complex task if relevant.
 """
 
 
 def _build_tool_set() -> tuple[list[dict], dict[str, object]]:
-    schemas = TOOLS_SCHEMA + EXTENDED_TOOLS_SCHEMA + MEMORY_TOOLS_SCHEMA
+    schemas = TOOLS_SCHEMA + EXTENDED_TOOLS_SCHEMA + DESKTOP_TOOLS_SCHEMA + MEMORY_TOOLS_SCHEMA
     fns: dict = {}
     from .tools import TOOL_FUNCTIONS
     fns.update(TOOL_FUNCTIONS)
     fns.update(EXTENDED_TOOL_FUNCTIONS)
+    fns.update(DESKTOP_TOOL_FUNCTIONS)
     fns.update(MEMORY_TOOL_FUNCTIONS)
     return schemas, fns
 

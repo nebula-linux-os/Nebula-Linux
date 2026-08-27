@@ -1,114 +1,80 @@
-# Nebula Agent Engine — Phase 2
+# Nebula Agent Engine — Phase 4
 
 Local-first agent engine for the planned Nebula Ubuntu · Agent Edition.
+Runs entirely on your machine, powered by Ollama. No cloud, no telemetry.
 
-## How it works
+## Quickstart
 
-```
-your task (text)
-   -> router classifies the task (coding / system / reasoning / quick)
-   -> picks the best installed model that fits in RAM
-   -> planner streams it + tools + saved memories to Ollama
-   -> model returns tool_calls (never runs anything itself)
-   -> executor validates + runs each one (confirming risky ones)
-   -> result goes back to the model
-   -> repeat until the model reports the task done
-   -> session transcript + task outcome saved to ~/.nebula-agent/
-```
-
-## Setup
-
-1. Install [Ollama](https://ollama.com) and make sure it's running.
-2. Pull one or more tool-calling models:
-   ```bash
-   ollama pull qwen2.5:7b
-   ```
-   The router auto-picks the best model per task. Pull more for better routing:
-   ```bash
-   ollama pull qwen2.5:3b       # fast, for simple lookups
-   ollama pull codellama:7b      # coding tasks
-   ollama pull qwen2.5:14b       # complex reasoning (needs ~10 GB RAM)
-   ```
-3. Install Python deps:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Run it
-
-**Single-shot** (auto-routed):
 ```bash
-python main.py "create a python web server in ./demo"
-python main.py "what OS am I running?"
+# 1. Install Ollama and pull a tool-calling model
+ollama pull qwen2.5:7b
+
+# 2. Install deps
+pip install -r requirements.txt
+
+# 3. Launch how you want:
+python main.py --tray                # background daemon + tray icon
+python main.py --web                 # web UI (foreground)
+python main.py                       # interactive CLI (REPL)
+python main.py "list files here"     # one-shot CLI
 ```
 
-**Force a specific model:**
-```bash
-python main.py --model codellama:7b "refactor this function"
-```
+## What Nova can do (19 tools)
 
-**Interactive mode** (omit the task):
-```bash
-python main.py
-```
+**Files:** `read_file`, `write_file`, `edit_file`, `list_dir`, `find_files`
+**Shell / System:** `run_command`, `system_info`, `install_package`
+**Apps & Web:** `open_app`, `open_url`, `web_search`
+**Screen & Clipboard:** `take_screenshot`, `read_clipboard`, `write_clipboard`
+**Alerts:** `notify` (desktop notifications)
+**Memory:** `save_memory`, `recall_memory`, `forget_memory`, `past_tasks`
 
-### REPL commands
+Risky tools (`run_command`, `write_file`, `edit_file`, `install_package`,
+`open_app`, `write_clipboard`) ask for confirmation before running.
 
-| Command | What it does |
-|---------|-------------|
-| `/memory` | List all saved memories |
-| `/history` | Show recent task history with model used |
-| `/models` | Show available models, routing profiles, and RAM fit |
-| `/forget N` | Delete a memory by ID |
-| `/help` | Show available commands |
-| `quit` | Exit |
+## Modes
 
-## Tools (13 total)
-
-| Tool | Risk | Description |
-|------|------|-------------|
-| `run_command` | risky | Run a shell command |
-| `write_file` | risky | Create or overwrite a file |
-| `edit_file` | risky | Replace a specific section of a file (safer than full rewrite) |
-| `install_package` | risky | Install via winget/pacman/apt/brew |
-| `read_file` | safe | Read a file's contents |
-| `list_dir` | safe | List directory contents |
-| `find_files` | safe | Recursive glob search (skips .git, node_modules, etc.) |
-| `system_info` | safe | OS, RAM, disk, CPU, installed tools |
-| `open_url` | safe | Open a URL in the default browser |
-| `save_memory` | safe | Save a fact to persistent memory |
-| `recall_memory` | safe | Search saved memories |
-| `forget_memory` | safe | Delete a memory by ID |
-| `past_tasks` | safe | Review recent task history |
-
-Risky tools ask for `[y/N]` confirmation unless you pass `--yes`.
+| Mode | Command | When to use |
+|------|---------|-------------|
+| **Tray** | `python main.py --tray` | Always-on background daemon with a taskbar icon. Right-click the icon → Open Nova to bring up the web UI. |
+| **Web** | `python main.py --web` | Foreground web server at `http://127.0.0.1:5757`. Best for testing. |
+| **REPL** | `python main.py` | Terminal chat with `/memory`, `/history`, `/models`, `/forget N`, `/help` commands. |
+| **One-shot** | `python main.py "<task>"` | Fire-and-return for scripting. |
 
 ## Multi-model routing
 
-The router classifies each task into a category and picks the best
-model that's (a) installed locally and (b) fits in ~80% of system RAM.
+The router auto-picks the best installed model per task:
 
-| Category | Triggered by | Best models |
-|----------|-------------|-------------|
-| `coding` | create, build, code, refactor, debug | codellama:7b, qwen2.5:7b/14b |
-| `system` | install, update, service, disk, network | qwen2.5:7b/14b |
-| `reasoning` | explain, why, analyze, compare | llama3.1:8b, qwen2.5:14b |
-| `quick` | list, show, read, check, find | qwen2.5:3b |
+| Category | Triggered by | Prefers |
+|----------|-------------|---------|
+| `coding` | write, build, refactor, debug | codellama, qwen2.5-coder |
+| `system` | install, service, disk, network | qwen2.5 |
+| `reasoning` | explain, analyze, compare | llama3.1, qwen2.5:14b |
+| `quick` | list, read, check, find | qwen2.5:3b, gemma |
 | `general` | everything else | qwen2.5:7b |
 
-Override with `--model <name>` to force a specific model.
+Override with `--model <name>`. Add a model to the router by editing
+`agent/models.py`.
 
 ## Data locations
 
 | Path | Contents |
 |------|----------|
-| `~/.nebula-agent/memory.db` | SQLite database (memories + task history) |
-| `~/.nebula-agent/sessions/` | JSON session transcripts |
+| `~/.nebula-agent/memory.db` | SQLite (memories + task history) |
+| `~/.nebula-agent/sessions/` | JSON transcripts of every task |
+
+## Web UI
+
+- Streaming responses (token-by-token)
+- Tool calls rendered as inline cards with pending → ok/error state
+- Click-to-confirm risky actions
+- Tabs: Chat, Memory, History, Models
 
 ## Phase history
 
-| Phase | What it added |
-|-------|--------------|
-| 0 | CLI proof-of-concept, 6 tools, confirmation gate, verification |
-| 1 | Persistent memory (SQLite), interactive REPL, streaming, session logging |
-| 2 | Multi-model routing, expanded tools (system_info, find_files, edit_file) |
+| Phase | Added |
+|-------|-------|
+| 0 | CLI PoC, 6 tools, confirmation gate |
+| 1 | SQLite memory, REPL, streaming, session logs |
+| 2 | Multi-model router, system_info, find_files, edit_file |
+| 3 | Flask web UI, SSE streaming, chat/memory/history/models tabs |
+| 4 | Desktop tools (open_app, screenshot, clipboard, notify, web_search), system tray |

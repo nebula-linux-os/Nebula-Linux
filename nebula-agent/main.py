@@ -136,9 +136,15 @@ def main() -> None:
     parser.add_argument("--yes", action="store_true", help="Auto-approve risky tool calls")
     parser.add_argument("--no-stream", action="store_true", help="Disable streaming (wait for full response)")
     parser.add_argument("--web", action="store_true", help="Launch the web UI instead of the CLI")
+    parser.add_argument("--tray", action="store_true", help="Launch web UI + system tray (background daemon)")
     parser.add_argument("--host", default="127.0.0.1", help="Web UI host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=5757, help="Web UI port (default: 5757)")
     args = parser.parse_args()
+
+    if args.tray:
+        from tray import run as tray_run
+        tray_run(host=args.host, port=args.port)
+        return
 
     if args.web:
         from web.server import start
