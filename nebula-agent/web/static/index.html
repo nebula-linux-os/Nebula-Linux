@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova · Nebula Agent</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<aside id="sidebar">
+  <div class="brand">
+    <span class="dot"></span>
+    <div>
+      <div class="brand-name">Nova</div>
+      <div class="brand-sub">Nebula Agent · Phase 3</div>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button data-tab="chat" class="active">Chat</button>
+    <button data-tab="memory">Memory</button>
+    <button data-tab="history">History</button>
+    <button data-tab="models">Models</button>
+  </nav>
+
+  <div class="settings">
+    <label>Model
+      <select id="model-select"><option value="">auto-route</option></select>
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" id="auto-approve"> Auto-approve risky tools
+    </label>
+  </div>
+
+  <div class="footer">Local · Ollama · Zero cloud</div>
+</aside>
+
+<main>
+  <section id="tab-chat" class="tab-panel active">
+    <div id="messages"></div>
+    <form id="composer">
+      <textarea id="input" rows="2" placeholder="Ask Nova to do something…" required></textarea>
+      <button type="submit" id="send">Send</button>
+    </form>
+  </section>
+
+  <section id="tab-memory" class="tab-panel">
+    <div class="panel-header">
+      <h2>Saved memories</h2>
+      <button id="reload-memory">Reload</button>
+    </div>
+    <div id="memory-list"></div>
+  </section>
+
+  <section id="tab-history" class="tab-panel">
+    <div class="panel-header">
+      <h2>Task history</h2>
+      <button id="reload-history">Reload</button>
+    </div>
+    <div id="history-list"></div>
+  </section>
+
+  <section id="tab-models" class="tab-panel">
+    <div class="panel-header">
+      <h2>Model routing</h2>
+      <button id="reload-models">Reload</button>
+    </div>
+    <div id="models-list"></div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
