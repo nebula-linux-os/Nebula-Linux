@@ -304,6 +304,44 @@ $('#reload-history')?.addEventListener('click', loadHistory);
 $('#reload-models')?.addEventListener('click', loadModels);
 
 loadModelOptions();
+loadStatus();
+
+async function loadStatus() {
+  try {
+    const res = await fetch('/api/status');
+    const s = await res.json();
+    $('#version').textContent = `v${s.version}`;
+    $('#autostart-toggle').checked = !!s.autostart;
+  } catch (e) { console.warn('status load failed', e); }
+  checkForUpdate();
+}
+
+async function checkForUpdate() {
+  try {
+    const res = await fetch('/api/update-check');
+    const info = await res.json();
+    if (info.update_available) {
+      const b = $('#update-banner');
+      b.hidden = false;
+      b.textContent = `Update: v${info.latest}`;
+      b.onclick = () => window.open(info.url, '_blank');
+    }
+  } catch (e) { /* silent */ }
+}
+
+$('#autostart-toggle').addEventListener('change', async (e) => {
+  const enabled = e.target.checked;
+  const res = await fetch('/api/autostart', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({enabled}),
+  });
+  const r = await res.json();
+  if (!r.ok) {
+    addMsg('error', `Autostart failed: ${r.error || 'unknown'}`);
+    e.target.checked = !enabled;
+  }
+});
 
 // ────────── Voice (Web Speech API + SpeechSynthesis) ──────────
 

@@ -17,9 +17,12 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, request, send_from_directory
 
+from agent import autostart
 from agent.events import run_task_events
 from agent.memory import MemoryStore
 from agent.models import ModelRouter
+from agent.updater import check_for_update
+from agent.version import __version__
 
 app = Flask(__name__, static_folder=None)
 STATIC_DIR = Path(__file__).parent / "static"
@@ -58,6 +61,27 @@ def api_history():
 @app.route("/api/models", methods=["GET"])
 def api_models():
     return jsonify(_router.list_available())
+
+
+@app.route("/api/status", methods=["GET"])
+def api_status():
+    return jsonify({
+        "version": __version__,
+        "autostart": autostart.is_enabled(),
+    })
+
+
+@app.route("/api/autostart", methods=["POST"])
+def api_autostart():
+    body = request.get_json() or {}
+    if body.get("enabled"):
+        return jsonify(autostart.enable())
+    return jsonify(autostart.disable())
+
+
+@app.route("/api/update-check", methods=["GET"])
+def api_update_check():
+    return jsonify(check_for_update())
 
 
 @app.route("/api/approve/<task_id>", methods=["POST"])

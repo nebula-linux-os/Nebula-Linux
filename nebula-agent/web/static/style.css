@@ -77,7 +77,19 @@ body {
   font-size: 12px;
 }
 
-.footer { font-size: 10px; color: var(--text-dim); text-align: center; padding-top: 16px; border-top: 1px solid var(--border); }
+.status-panel { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid var(--border); }
+.footer { font-size: 10px; color: var(--text-dim); text-align: center; }
+#update-banner {
+  font-size: 11px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(90,140,255,0.1);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  text-align: center;
+  cursor: pointer;
+}
+#update-banner:hover { background: rgba(90,140,255,0.2); }
 
 /* Main */
 main { overflow: hidden; display: flex; flex-direction: column; }
