@@ -30,6 +30,9 @@
     <label class="checkbox">
       <input type="checkbox" id="auto-approve"> Auto-approve risky tools
     </label>
+    <label class="checkbox">
+      <input type="checkbox" id="voice-mode"> Voice mode (mic + speak)
+    </label>
   </div>
 
   <div class="footer">Local · Ollama · Zero cloud</div>
@@ -40,6 +43,7 @@
     <div id="messages"></div>
     <form id="composer">
       <textarea id="input" rows="2" placeholder="Ask Nova to do something…" required></textarea>
+      <button type="button" id="mic" title="Push to talk" hidden>🎤</button>
       <button type="submit" id="send">Send</button>
     </form>
   </section>

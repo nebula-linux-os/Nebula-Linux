@@ -236,6 +236,49 @@ main { overflow: hidden; display: flex; flex-direction: column; }
 }
 #send:disabled { opacity: 0.5; cursor: not-allowed; }
 
+#mic {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+#mic:hover { border-color: var(--accent); }
+#mic.listening {
+  background: var(--err);
+  border-color: var(--err);
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(248,113,113,0); }
+}
+
+.voice-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--accent);
+  font-family: var(--mono);
+  padding: 4px 8px;
+  background: var(--accent-dim);
+  border-radius: 5px;
+  align-self: flex-start;
+}
+.voice-indicator .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
 /* Lists */
 #memory-list, #history-list, #models-list {
   overflow-y: auto;

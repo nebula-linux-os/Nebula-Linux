@@ -136,6 +136,7 @@ def run_task(
     stream: bool = True,
     memory: MemoryStore | None = None,
     router: ModelRouter | None = None,
+    speaker=None,
 ) -> None:
     if memory is None:
         memory = MemoryStore()
@@ -190,8 +191,11 @@ def run_task(
         tool_calls = message.get("tool_calls")
 
         if not tool_calls:
+            final_text = message.get('content', '').strip()
             if not stream:
-                print(f"\n{message.get('content', '').strip()}")
+                print(f"\n{final_text}")
+            if speaker is not None and final_text:
+                speaker.say(final_text)
             break
 
         for call in tool_calls:

@@ -20,9 +20,10 @@ import sys
 from agent.memory import MemoryStore
 from agent.models import ModelRouter
 from agent.planner import run_task
+from agent.voice import Speaker
 
 
-def _repl(model: str | None, auto_approve: bool, stream: bool) -> None:
+def _repl(model: str | None, auto_approve: bool, stream: bool, speaker=None) -> None:
     memory = MemoryStore()
     router = ModelRouter()
     mode_label = f"Model: {model}" if model else "Model: auto-routed"
@@ -62,6 +63,7 @@ def _repl(model: str | None, auto_approve: bool, stream: bool) -> None:
         run_task(
             task, model=model, auto_approve=auto_approve,
             stream=stream, memory=memory, router=router,
+            speaker=speaker,
         )
         print()
 
@@ -137,6 +139,7 @@ def main() -> None:
     parser.add_argument("--no-stream", action="store_true", help="Disable streaming (wait for full response)")
     parser.add_argument("--web", action="store_true", help="Launch the web UI instead of the CLI")
     parser.add_argument("--tray", action="store_true", help="Launch web UI + system tray (background daemon)")
+    parser.add_argument("--voice", action="store_true", help="Speak responses aloud via pyttsx3 (CLI only)")
     parser.add_argument("--host", default="127.0.0.1", help="Web UI host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=5757, help="Web UI port (default: 5757)")
     args = parser.parse_args()
@@ -152,6 +155,9 @@ def main() -> None:
         return
 
     stream = not args.no_stream
+    speaker = Speaker() if args.voice else None
+    if args.voice and speaker and not speaker.available:
+        print("[voice] pyttsx3 not available — install with `pip install pyttsx3`")
 
     if args.task:
         memory = MemoryStore()
@@ -160,6 +166,7 @@ def main() -> None:
             run_task(
                 args.task, model=args.model, auto_approve=args.yes,
                 stream=stream, memory=memory, router=router,
+                speaker=speaker,
             )
         except KeyboardInterrupt:
             print("\nInterrupted.")
@@ -167,7 +174,7 @@ def main() -> None:
         finally:
             memory.close()
     else:
-        _repl(args.model, args.yes, stream)
+        _repl(args.model, args.yes, stream, speaker=speaker)
 
 
 if __name__ == "__main__":

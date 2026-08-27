@@ -1,4 +1,4 @@
-# Nebula Agent Engine — Phase 4
+# Nebula Agent Engine — Phase 5
 
 Local-first agent engine for the planned Nebula Ubuntu · Agent Edition.
 Runs entirely on your machine, powered by Ollama. No cloud, no telemetry.
@@ -14,9 +14,9 @@ pip install -r requirements.txt
 
 # 3. Launch how you want:
 python main.py --tray                # background daemon + tray icon
-python main.py --web                 # web UI (foreground)
+python main.py --web                 # web UI (foreground) — has voice toggle
 python main.py                       # interactive CLI (REPL)
-python main.py "list files here"     # one-shot CLI
+python main.py --voice "list files"  # CLI with spoken responses
 ```
 
 ## What Nova can do (19 tools)
@@ -68,6 +68,17 @@ Override with `--model <name>`. Add a model to the router by editing
 - Tool calls rendered as inline cards with pending → ok/error state
 - Click-to-confirm risky actions
 - Tabs: Chat, Memory, History, Models
+- **Voice mode** — checkbox in sidebar activates a mic button (Web Speech
+  API for input) and speaks responses aloud (SpeechSynthesis API for
+  output). Works in Chrome/Edge. Zero server-side deps needed.
+
+## Voice
+
+| Where | Backend | How |
+|-------|---------|-----|
+| Web UI input | Browser Web Speech API | Toggle "Voice mode" in sidebar, click 🎤 to speak |
+| Web UI output | Browser SpeechSynthesis | Auto-speaks each assistant reply when voice mode is on |
+| CLI output | pyttsx3 (offline, OS voices) | `python main.py --voice "your task"` |
 
 ## Phase history
 
@@ -78,3 +89,4 @@ Override with `--model <name>`. Add a model to the router by editing
 | 2 | Multi-model router, system_info, find_files, edit_file |
 | 3 | Flask web UI, SSE streaming, chat/memory/history/models tabs |
 | 4 | Desktop tools (open_app, screenshot, clipboard, notify, web_search), system tray |
+| 5 | Voice input (browser Web Speech), voice output (browser TTS + CLI pyttsx3) |

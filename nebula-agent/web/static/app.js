@@ -128,6 +128,9 @@ $('#composer').addEventListener('submit', async (e) => {
   $('#input').value = '';
   $('#send').disabled = true;
 
+  // Cancel any lingering TTS from the previous turn
+  if (typeof stopSpeaking === 'function') stopSpeaking();
+
   addMsg('user', task);
   let assistantBody = null;
   const toolBlocks = {};
@@ -180,10 +183,12 @@ $('#composer').addEventListener('submit', async (e) => {
       case 'token':
         if (!assistantBody) assistantBody = addMsg('assistant', '');
         assistantBody.textContent += evt.text;
+        window.dispatchEvent(new CustomEvent('nova:assistant_token', {detail: {text: evt.text}}));
         scrollToBottom();
         break;
       case 'assistant_done':
         assistantBody = null;
+        window.dispatchEvent(new CustomEvent('nova:assistant_done'));
         break;
       case 'tool_call':
         currentBlock = addToolBlock(evt.step, evt.name, evt.args);
@@ -299,3 +304,116 @@ $('#reload-history')?.addEventListener('click', loadHistory);
 $('#reload-models')?.addEventListener('click', loadModels);
 
 loadModelOptions();
+
+// ────────── Voice (Web Speech API + SpeechSynthesis) ──────────
+
+const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognizer = null;
+let ttsQueue = [];
+let ttsSpeaking = false;
+
+function voiceEnabled() { return $('#voice-mode').checked; }
+function ttsAvailable() { return 'speechSynthesis' in window; }
+function sttAvailable() { return !!SpeechRecognitionClass; }
+
+function setupVoiceUI() {
+  const supported = sttAvailable();
+  const micBtn = $('#mic');
+  if (voiceEnabled() && supported) {
+    micBtn.hidden = false;
+  } else {
+    micBtn.hidden = true;
+  }
+  if (voiceEnabled() && !supported) {
+    addMsg('system', 'Voice input not supported in this browser. Chrome or Edge works best.');
+    $('#voice-mode').checked = false;
+  }
+}
+
+$('#voice-mode').addEventListener('change', setupVoiceUI);
+
+$('#mic').addEventListener('click', () => {
+  if (recognizer) {
+    recognizer.stop();
+    return;
+  }
+  startListening();
+});
+
+function startListening() {
+  recognizer = new SpeechRecognitionClass();
+  recognizer.continuous = false;
+  recognizer.interimResults = true;
+  recognizer.lang = 'en-US';
+
+  const micBtn = $('#mic');
+  micBtn.classList.add('listening');
+  micBtn.textContent = '⏹';
+
+  let finalText = '';
+  recognizer.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += t;
+      else interim += t;
+    }
+    $('#input').value = (finalText + interim).trim();
+  };
+  recognizer.onerror = (e) => {
+    console.warn('speech recog error', e.error);
+  };
+  recognizer.onend = () => {
+    micBtn.classList.remove('listening');
+    micBtn.textContent = '🎤';
+    recognizer = null;
+    if (finalText.trim()) {
+      $('#composer').requestSubmit();
+    }
+  };
+  recognizer.start();
+}
+
+function speak(text) {
+  if (!voiceEnabled() || !ttsAvailable()) return;
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (!clean) return;
+  ttsQueue.push(clean);
+  drainTTS();
+}
+
+function drainTTS() {
+  if (ttsSpeaking || !ttsQueue.length) return;
+  ttsSpeaking = true;
+  const text = ttsQueue.shift();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 1.05;
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+  utter.onend = () => { ttsSpeaking = false; drainTTS(); };
+  utter.onerror = () => { ttsSpeaking = false; drainTTS(); };
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeaking() {
+  ttsQueue = [];
+  if (ttsAvailable()) window.speechSynthesis.cancel();
+  ttsSpeaking = false;
+}
+
+// Hook TTS into the message flow — speak completed assistant turns.
+// Buffer tokens, then speak the accumulated text once the turn ends.
+let pendingSpeech = '';
+const originalHandleEvent = null; // placeholder, real hook is inline below
+
+// Patch: intercept assistant tokens to accumulate, then speak on assistant_done.
+// We do this by wrapping addMsg's assistant body element.
+const _origAddMsg = addMsg;
+window.addEventListener('nova:assistant_done', () => {
+  if (pendingSpeech.trim()) speak(pendingSpeech);
+  pendingSpeech = '';
+});
+window.addEventListener('nova:assistant_token', (e) => {
+  pendingSpeech += e.detail.text;
+});
+
