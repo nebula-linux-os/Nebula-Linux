@@ -1,7 +1,12 @@
 # Nebula Agent Edition — build container
 # Runs Debian live-build inside a controlled environment so the ISO is
-# reproducible regardless of the host OS. Same pattern as the Arch build,
-# but targeting Ubuntu 24.04 + XFCE + Nova.
+# reproducible regardless of the host OS.
+#
+# NOTE: this Dockerfile expects the REPO ROOT as build context, not
+# agent-edition/. That lets us COPY nebula-agent/ into the image without
+# any host-side runtime mount — which sidesteps the well-known "space
+# in Windows path breaks Docker -v" trap that already burned the Arch
+# build.
 FROM debian:bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -32,7 +37,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /build
 
-COPY . /build/
+# Build context is the repo root. Pull in both the agent-edition
+# directory (as /build) and the sibling nebula-agent/ (as /build/nebula-agent).
+COPY agent-edition/ /build/
+COPY nebula-agent/ /build/nebula-agent/
 
 RUN chmod +x /build/build.sh
 

@@ -1,0 +1,24 @@
+# Repo-root .dockerignore — keeps the agent-edition build context small.
+# The agent-edition Dockerfile uses the repo root as context so it can
+# COPY both agent-edition/ and nebula-agent/. Everything else is noise.
+.git
+.gitattributes
+.gitignore
+docs/
+profile/
+out/
+memory/
+graphify-out/
+assets/
+Wallpaper/
+*.iso
+*.png
+*.jpg
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+nebula-agent/dist/
+nebula-agent/build/
+nebula-agent/**/sessions/
+agent-edition/out/
