@@ -1,16 +1,25 @@
 #!/bin/sh
-# live-build auto/config — Ubuntu 24.04 (noble) + XFCE + Nova
+# live-build auto/config — Debian 12 (bookworm) + XFCE + Nova.
+# Debian's own live-build tool builds Debian ISOs natively; trying to
+# make it target Ubuntu Noble fell back to the ancient bullseye default
+# with an expired security repo. Debian bookworm gives us the same
+# result (modern kernel, working XFCE, Calamares, all the packages we
+# need) without fighting the toolchain.
 set -e
 
 lb config noauto \
-    --mode ubuntu \
-    --distribution noble \
-    --archive-areas "main restricted universe multiverse" \
-    --parent-mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
-    --parent-mirror-chroot "http://archive.ubuntu.com/ubuntu/" \
-    --mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
-    --mirror-chroot "http://archive.ubuntu.com/ubuntu/" \
-    --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --mode debian \
+    --distribution bookworm \
+    --archive-areas "main contrib non-free non-free-firmware" \
+    --parent-mirror-bootstrap "http://deb.debian.org/debian/" \
+    --parent-mirror-chroot "http://deb.debian.org/debian/" \
+    --mirror-bootstrap "http://deb.debian.org/debian/" \
+    --mirror-chroot "http://deb.debian.org/debian/" \
+    --mirror-binary "http://deb.debian.org/debian/" \
+    --parent-mirror-chroot-security "http://security.debian.org/debian-security/" \
+    --parent-mirror-binary-security "http://security.debian.org/debian-security/" \
+    --mirror-chroot-security "http://security.debian.org/debian-security/" \
+    --mirror-binary-security "http://security.debian.org/debian-security/" \
     --bootloaders "grub-efi grub-pc" \
     --binary-images iso-hybrid \
     --debian-installer live \
@@ -18,10 +27,9 @@ lb config noauto \
     --iso-application "Nebula Agent Edition" \
     --iso-publisher "Nebula Linux" \
     --iso-volume "NEBULA-AGENT" \
-    --linux-flavours "generic" \
-    --archive-areas "main restricted universe multiverse" \
+    --linux-flavours "amd64" \
     --apt-recommends false \
     --memtest none \
-    --updates false \
-    --security false \
+    --updates true \
+    --security true \
     "$@"

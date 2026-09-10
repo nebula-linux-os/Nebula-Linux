@@ -1,13 +1,16 @@
 # Nebula Agent Edition (ISO)
 
-An Ubuntu 24.04 + XFCE live/installable ISO with Nova
+A Debian 12 + XFCE live/installable ISO with Nova
 ([nebula-agent](../nebula-agent)) and Ollama pre-installed. Boots to a
 lightweight desktop, walks the user through pulling a starter model on
 first login, and drops them into a working local-AI workstation.
 
 ## What's baked in
 
-- **Ubuntu 24.04 (noble)** base — LTS, stable, driver-friendly.
+- **Debian 12 (bookworm)** base — LTS, stable, native live-build target.
+  We tried Ubuntu Noble first but Debian's live-build tool doesn't
+  cleanly build Ubuntu ISOs (that's Ubuntu's fork's job), and switching
+  to Debian gives us the same result with less friction.
 - **XFCE desktop** — light, boring, ~2 GB RAM to run.
 - **Ollama** installed system-wide as a systemd service on `127.0.0.1:11434`.
 - **Nova** at `/opt/nebula-agent` with a system Python venv, wrapped by

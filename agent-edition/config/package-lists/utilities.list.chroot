@@ -10,5 +10,7 @@ nano
 vim
 tmux
 neofetch
+zenity
+# Calamares is in bookworm main; the settings-debian pack targets it too.
 calamares
 calamares-settings-debian

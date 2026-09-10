@@ -64,7 +64,11 @@ echo "==> Rendering GRUB theme"
 rsvg-convert -w 1920 -h 1080 -o "${GRUB_THEME}/background.png" "${BG}/nebula.svg"
 rsvg-convert -w   96 -h   96 -o "${GRUB_THEME}/logo.png"       "${NEB}/logo.svg"
 
-# 3. Fix ownership + permissions on files we shipped
+# 3. Fix ownership + permissions on files we shipped.
+#    Docker COPY strips executable bits on Windows-authored files, so we
+#    have to re-apply them here or hooks silently skip and lb config
+#    silently ignores auto/config.
+chmod +x "${BUILD_ROOT}/config/auto/config"
 chmod 755 "${BUILD_ROOT}/config/includes.chroot/usr/local/bin/"*
 find "${BUILD_ROOT}/config/hooks" -name '*.hook.chroot' -exec chmod +x {} \;
 

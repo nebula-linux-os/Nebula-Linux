@@ -8,8 +8,9 @@ dbus-x11
 xorg
 network-manager
 network-manager-gnome
+# Firmware for common hardware. non-free-firmware is a Debian 12 archive.
 firmware-linux-free
-firmware-misc-nonfree
+firmware-linux-nonfree
 firmware-realtek
 firmware-iwlwifi
 plymouth
@@ -18,3 +19,6 @@ grub2-common
 grub-efi-amd64
 grub-pc
 os-prober
+locales
+tzdata
+sudo
