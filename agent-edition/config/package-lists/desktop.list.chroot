@@ -15,9 +15,11 @@ firmware-realtek
 firmware-iwlwifi
 plymouth
 plymouth-themes
+# GRUB packages are NOT listed here — grub-efi-amd64 and grub-pc conflict
+# and can't coexist in the chroot. live-build's --bootloaders handles the
+# ISO itself; Calamares picks the right grub for the target at install
+# time based on the target's firmware type.
 grub2-common
-grub-efi-amd64
-grub-pc
 os-prober
 locales
 tzdata
