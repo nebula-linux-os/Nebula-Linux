@@ -18,6 +18,7 @@ libnotify-bin
 scrot
 wl-clipboard
 xclip
-# For tray on X11
-libappindicator3-1
-gir1.2-appindicator3-0.1
+# For pystray on X11 — Debian ships the Ayatana forks (Ubuntu still has
+# both under the historic gir1.2-appindicator3-0.1 name; Debian doesn't).
+libayatana-appindicator3-1
+gir1.2-ayatanaappindicator3-0.1
