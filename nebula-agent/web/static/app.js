@@ -322,6 +322,16 @@ async function loadStatus() {
       badge.textContent = '👁 no vision model';
       badge.title = 'Pull one, e.g. `ollama pull llama3.2-vision` or `ollama pull moondream`';
     }
+    const ragBadge = $('#rag-badge');
+    if (s.embed_model) {
+      ragBadge.className = 'vision-badge on';
+      ragBadge.textContent = `📚 ${s.embed_model}`;
+      ragBadge.title = `Embed model: ${s.embed_model}`;
+    } else {
+      ragBadge.className = 'vision-badge off';
+      ragBadge.textContent = '📚 no embed model';
+      ragBadge.title = 'Pull one, e.g. `ollama pull nomic-embed-text`';
+    }
   } catch (e) { console.warn('status load failed', e); }
   checkForUpdate();
 }

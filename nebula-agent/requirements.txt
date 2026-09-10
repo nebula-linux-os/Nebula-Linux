@@ -3,3 +3,4 @@ flask>=3.0
 pillow>=10.0
 pystray>=0.19
 pyttsx3>=2.90
+numpy>=1.24

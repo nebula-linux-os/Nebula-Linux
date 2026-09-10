@@ -24,6 +24,8 @@ from agent.models import ModelRouter
 from agent.updater import check_for_update
 from agent.version import __version__
 from agent.vision import VISION_MODEL_CANDIDATES, pick_vision_model
+from agent.rag import pick_embed_model as pick_rag_model
+from agent.tools_rag import list_collections as rag_list_collections
 
 app = Flask(__name__, static_folder=None)
 STATIC_DIR = Path(__file__).parent / "static"
@@ -67,12 +69,19 @@ def api_models():
 @app.route("/api/status", methods=["GET"])
 def api_status():
     vision = pick_vision_model()
+    embed = pick_rag_model()
     return jsonify({
         "version": __version__,
         "autostart": autostart.is_enabled(),
         "vision_model": vision,
         "vision_candidates": VISION_MODEL_CANDIDATES,
+        "embed_model": embed,
     })
+
+
+@app.route("/api/rag/collections", methods=["GET"])
+def api_rag_collections():
+    return jsonify(rag_list_collections())
 
 
 @app.route("/api/autostart", methods=["POST"])

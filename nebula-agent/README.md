@@ -1,4 +1,4 @@
-# Nebula Agent Engine — v0.7.0
+# Nebula Agent Engine — v0.8.0
 
 Local-first agent engine for the planned Nebula Ubuntu · Agent Edition.
 Runs entirely on your machine, powered by Ollama. No cloud, no telemetry.
@@ -41,13 +41,14 @@ python main.py                       # interactive REPL
 python main.py --voice "list files"  # CLI + spoken response
 ```
 
-## What Nova can do (24 tools)
+## What Nova can do (29 tools)
 
 **Files:** `read_file`, `write_file`, `edit_file`, `list_dir`, `find_files`
 **Shell / System:** `run_command`, `system_info`, `install_package`
 **Apps & Web:** `open_app`, `open_url`, `web_search`, `fetch_page`, `fetch_json`
 **Screen & Vision:** `take_screenshot`, `see_screen`, `describe_image`, `vision_info`
 **Clipboard:** `read_clipboard`, `write_clipboard`
+**Docs (RAG):** `index_folder`, `search_docs`, `list_collections`, `forget_collection`, `rag_info`
 **Alerts:** `notify` (desktop notifications)
 **Memory:** `save_memory`, `recall_memory`, `forget_memory`, `past_tasks`
 
@@ -76,6 +77,30 @@ The router auto-picks the best installed model per task:
 | `general` | everything else | qwen2.5:7b |
 
 Override with `--model <name>`. Add a model by editing `agent/models.py`.
+
+## RAG (retrieval-augmented answers)
+
+Point Nova at a folder of code or documents and it'll index the text
+files, then answer questions grounded in the actual content:
+
+```bash
+ollama pull nomic-embed-text     # ~275 MB embedding model
+```
+
+Then in the REPL or web UI:
+```
+index the folder D:/Project/my-project
+what does the auth module actually do?
+```
+
+- Text files only (source code, markdown, JSON, YAML, etc.). Skips
+  binaries and common noise dirs (.git, node_modules, __pycache__).
+- Chunks at ~1500 chars with 200 char overlap.
+- Skips already-indexed unchanged files (mtime + size check).
+- Multiple collections supported — `index_folder(folder, collection="myproj")`.
+- Cosine similarity on float32 embeddings, all in numpy — no FAISS/Chroma.
+
+Storage: `~/.nebula-agent/rag.db`.
 
 ## Vision
 
@@ -156,3 +181,4 @@ python build.py --onedir    # folder distribution — faster startup
 | 6 | Packaging (PyInstaller build), autostart, self-update check, first-run installer |
 | 7 | Vision — see_screen, describe_image, vision_info; auto-picks any installed multimodal Ollama model |
 | 7.1 | Web reading — fetch_page (URL → readable text), fetch_json (URL → parsed JSON); one-line installers for Windows/Mac/Linux |
+| 8 | RAG — index_folder, search_docs, list_collections, forget_collection, rag_info; local embeddings + SQLite storage + numpy cosine |

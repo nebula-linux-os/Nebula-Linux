@@ -23,6 +23,7 @@ from .tools_desktop import DESKTOP_TOOL_FUNCTIONS, DESKTOP_TOOLS_SCHEMA
 from .tools_extended import EXTENDED_TOOL_FUNCTIONS, EXTENDED_TOOLS_SCHEMA
 from .tools_vision import VISION_TOOL_FUNCTIONS, VISION_TOOLS_SCHEMA
 from .tools_web import WEB_TOOL_FUNCTIONS, WEB_TOOLS_SCHEMA
+from .tools_rag import RAG_TOOL_FUNCTIONS, RAG_TOOLS_SCHEMA
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MAX_STEPS = 15
@@ -38,6 +39,7 @@ Your tools cover the whole desktop, not just files:
 - Screen: take_screenshot (PNG only), see_screen (look at desktop), describe_image (any image file)
 - Clipboard: read_clipboard, write_clipboard
 - Alerts: notify (desktop notification)
+- Docs (RAG): index_folder, search_docs, list_collections, rag_info
 - Memory: save_memory, recall_memory, forget_memory, past_tasks
 
 Tool selection guide:
@@ -45,6 +47,8 @@ Tool selection guide:
 - User says "open <site>" or a URL → open_url
 - User asks a factual question you don't know → web_search, then fetch_page on the top result
 - User gives you a specific URL to read → fetch_page directly
+- User asks about their code/docs and wants a grounded answer → list_collections, index_folder if needed, search_docs
+- search_docs returns chunks — cite the path when using them
 - User asks "what's on my screen" or "look at X" → see_screen or describe_image
 - see_screen and describe_image need a vision model — call vision_info if unsure
 - Use edit_file instead of write_file when only changing part of a file
@@ -63,7 +67,8 @@ Rules:
 def _build_tool_set() -> tuple[list[dict], dict[str, object]]:
     schemas = (
         TOOLS_SCHEMA + EXTENDED_TOOLS_SCHEMA + DESKTOP_TOOLS_SCHEMA
-        + VISION_TOOLS_SCHEMA + WEB_TOOLS_SCHEMA + MEMORY_TOOLS_SCHEMA
+        + VISION_TOOLS_SCHEMA + WEB_TOOLS_SCHEMA + RAG_TOOLS_SCHEMA
+        + MEMORY_TOOLS_SCHEMA
     )
     fns: dict = {}
     from .tools import TOOL_FUNCTIONS
@@ -72,6 +77,7 @@ def _build_tool_set() -> tuple[list[dict], dict[str, object]]:
     fns.update(DESKTOP_TOOL_FUNCTIONS)
     fns.update(VISION_TOOL_FUNCTIONS)
     fns.update(WEB_TOOL_FUNCTIONS)
+    fns.update(RAG_TOOL_FUNCTIONS)
     fns.update(MEMORY_TOOL_FUNCTIONS)
     return schemas, fns
 
