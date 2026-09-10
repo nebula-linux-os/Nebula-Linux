@@ -3,30 +3,49 @@
 Local-first agent engine for the planned Nebula Ubuntu · Agent Edition.
 Runs entirely on your machine, powered by Ollama. No cloud, no telemetry.
 
-## Quickstart
+## Install
+
+### One-line install (recommended)
+
+**Windows** (PowerShell):
+```powershell
+iwr -useb https://raw.githubusercontent.com/nebula-linux-os/Nebula-Linux/main/nebula-agent/install.ps1 | iex
+```
+
+**macOS / Linux** (bash):
+```bash
+curl -fsSL https://raw.githubusercontent.com/nebula-linux-os/Nebula-Linux/main/nebula-agent/install.sh | sh
+```
+
+Both scripts check for Python 3.10+ and Ollama, clone the repo, install
+Python deps, and run first-run setup.
+
+### Manual install
 
 ```bash
-# 1. Install Ollama and pull a tool-calling model
+# 1. Install Ollama from https://ollama.com and pull a model
 ollama pull qwen2.5:7b
 
-# 2. Install Python deps
+# 2. Clone + install deps
+git clone https://github.com/nebula-linux-os/Nebula-Linux.git
+cd Nebula-Linux/nebula-agent
 pip install -r requirements.txt
 
-# 3. First-run setup (checks Ollama, pulls model, enables autostart)
+# 3. First-run setup (autostart, model check)
 python install.py
 
-# 4. Launch how you want:
+# 4. Launch
 python main.py --tray                # background daemon + tray icon
-python main.py --web                 # foreground web UI (voice available)
+python main.py --web                 # foreground web UI at :5757
 python main.py                       # interactive REPL
 python main.py --voice "list files"  # CLI + spoken response
 ```
 
-## What Nova can do (22 tools)
+## What Nova can do (24 tools)
 
 **Files:** `read_file`, `write_file`, `edit_file`, `list_dir`, `find_files`
 **Shell / System:** `run_command`, `system_info`, `install_package`
-**Apps & Web:** `open_app`, `open_url`, `web_search`
+**Apps & Web:** `open_app`, `open_url`, `web_search`, `fetch_page`, `fetch_json`
 **Screen & Vision:** `take_screenshot`, `see_screen`, `describe_image`, `vision_info`
 **Clipboard:** `read_clipboard`, `write_clipboard`
 **Alerts:** `notify` (desktop notifications)
@@ -136,3 +155,4 @@ python build.py --onedir    # folder distribution — faster startup
 | 5 | Voice input (browser Web Speech), voice output (browser TTS + CLI pyttsx3) |
 | 6 | Packaging (PyInstaller build), autostart, self-update check, first-run installer |
 | 7 | Vision — see_screen, describe_image, vision_info; auto-picks any installed multimodal Ollama model |
+| 7.1 | Web reading — fetch_page (URL → readable text), fetch_json (URL → parsed JSON); one-line installers for Windows/Mac/Linux |

@@ -21,6 +21,7 @@ from .tools import RISKY_TOOLS, TOOL_FUNCTIONS, TOOLS_SCHEMA
 from .tools_desktop import DESKTOP_TOOL_FUNCTIONS, DESKTOP_TOOLS_SCHEMA
 from .tools_extended import EXTENDED_TOOL_FUNCTIONS, EXTENDED_TOOLS_SCHEMA
 from .tools_vision import VISION_TOOL_FUNCTIONS, VISION_TOOLS_SCHEMA
+from .tools_web import WEB_TOOL_FUNCTIONS, WEB_TOOLS_SCHEMA
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MAX_STEPS = 15
@@ -32,7 +33,7 @@ Your tools cover the whole desktop, not just files:
 - Shell: run_command
 - System: system_info, install_package
 - Apps: open_app (launch programs by name — prefer over run_command)
-- Web: open_url, web_search
+- Web: open_url, web_search, fetch_page (read a URL's text), fetch_json (parse JSON APIs)
 - Screen: take_screenshot (saves PNG only), see_screen (looks at desktop and describes it), describe_image (looks at any image file)
 - Clipboard: read_clipboard, write_clipboard
 - Alerts: notify (desktop notification)
@@ -41,7 +42,8 @@ Your tools cover the whole desktop, not just files:
 Tool selection guide:
 - User says "open <app>" → open_app, NOT run_command
 - User says "open <site>" or a URL → open_url
-- User asks a factual question you don't know → web_search first
+- User asks a factual question you don't know → web_search, then fetch_page on the top result for the actual answer
+- User gives you a specific URL to read → fetch_page directly
 - User asks "what's on my screen" or "look at X" → see_screen or describe_image
 - see_screen and describe_image need a vision model — call vision_info first if unsure
 - Use edit_file instead of write_file when only changing part of a file
@@ -61,13 +63,14 @@ Rules:
 def _build_tool_set() -> tuple[list[dict], dict]:
     schemas = (
         TOOLS_SCHEMA + EXTENDED_TOOLS_SCHEMA + DESKTOP_TOOLS_SCHEMA
-        + VISION_TOOLS_SCHEMA + MEMORY_TOOLS_SCHEMA
+        + VISION_TOOLS_SCHEMA + WEB_TOOLS_SCHEMA + MEMORY_TOOLS_SCHEMA
     )
     fns = {
         **TOOL_FUNCTIONS,
         **EXTENDED_TOOL_FUNCTIONS,
         **DESKTOP_TOOL_FUNCTIONS,
         **VISION_TOOL_FUNCTIONS,
+        **WEB_TOOL_FUNCTIONS,
         **MEMORY_TOOL_FUNCTIONS,
     }
     return schemas, fns
