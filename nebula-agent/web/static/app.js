@@ -312,6 +312,16 @@ async function loadStatus() {
     const s = await res.json();
     $('#version').textContent = `v${s.version}`;
     $('#autostart-toggle').checked = !!s.autostart;
+    const badge = $('#vision-badge');
+    if (s.vision_model) {
+      badge.className = 'vision-badge on';
+      badge.textContent = `👁 ${s.vision_model}`;
+      badge.title = `Vision model: ${s.vision_model}`;
+    } else {
+      badge.className = 'vision-badge off';
+      badge.textContent = '👁 no vision model';
+      badge.title = 'Pull one, e.g. `ollama pull llama3.2-vision` or `ollama pull moondream`';
+    }
   } catch (e) { console.warn('status load failed', e); }
   checkForUpdate();
 }

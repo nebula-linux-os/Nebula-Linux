@@ -79,6 +79,20 @@ body {
 
 .status-panel { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid var(--border); }
 .footer { font-size: 10px; color: var(--text-dim); text-align: center; }
+
+.vision-badge {
+  font-size: 11px;
+  font-family: var(--mono);
+  padding: 4px 8px;
+  border-radius: 5px;
+  text-align: center;
+  border: 1px solid var(--border);
+  background: var(--bg-elev-2);
+  color: var(--text-dim);
+  cursor: default;
+}
+.vision-badge.on { color: var(--ok); border-color: var(--ok); background: rgba(74,222,128,0.08); }
+.vision-badge.off { color: var(--text-dim); }
 #update-banner {
   font-size: 11px;
   padding: 8px;

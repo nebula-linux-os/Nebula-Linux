@@ -23,6 +23,7 @@ from agent.memory import MemoryStore
 from agent.models import ModelRouter
 from agent.updater import check_for_update
 from agent.version import __version__
+from agent.vision import VISION_MODEL_CANDIDATES, pick_vision_model
 
 app = Flask(__name__, static_folder=None)
 STATIC_DIR = Path(__file__).parent / "static"
@@ -65,9 +66,12 @@ def api_models():
 
 @app.route("/api/status", methods=["GET"])
 def api_status():
+    vision = pick_vision_model()
     return jsonify({
         "version": __version__,
         "autostart": autostart.is_enabled(),
+        "vision_model": vision,
+        "vision_candidates": VISION_MODEL_CANDIDATES,
     })
 
 

@@ -1,4 +1,4 @@
-# Nebula Agent Engine — v0.6.0
+# Nebula Agent Engine — v0.7.0
 
 Local-first agent engine for the planned Nebula Ubuntu · Agent Edition.
 Runs entirely on your machine, powered by Ollama. No cloud, no telemetry.
@@ -22,12 +22,13 @@ python main.py                       # interactive REPL
 python main.py --voice "list files"  # CLI + spoken response
 ```
 
-## What Nova can do (19 tools)
+## What Nova can do (22 tools)
 
 **Files:** `read_file`, `write_file`, `edit_file`, `list_dir`, `find_files`
 **Shell / System:** `run_command`, `system_info`, `install_package`
 **Apps & Web:** `open_app`, `open_url`, `web_search`
-**Screen & Clipboard:** `take_screenshot`, `read_clipboard`, `write_clipboard`
+**Screen & Vision:** `take_screenshot`, `see_screen`, `describe_image`, `vision_info`
+**Clipboard:** `read_clipboard`, `write_clipboard`
 **Alerts:** `notify` (desktop notifications)
 **Memory:** `save_memory`, `recall_memory`, `forget_memory`, `past_tasks`
 
@@ -56,6 +57,25 @@ The router auto-picks the best installed model per task:
 | `general` | everything else | qwen2.5:7b |
 
 Override with `--model <name>`. Add a model by editing `agent/models.py`.
+
+## Vision
+
+The agent can see screenshots and images. Pull any vision-capable Ollama
+model — Nova auto-detects and uses the first one it finds:
+
+```bash
+ollama pull llama3.2-vision       # ~7.9 GB, best all-round
+ollama pull moondream             # ~1.7 GB, lightweight
+ollama pull llava                 # ~4.7 GB
+```
+
+The main planner model stays text-only. When the agent calls `see_screen`
+or `describe_image`, Nova runs a separate one-shot request to the
+vision model and returns the description to the planner — so vision
+works on top of any base model.
+
+Vision status appears in the sidebar (👁 badge). Set `NOVA_VISION_MODEL`
+env var to force a specific one.
 
 ## Voice
 
@@ -115,3 +135,4 @@ python build.py --onedir    # folder distribution — faster startup
 | 4 | Desktop tools (`open_app`, `screenshot`, `clipboard`, `notify`, `web_search`), system tray |
 | 5 | Voice input (browser Web Speech), voice output (browser TTS + CLI pyttsx3) |
 | 6 | Packaging (PyInstaller build), autostart, self-update check, first-run installer |
+| 7 | Vision — see_screen, describe_image, vision_info; auto-picks any installed multimodal Ollama model |
