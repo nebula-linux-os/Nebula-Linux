@@ -754,6 +754,87 @@ body.light-mode nav.scrolled {
 body.light-mode .btn-secondary { background: rgba(20, 16, 40, 0.03); }
 body.light-mode .hero-badge { background: rgba(149, 128, 255, 0.1); }
 
+/* ---- Nova (agent) section --------------------------------------- */
+.section-lead {
+    max-width: 720px;
+    margin: 0 auto 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.55;
+}
+.nova-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    max-width: 960px;
+    margin: 0 auto 2rem;
+}
+.nova-feature {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1.3rem;
+}
+.nova-feature h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 600;
+}
+.nova-feature p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+.install-block {
+    max-width: 780px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+.install-block h4 {
+    margin: 0 0 1rem 0;
+    color: var(--fg);
+    font-size: 1rem;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+.install-label {
+    margin: 0.8rem 0 0.4rem 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.install-cmd {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    overflow-x: auto;
+    margin: 0;
+}
+.install-cmd code {
+    color: #a5d0ff;
+    font-family: var(--mono, 'JetBrains Mono', 'Consolas', monospace);
+    font-size: 0.85rem;
+    white-space: pre;
+}
+.install-note {
+    margin: 1rem 0 0 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+.install-note a { color: var(--accent); }
+body.light-mode .install-cmd { background: rgba(20,16,40,0.06); }
+body.light-mode .install-cmd code { color: #1a5aad; }
+body.light-mode .nova-feature { background: rgba(20,16,40,0.02); }
+
 /* ---- Responsive ------------------------------------------------- */
 @media (max-width: 768px) {
     .links a { margin-left: 1.1rem; font-size: 0.9rem; }

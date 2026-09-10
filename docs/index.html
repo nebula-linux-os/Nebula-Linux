@@ -34,6 +34,7 @@
         </div>
         <div class="links">
             <a href="#download">Download</a>
+            <a href="#nova">Nova AI</a>
             <a href="#features">Features</a>
             <a href="docs.html">Docs</a>
             <a href="roadmap.html">Roadmap</a>
@@ -123,6 +124,40 @@
                     <a href="https://github.com/nebula-linux-os/Nebula-Linux/tree/main#building-the-iso" class="btn-secondary" target="_blank">Build Guide</a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section id="nova" class="features-section">
+        <h2 class="section-title">Nova · Local AI Agent</h2>
+        <p class="section-lead">A local-first LLM agent that runs on your own machine. Powered by Ollama, no cloud, no telemetry. Runs on Windows, macOS, and Linux — the same code that will ship inside the future Nebula Agent Edition.</p>
+        <div class="nova-grid">
+            <div class="nova-feature">
+                <h4>24 tools</h4>
+                <p>Read/write files, run commands, install packages, take screenshots, see your screen, browse the web, remember things across sessions.</p>
+            </div>
+            <div class="nova-feature">
+                <h4>Any model</h4>
+                <p>Auto-routes tasks to the best Ollama model you have installed. Add a vision model and it can see too.</p>
+            </div>
+            <div class="nova-feature">
+                <h4>Web, tray, CLI, voice</h4>
+                <p>Chat in the browser, run in the system tray, speak to it, or script it from the terminal.</p>
+            </div>
+            <div class="nova-feature">
+                <h4>Zero cloud</h4>
+                <p>Every request stays on your machine. Memory, sessions, model — all local by design.</p>
+            </div>
+        </div>
+        <div class="install-block">
+            <h4>Install</h4>
+            <p class="install-label">Windows (PowerShell)</p>
+            <pre class="install-cmd"><code>iwr -useb https://raw.githubusercontent.com/nebula-linux-os/Nebula-Linux/main/nebula-agent/install.ps1 | iex</code></pre>
+            <p class="install-label">macOS / Linux</p>
+            <pre class="install-cmd"><code>curl -fsSL https://raw.githubusercontent.com/nebula-linux-os/Nebula-Linux/main/nebula-agent/install.sh | sh</code></pre>
+            <p class="install-note">Requires <a href="https://ollama.com/download" target="_blank">Ollama</a> and Python 3.10+.</p>
+        </div>
+        <div class="cta-buttons" style="justify-content: center; margin-top: 24px;">
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux/tree/main/nebula-agent" class="btn-primary" target="_blank">Source &amp; docs</a>
         </div>
     </section>
 
