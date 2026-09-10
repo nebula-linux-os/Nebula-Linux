@@ -1,0 +1,21 @@
+#!/bin/sh
+# Enable + set defaults for services on the live/installed system.
+set -e
+
+echo "==> Configuring services"
+
+# Ollama daemon on boot (unit was shipped via includes.chroot)
+systemctl enable ollama.service 2>/dev/null || true
+
+# LightDM as the display manager
+systemctl enable lightdm.service 2>/dev/null || true
+# Ensure NetworkManager is on so Wi-Fi Just Works
+systemctl enable NetworkManager.service 2>/dev/null || true
+
+# Autologin the live user so first boot goes straight to XFCE
+if [ -f /etc/lightdm/lightdm.conf ]; then
+    sed -i \
+        -e '/^\[Seat:\*\]/,/^\[/ s/^#*autologin-user=.*/autologin-user=user/' \
+        -e '/^\[Seat:\*\]/,/^\[/ s/^#*autologin-user-timeout=.*/autologin-user-timeout=0/' \
+        /etc/lightdm/lightdm.conf || true
+fi

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Nova
+GenericName=Local AI Agent
+Comment=Local-first LLM agent powered by Ollama
+Exec=nebula-agent --web
+Icon=applications-science
+Terminal=false
+Categories=Utility;Development;
+Keywords=ai;agent;llm;ollama;nova;nebula;
+StartupNotify=true

@@ -1,0 +1,20 @@
+# XFCE — lightweight, boring, works on almost everything.
+xfce4
+xfce4-goodies
+xfce4-terminal
+lightdm
+lightdm-gtk-greeter
+dbus-x11
+xorg
+network-manager
+network-manager-gnome
+firmware-linux-free
+firmware-misc-nonfree
+firmware-realtek
+firmware-iwlwifi
+plymouth
+plymouth-themes
+grub2-common
+grub-efi-amd64
+grub-pc
+os-prober

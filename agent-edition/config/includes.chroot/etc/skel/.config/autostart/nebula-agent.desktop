@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Nova (Nebula Agent)
+Comment=Local AI desktop agent — system tray daemon
+Exec=nebula-agent --tray
+Terminal=false
+Icon=applications-science
+Hidden=false
+X-GNOME-Autostart-enabled=true
+X-XFCE-Autostart-enabled=true

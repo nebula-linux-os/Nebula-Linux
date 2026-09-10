@@ -835,6 +835,52 @@ body.light-mode .install-cmd { background: rgba(20,16,40,0.06); }
 body.light-mode .install-cmd code { color: #1a5aad; }
 body.light-mode .nova-feature { background: rgba(20,16,40,0.02); }
 
+.agent-edition-teaser {
+    max-width: 780px;
+    margin: 3rem auto 0;
+    padding: 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(90,140,255,0.08), rgba(149,128,255,0.08));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+.teaser-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(90,140,255,0.15);
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+.agent-edition-teaser h3 {
+    margin: 0 0 0.7rem 0;
+    font-size: 1.5rem;
+    color: var(--fg);
+}
+.agent-edition-teaser p {
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 1.2rem;
+    line-height: 1.55;
+}
+.teaser-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.2rem;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.teaser-features span { color: var(--fg); }
+body.light-mode .agent-edition-teaser {
+    background: linear-gradient(135deg, rgba(90,140,255,0.05), rgba(149,128,255,0.05));
+}
+
 /* ---- Responsive ------------------------------------------------- */
 @media (max-width: 768px) {
     .links a { margin-left: 1.1rem; font-size: 0.9rem; }

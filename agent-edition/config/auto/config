@@ -1,0 +1,27 @@
+#!/bin/sh
+# live-build auto/config — Ubuntu 24.04 (noble) + XFCE + Nova
+set -e
+
+lb config noauto \
+    --mode ubuntu \
+    --distribution noble \
+    --archive-areas "main restricted universe multiverse" \
+    --parent-mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
+    --parent-mirror-chroot "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-bootstrap "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-chroot "http://archive.ubuntu.com/ubuntu/" \
+    --mirror-binary "http://archive.ubuntu.com/ubuntu/" \
+    --bootloaders "grub-efi grub-pc" \
+    --binary-images iso-hybrid \
+    --debian-installer live \
+    --debian-installer-gui true \
+    --iso-application "Nebula Agent Edition" \
+    --iso-publisher "Nebula Linux" \
+    --iso-volume "NEBULA-AGENT" \
+    --linux-flavours "generic" \
+    --archive-areas "main restricted universe multiverse" \
+    --apt-recommends false \
+    --memtest none \
+    --updates false \
+    --security false \
+    "$@"

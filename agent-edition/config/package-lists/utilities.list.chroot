@@ -1,0 +1,14 @@
+# User-facing utilities baked into the live system.
+firefox-esr
+mousepad
+thunar
+file-roller
+gnome-disk-utility
+gparted
+htop
+nano
+vim
+tmux
+neofetch
+calamares
+calamares-settings-debian

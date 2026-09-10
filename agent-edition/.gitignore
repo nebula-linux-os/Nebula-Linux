@@ -1,0 +1,8 @@
+out/
+config/includes.chroot/opt/nebula-agent/
+.build/
+cache/
+*.iso
+*.log
+chroot/
+binary/

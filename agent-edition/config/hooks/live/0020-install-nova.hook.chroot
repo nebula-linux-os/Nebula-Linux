@@ -1,0 +1,27 @@
+#!/bin/sh
+# Install Nova's Python deps into a system-wide venv at /opt/nebula-agent/.venv
+# so users don't need to touch pip themselves. First-boot script will
+# pull the initial Ollama model.
+set -e
+
+NOVA_DIR="/opt/nebula-agent"
+VENV="${NOVA_DIR}/.venv"
+
+if [ ! -d "${NOVA_DIR}" ]; then
+    echo "!! ${NOVA_DIR} not staged — includes.chroot broken" >&2
+    exit 1
+fi
+
+echo "==> Building Nova virtualenv"
+python3 -m venv --system-site-packages "${VENV}"
+"${VENV}/bin/pip" install --quiet --no-cache-dir --upgrade pip
+"${VENV}/bin/pip" install --quiet --no-cache-dir -r "${NOVA_DIR}/requirements.txt"
+
+# Convenience wrapper on PATH so users can just type `nebula-agent`
+cat >/usr/local/bin/nebula-agent <<'EOF'
+#!/bin/sh
+exec /opt/nebula-agent/.venv/bin/python /opt/nebula-agent/main.py "$@"
+EOF
+chmod +x /usr/local/bin/nebula-agent
+
+echo "==> Nova installed at ${NOVA_DIR}"

@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.sh text eol=lf
+*.hook.chroot text eol=lf
+config/auto/config text eol=lf
+usr/local/bin/* text eol=lf

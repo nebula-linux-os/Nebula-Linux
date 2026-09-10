@@ -1,0 +1,24 @@
+#!/bin/sh
+# Install Ollama inside the chroot so the live/installed system has it
+# out of the box. Uses the official installer, but skips the systemd
+# service enable — we ship our own unit at /etc/systemd/system/ollama.service.
+set -e
+
+echo "==> Installing Ollama"
+
+# Standalone install (systemd unit management stubbed)
+export OLLAMA_INSTALL_SKIP_SERVICE=1
+curl -fsSL https://ollama.com/install.sh | sh || {
+    echo "!! Ollama install failed" >&2
+    exit 1
+}
+
+# Create the ollama system user + group if the installer didn't
+if ! id ollama >/dev/null 2>&1; then
+    useradd --system --home /usr/share/ollama --shell /bin/false ollama
+fi
+
+# The service unit is installed via includes.chroot — enable it here
+systemctl enable ollama.service || true
+
+echo "==> Ollama installed"

@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Nebula Agent Edition — first-boot setup.
+# Runs once via the XDG autostart entry, then removes itself.
+
+set -e
+
+FLAG="$HOME/.config/nebula-agent/first-boot-done"
+mkdir -p "$(dirname "$FLAG")"
+
+if [ -f "$FLAG" ]; then
+    exit 0
+fi
+
+# Wait a bit for the desktop to settle before showing anything
+sleep 3
+
+# Are we in a graphical session? If not, just skip.
+if [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
+    exit 0
+fi
+
+TITLE="Welcome to Nebula Agent Edition"
+BODY="Nova is your local AI desktop agent. On first launch we'll pull a starter model (~4.7 GB, needs internet) so Nova can actually think.\n\nProceed?"
+
+if command -v zenity >/dev/null 2>&1; then
+    if ! zenity --question --title="$TITLE" --text="$BODY" --width=520; then
+        touch "$FLAG"
+        exit 0
+    fi
+else
+    notify-send "$TITLE" "Pulling qwen2.5:7b in the background..." || true
+fi
+
+# Wait for Ollama to actually be reachable (it starts on boot but may take a moment)
+for i in 1 2 3 4 5 6 7 8 9 10; do
+    if curl -sf http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
+        break
+    fi
+    sleep 2
+done
+
+# Pull the starter model in a terminal so the user sees progress.
+if command -v xfce4-terminal >/dev/null 2>&1; then
+    xfce4-terminal --title="Nova: first-boot model pull" \
+        --command="bash -c 'ollama pull qwen2.5:7b && ollama pull nomic-embed-text; echo; echo \"Done. Launching Nova...\"; sleep 2; nebula-agent --tray & disown; exit'"
+else
+    ollama pull qwen2.5:7b
+    ollama pull nomic-embed-text
+    nebula-agent --tray &
+fi
+
+touch "$FLAG"
+
+# Disable the autostart entry so this never runs again
+if [ -f "$HOME/.config/autostart/nebula-first-boot.desktop" ]; then
+    rm -f "$HOME/.config/autostart/nebula-first-boot.desktop"
+fi

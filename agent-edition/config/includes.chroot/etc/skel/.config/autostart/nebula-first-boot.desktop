@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nebula First-Boot Setup
+Comment=Runs once on first login to pull the starter model and launch Nova
+Exec=/usr/local/bin/nebula-first-boot
+Terminal=false
+Hidden=false
+X-GNOME-Autostart-enabled=true
+X-XFCE-Autostart-enabled=true
