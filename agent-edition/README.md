@@ -17,6 +17,10 @@ first login, and drops them into a working local-AI workstation.
 - **Autostart** — Nova's tray daemon starts on every login after first boot.
 - **Calamares** graphical installer for putting it on disk.
 - Firefox, Thunar, Mousepad, GParted, htop, and other everyday tools.
+- **Nebula branding** — shared with the Arch edition: Plymouth boot
+  splash (rotating orbit around a logo), custom GRUB theme, dark
+  wallpaper, dark XFCE (Adwaita-dark), LightDM greeter with the
+  Nebula backdrop.
 
 ## Build
 
@@ -51,7 +55,8 @@ agent-edition/
 │   │   ├── 0010-install-ollama.hook.chroot
 │   │   ├── 0020-install-nova.hook.chroot
 │   │   ├── 0030-services.hook.chroot
-│   │   └── 0040-defaults.hook.chroot
+│   │   ├── 0040-defaults.hook.chroot
+│   │   └── 0050-branding.hook.chroot
 │   └── includes.chroot/
 │       ├── etc/skel/.config/autostart/
 │       │   ├── nebula-first-boot.desktop   # runs once at first login

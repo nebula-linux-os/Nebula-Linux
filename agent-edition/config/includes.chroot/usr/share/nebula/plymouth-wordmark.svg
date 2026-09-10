@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 80" width="600" height="80">
+  <text x="300" y="55"
+        text-anchor="middle"
+        font-family="Inter, 'Segoe UI', sans-serif"
+        font-size="34"
+        font-weight="300"
+        letter-spacing="14"
+        fill="#B5C4FF">NEBULA LINUX</text>
+</svg>

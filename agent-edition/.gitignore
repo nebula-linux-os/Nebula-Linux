@@ -6,3 +6,11 @@ cache/
 *.log
 chroot/
 binary/
+
+# Build-time rendered PNGs (from SVG sources)
+config/includes.chroot/usr/share/backgrounds/nebula/nebula.png
+config/includes.chroot/usr/share/backgrounds/nebula/nebula-grub.png
+config/includes.chroot/usr/share/icons/hicolor/**/*.png
+config/includes.chroot/usr/share/pixmaps/nebula-linux.png
+config/includes.chroot/usr/share/plymouth/themes/nebula/*.png
+config/includes.chroot/usr/share/grub/themes/nebula/*.png

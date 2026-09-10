@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="60%" stop-color="#9580ff" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#5AAFFF" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#9580ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Outer soft glow -->
+  <circle cx="256" cy="256" r="230" fill="url(#glow)"/>
+  <!-- Bright thin ring -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#B5C4FF" stroke-width="2" stroke-opacity="0.85"/>
+  <!-- Inner ring with a bright arc -->
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#5AAFFF" stroke-width="1.5" stroke-opacity="0.55"/>
+  <path d="M 256 56 A 200 200 0 0 1 456 256"
+        fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-opacity="0.9"/>
+  <!-- Highlight dot on the ring -->
+  <circle cx="456" cy="256" r="5" fill="#ffffff"/>
+</svg>

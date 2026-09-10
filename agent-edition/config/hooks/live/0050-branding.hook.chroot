@@ -1,0 +1,56 @@
+#!/bin/sh
+# Activate Nebula branding — Plymouth theme, GRUB theme, LightDM greeter.
+set -e
+
+echo "==> Activating Plymouth theme"
+if command -v plymouth-set-default-theme >/dev/null 2>&1; then
+    plymouth-set-default-theme -R nebula 2>/dev/null || \
+        plymouth-set-default-theme nebula
+    # Rebuild initramfs so the theme is available at early boot
+    if command -v update-initramfs >/dev/null 2>&1; then
+        update-initramfs -u 2>/dev/null || true
+    fi
+fi
+
+echo "==> Configuring GRUB theme"
+mkdir -p /etc/default
+if [ -f /etc/default/grub ]; then
+    if grep -q '^GRUB_THEME=' /etc/default/grub; then
+        sed -i 's|^GRUB_THEME=.*|GRUB_THEME=/usr/share/grub/themes/nebula/theme.txt|' /etc/default/grub
+    else
+        echo 'GRUB_THEME=/usr/share/grub/themes/nebula/theme.txt' >> /etc/default/grub
+    fi
+    sed -i 's|^GRUB_TIMEOUT=.*|GRUB_TIMEOUT=5|' /etc/default/grub
+    # Splash + quiet for the Plymouth boot experience
+    if grep -q '^GRUB_CMDLINE_LINUX_DEFAULT=' /etc/default/grub; then
+        sed -i 's|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' /etc/default/grub
+    fi
+fi
+
+echo "==> Configuring LightDM greeter background"
+mkdir -p /etc/lightdm
+cat >/etc/lightdm/lightdm-gtk-greeter.conf <<'EOF'
+[greeter]
+background=/usr/share/backgrounds/nebula/nebula.png
+theme-name=Adwaita-dark
+icon-theme-name=Adwaita
+font-name=Sans 11
+xft-antialias=true
+xft-hintstyle=slight
+xft-rgba=rgb
+show-clock=true
+clock-format=%H:%M
+indicators=~host;~spacer;~clock;~spacer;~session;~power
+default-user-image=/usr/share/nebula/logo.svg
+EOF
+
+echo "==> Writing os-release / lsb-release identity"
+if [ -f /etc/os-release ]; then
+    # Preserve the base Ubuntu ID_LIKE etc but re-brand the pretty name
+    sed -i \
+        -e 's|^NAME=.*|NAME="Nebula Agent Edition"|' \
+        -e 's|^PRETTY_NAME=.*|PRETTY_NAME="Nebula Agent Edition"|' \
+        -e 's|^HOME_URL=.*|HOME_URL="https://nebula-linux-os.github.io/Nebula-Linux/"|' \
+        -e 's|^SUPPORT_URL=.*|SUPPORT_URL="https://github.com/nebula-linux-os/Nebula-Linux/issues"|' \
+        /etc/os-release
+fi

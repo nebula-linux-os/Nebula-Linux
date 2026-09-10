@@ -26,6 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         sudo \
         python3 \
         python3-pip \
+        librsvg2-bin \
+        imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build

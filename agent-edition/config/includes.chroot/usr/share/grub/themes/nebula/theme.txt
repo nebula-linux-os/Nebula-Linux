@@ -1,0 +1,89 @@
+# Nebula Linux — GRUB theme
+# Deep space background, Material accent, hostname-style title.
+
+desktop-image:  "background.png"
+desktop-color:  "#0A0715"
+# title-text is intentionally EMPTY. GRUB renders this string at its own
+# built-in position near the top of the screen, which landed directly on
+# top of the logo image — that was the "Nebula Linux" text overlapping the
+# logo in the boot menu. Our own wordmark label below covers this need.
+title-text:     ""
+title-color:    "#B5C4FF"
+title-font:     "Unifont Regular 16"
+message-color:  "#8A98C7"
+message-font:   "Unifont Regular 14"
+terminal-font:  "Unifont Regular 16"
+terminal-box:   "terminal_box_*.png"
+
+# Top cluster (logo + wordmark) uses FIXED PIXEL positions rather than
+# percent, and boot_menu's top is percent-based starting well clear of it.
+# The earlier layout mixed "12%+140"-style pixel-offset-from-percent math
+# for the wordmark with a plain percent top for boot_menu — the two units
+# scale differently across resolutions, so at anything below ~900px tall
+# (e.g. a VM's default 640x480 or 800x600 framebuffer) the wordmark ended
+# up INSIDE the boot_menu's vertical span, and its text visually collided
+# with the actual menu entries. Verified by direct computation clear of
+# overlap from 480p through 1440p before shipping this.
+# width/height here MUST equal the size build.sh renders logo.png at (96x96),
+# otherwise GRUB draws it at native size and it overlaps the wordmark below.
++ image {
+    id       = "logo"
+    file     = "logo.png"
+    left     = 50%-48
+    top      = 20
+    width    = 96
+    height   = 96
+}
+
++ label {
+    id       = "wordmark"
+    text     = "NEBULA  LINUX"
+    color    = "#B5C4FF"
+    align    = "center"
+    left     = 0
+    top      = 128
+    width    = 100%
+    height   = 24
+    font     = "Unifont Bold 18"
+}
+
++ boot_menu {
+    left            = 25%
+    top             = 40%
+    width           = 50%
+    height          = 36%
+    item_height     = 32
+    item_padding    = 6
+    item_spacing    = 4
+    item_color      = "#8A98C7"
+    selected_item_color = "#ffffff"
+    item_pixmap_style       = "menu_bkg_*.png"
+    selected_item_pixmap_style  = "menu_selected_*.png"
+    scrollbar       = false
+    item_font       = "Unifont Regular 16"
+    selected_item_font = "Unifont Bold 16"
+}
+
++ label {
+    id       = "help"
+    text     = "↑↓  select    Enter  boot    e  edit    c  console"
+    color    = "#5A6B99"
+    align    = "center"
+    left     = 0
+    top      = 90%
+    width    = 100%
+    height   = 20
+    font     = "Unifont Regular 12"
+}
+
++ progress_bar {
+    id       = "__timeout__"
+    left     = 25%
+    top      = 86%
+    width    = 50%
+    height   = 6
+    fg_color = "#5AAFFF"
+    bg_color = "#1A1830"
+    border_color = "#3B3B4D"
+    text     = ""
+}

@@ -34,7 +34,37 @@ rsync -a \
     --exclude 'sessions/' \
     "${NOVA_SRC}/" "${DEST_NOVA}/"
 
-# 2. Fix ownership + permissions on files we shipped
+# 2. Render brand assets — Plymouth logo/orbit/wordmark, GRUB bg + logo,
+#    hicolor icons, pixmap, and the desktop wallpaper — all from SVG.
+INCLUDES="${BUILD_ROOT}/config/includes.chroot"
+BG="${INCLUDES}/usr/share/backgrounds/nebula"
+NEB="${INCLUDES}/usr/share/nebula"
+PLY="${INCLUDES}/usr/share/plymouth/themes/nebula"
+GRUB_THEME="${INCLUDES}/usr/share/grub/themes/nebula"
+ICONS="${INCLUDES}/usr/share/icons/hicolor"
+
+echo "==> Rendering wallpaper"
+rsvg-convert -w 3840 -h 2160 -o "${BG}/nebula.png" "${BG}/nebula.svg"
+
+echo "==> Rendering hicolor icons"
+for s in 48 64 128 256 512; do
+    mkdir -p "${ICONS}/${s}x${s}/apps"
+    rsvg-convert -w "$s" -h "$s" -o "${ICONS}/${s}x${s}/apps/nebula-linux.png" "${NEB}/logo.svg"
+done
+mkdir -p "${ICONS}/scalable/apps" "${INCLUDES}/usr/share/pixmaps"
+cp "${NEB}/logo.svg" "${ICONS}/scalable/apps/nebula-linux.svg"
+rsvg-convert -w 256 -h 256 -o "${INCLUDES}/usr/share/pixmaps/nebula-linux.png" "${NEB}/logo.svg"
+
+echo "==> Rendering Plymouth theme"
+rsvg-convert -w 220 -h 220 -o "${PLY}/logo.png"     "${NEB}/logo.svg"
+rsvg-convert -w 512 -h 512 -o "${PLY}/orbit.png"    "${NEB}/plymouth-orbit.svg"
+rsvg-convert -w 420 -h  56 -o "${PLY}/wordmark.png" "${NEB}/plymouth-wordmark.svg"
+
+echo "==> Rendering GRUB theme"
+rsvg-convert -w 1920 -h 1080 -o "${GRUB_THEME}/background.png" "${BG}/nebula.svg"
+rsvg-convert -w   96 -h   96 -o "${GRUB_THEME}/logo.png"       "${NEB}/logo.svg"
+
+# 3. Fix ownership + permissions on files we shipped
 chmod 755 "${BUILD_ROOT}/config/includes.chroot/usr/local/bin/"*
 find "${BUILD_ROOT}/config/hooks" -name '*.hook.chroot' -exec chmod +x {} \;
 

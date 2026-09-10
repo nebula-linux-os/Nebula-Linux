@@ -1,0 +1,61 @@
+// Nebula Linux — Plymouth boot splash
+// Deep space background with a rotating light ring around a black singularity.
+// Uses only script primitives (no per-frame PNGs) so we ship <100 KB.
+
+Window.SetBackgroundTopColor    (0.03, 0.02, 0.08);
+Window.SetBackgroundBottomColor (0.05, 0.03, 0.15);
+
+screen_w = Window.GetWidth();
+screen_h = Window.GetHeight();
+cx = screen_w / 2;
+cy = screen_h / 2;
+
+// ---- Logo ------------------------------------------------------------------
+logo.image  = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo.sprite.SetPosition(cx - logo.image.GetWidth() / 2,
+                        cy - logo.image.GetHeight() / 2 - 40,
+                        0);
+
+// ---- Wordmark --------------------------------------------------------------
+wordmark.image  = Image("wordmark.png");
+wordmark.sprite = Sprite(wordmark.image);
+wordmark.sprite.SetPosition(cx - wordmark.image.GetWidth() / 2,
+                            cy + logo.image.GetHeight() / 2 - 10,
+                            0);
+
+// ---- Orbit spinner ---------------------------------------------------------
+orbit.image  = Image("orbit.png");
+orbit.sprite = Sprite();
+orbit.sprite.SetOpacity(0.9);
+angle = 0;
+
+fun refresh() {
+    angle += 0.05;
+    orbit.rotated = orbit.image.Rotate(angle);
+    orbit.sprite.SetImage(orbit.rotated);
+    orbit.sprite.SetPosition(
+        cx - orbit.rotated.GetWidth() / 2,
+        cy - orbit.rotated.GetHeight() / 2 - 40,
+        -1);
+}
+
+Plymouth.SetRefreshFunction(refresh);
+
+// ---- Password prompt (for FDE unlock) --------------------------------------
+status = "normal";
+
+fun display_password_callback(prompt, bullets) {
+    prompt.image  = Image.Text(prompt, 1, 1, 1, 1, "Sans 12");
+    prompt.sprite = Sprite(prompt.image);
+    prompt.sprite.SetPosition(cx - prompt.image.GetWidth() / 2,
+                              cy + 120, 10);
+    dots = "";
+    i = 0;
+    while (i < bullets) { dots += "●"; i++; }
+    dots.image  = Image.Text(dots, 1, 1, 1, 1, "Sans 14");
+    dots.sprite = Sprite(dots.image);
+    dots.sprite.SetPosition(cx - dots.image.GetWidth() / 2, cy + 150, 10);
+}
+
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
