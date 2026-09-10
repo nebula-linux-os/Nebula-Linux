@@ -48,8 +48,8 @@ agent-edition/
 ├── Dockerfile              # debian:bookworm + live-build toolchain
 ├── build.sh                # inside-container entrypoint
 ├── docker_build.sh         # host-side entrypoint
+├── auto/config             # lb config invocation (distro, mirrors, boot)
 ├── config/
-│   ├── auto/config         # lb config invocation (distro, mirrors, boot)
 │   ├── package-lists/
 │   │   ├── desktop.list.chroot     # XFCE + LightDM + firmware
 │   │   ├── nova.list.chroot        # Python + system deps for Nova
