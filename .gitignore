@@ -3,3 +3,4 @@ out/
 .claude/
 __pycache__/
 *.pyc
+CLAUDE.md
