@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Nebula agent engine — Phase 3 CLI + Web.
+"""Nebula agent engine — Nova, the local-first AI desktop agent.
 
 Single-shot:
     python main.py "create a python web server in ./demo"
@@ -132,7 +132,11 @@ def _show_help() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Nebula agent engine (Phase 3)")
+    from agent.version import __version__
+    parser = argparse.ArgumentParser(
+        description=f"Nova — Nebula Agent Engine v{__version__}",
+    )
+    parser.add_argument("--version", action="version", version=f"nova {__version__}")
     parser.add_argument("task", nargs="?", default=None, help="Task for the agent (omit for interactive mode)")
     parser.add_argument("--model", default=None, help="Force a specific Ollama model (default: auto-route)")
     parser.add_argument("--yes", action="store_true", help="Auto-approve risky tool calls")
