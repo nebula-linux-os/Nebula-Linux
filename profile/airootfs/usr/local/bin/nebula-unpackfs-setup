@@ -1,0 +1,65 @@
+#!/bin/bash
+set -euo pipefail
+
+CONF=/etc/calamares/modules/unpackfs.conf
+
+# Read a kernel cmdline parameter, same defaults as the archiso hook.
+cmdline_arg() { # cmdline_arg <key> [default]
+    local key="$1" default="${2-}" word
+    for word in $(</proc/cmdline); do
+        case "$word" in
+            "$key"=*) printf '%s\n' "${word#*=}"; return 0 ;;
+        esac
+    done
+    printf '%s\n' "$default"
+}
+
+write_conf() { # write_conf <source> <sourcefs>
+    install -d -m 0755 "$(dirname "$CONF")"
+    cat >"$CONF" <<EOF
+---
+# Generated at run time by nebula-unpackfs-setup. Do not edit by hand:
+# this file is rewritten on every live boot and before the installer starts.
+unpack:
+  - source: "$1"
+    sourcefs: "$2"
+    destination: ""
+EOF
+    echo "nebula-unpackfs-setup: unpackfs source = $1 (sourcefs: $2)"
+}
+
+basedir="$(cmdline_arg archisobasedir arch)"
+arch="$(cmdline_arg arch "$(uname -m)")"
+
+# Preferred: unpack the image itself (unsquashfs is faster than rsync).
+# copytoram puts it in tmpfs, bootmnt keeps it on the medium.
+for img in \
+    "/run/archiso/bootmnt/${basedir}/${arch}/airootfs.sfs" \
+    "/run/archiso/copytoram/airootfs.sfs" \
+    "/run/archiso/bootmnt/${basedir}/${arch}/airootfs.erofs" \
+    "/run/archiso/copytoram/airootfs.erofs"
+do
+    [[ -f "$img" ]] || continue
+    case "$img" in
+        *.sfs)
+            write_conf "$img" squashfs
+            exit 0
+            ;;
+        *.erofs)
+            # unpackfs only accepts a sourcefs listed in /proc/filesystems.
+            modprobe -q erofs || true
+            write_conf "$img" erofs
+            exit 0
+            ;;
+    esac
+done
+
+# Fallback: whatever the format and wherever it came from, the initramfs
+# leaves the live root mounted read-only here. rsync it directly.
+if mountpoint -q /run/archiso/airootfs; then
+    write_conf /run/archiso/airootfs file
+    exit 0
+fi
+
+echo "nebula-unpackfs-setup: no live root image found, leaving $CONF as shipped" >&2
+exit 1

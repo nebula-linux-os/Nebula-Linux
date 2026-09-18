@@ -77,7 +77,7 @@ sed -i \
     "$PROFILE/profiledef.sh"
 
 # Make our scripts executable inside the image.
-sed -i '/^file_permissions=(/a\  ["/usr/local/bin/nebula-live-setup"]="0:0:755"\n  ["/usr/local/bin/nebula-install"]="0:0:755"\n  ["/usr/local/bin/nebula-installer"]="0:0:755"\n  ["/usr/local/bin/nebula-target-cleanup"]="0:0:755"\n  ["/usr/local/bin/nebula"]="0:0:755"\n  ["/usr/local/bin/nebula-welcome"]="0:0:755"\n  ["/usr/local/bin/nebula-vm-setup"]="0:0:755"\n  ["/usr/local/bin/nebula-plymouth-setup"]="0:0:755"\n  ["/usr/share/nebula/nebula-welcome.py"]="0:0:755"' \
+sed -i '/^file_permissions=(/a\  ["/usr/local/bin/nebula-live-setup"]="0:0:755"\n  ["/usr/local/bin/nebula-install"]="0:0:755"\n  ["/usr/local/bin/nebula-installer"]="0:0:755"\n  ["/usr/local/bin/nebula-unpackfs-setup"]="0:0:755"\n  ["/usr/local/bin/nebula-target-cleanup"]="0:0:755"\n  ["/usr/local/bin/nebula"]="0:0:755"\n  ["/usr/local/bin/nebula-welcome"]="0:0:755"\n  ["/usr/local/bin/nebula-vm-setup"]="0:0:755"\n  ["/usr/local/bin/nebula-plymouth-setup"]="0:0:755"\n  ["/usr/share/nebula/nebula-welcome.py"]="0:0:755"' \
     "$PROFILE/profiledef.sh"
 
 # Rebrand boot menus (GRUB, syslinux, systemd-boot — whatever the profile has).
