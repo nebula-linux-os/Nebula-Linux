@@ -6,3 +6,8 @@ venv/
 .env
 *.db
 sessions/
+
+# PyInstaller output (see build.py)
+build/
+dist/
+*.spec
