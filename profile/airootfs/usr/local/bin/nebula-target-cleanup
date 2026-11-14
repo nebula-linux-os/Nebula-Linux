@@ -14,6 +14,13 @@ rm -f /usr/share/applications/install-nebula.desktop
 rm -f /usr/local/bin/nebula-installer
 rm -f /usr/local/bin/nebula-install
 
+# releng enables sshd and ships a drop-in allowing root + password logins
+# for the live ISO. In an installed system that means anyone on the network
+# can try root's password (which Calamares sets to the user's password).
+# Remove both; users who want SSH can `systemctl enable --now sshd`.
+rm -f /etc/ssh/sshd_config.d/10-archiso.conf
+rm -f /etc/systemd/system/multi-user.target.wants/sshd.service
+
 # The greetd package's sysusers.d config leaves the "greeter" system user
 # with HOME=/ (filesystem root) rather than a real home directory. Every
 # write dms-greeter/Quickshell attempts relative to $HOME (config, cache,
