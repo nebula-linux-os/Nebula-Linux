@@ -1,0 +1,13 @@
+# Packages that are only Recommends of something we rely on. auto/config
+# sets --apt-recommends false, so without listing them explicitly they
+# never get installed:
+#
+# user-setup — live-config's user-setup step creates the live user
+#   ("user") only if this package is present. Without it LightDM's
+#   autologin has no account and the live ISO stops at a login screen.
+user-setup
+live-tools
+# zstd — Ollama's install.sh downloads ollama-linux-amd64.tar.zst and
+#   aborts if zstd is missing, which fails 0010-install-ollama and with it
+#   the whole lb build.
+zstd
