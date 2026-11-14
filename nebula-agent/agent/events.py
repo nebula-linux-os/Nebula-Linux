@@ -217,7 +217,7 @@ def run_task_events(
             if name in fns:
                 try:
                     if name in RISKY_TOOLS:
-                        result = execute_tool(name, args, auto_approve=True)
+                        result = execute_tool(name, args, auto_approve=True, functions=fns)
                     else:
                         result = fns[name](**args)
                 except Exception as e:

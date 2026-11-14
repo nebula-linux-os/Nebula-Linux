@@ -31,8 +31,20 @@ def verify(name: str, args: dict, result: dict) -> str | None:
     return None
 
 
-def execute_tool(name: str, args: dict, auto_approve: bool = False) -> dict:
-    fn = TOOL_FUNCTIONS.get(name)
+def execute_tool(
+    name: str,
+    args: dict,
+    auto_approve: bool = False,
+    functions: dict | None = None,
+) -> dict:
+    """Run one tool call through the confirmation gate.
+
+    `functions` is the full name -> callable registry the caller exposes to
+    the model. It must be passed for anything outside the 6 core tools:
+    RISKY_TOOLS includes edit_file, open_app, write_clipboard and
+    forget_collection, which live in other modules.
+    """
+    fn = (functions or TOOL_FUNCTIONS).get(name)
     if fn is None:
         return {"error": f"unknown tool: {name}"}
 

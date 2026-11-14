@@ -7,6 +7,7 @@ so you can replay or debug what the agent did.
 from __future__ import annotations
 
 import json
+import re
 import time
 from pathlib import Path
 
@@ -24,7 +25,9 @@ class Session:
     def _make_path(self) -> Path:
         SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
         ts = time.strftime("%Y%m%d-%H%M%S", time.localtime(self.start_time))
-        slug = self.task[:40].replace(" ", "_").replace("/", "-")
+        # Keep only filename-safe characters: Windows rejects ?*"<>|\ and
+        # newlines, and ":" would write to an NTFS alternate data stream.
+        slug = re.sub(r"[^A-Za-z0-9_-]+", "_", self.task[:40]).strip("_") or "task"
         return SESSIONS_DIR / f"{ts}_{slug}.json"
 
     def log(self, role: str, content: str, tool_name: str = "", tool_args: dict | None = None) -> None:

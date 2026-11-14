@@ -19,11 +19,13 @@ case "$(uname -s)" in
     *)       echo "[x] Unsupported OS: $(uname -s)"; exit 1 ;;
 esac
 
-C_CYAN=$'\033[36m'
-C_YELLOW=$'\033[33m'
-C_RED=$'\033[31m'
-C_GREEN=$'\033[32m'
-C_OFF=$'\033[0m'
+# POSIX-safe colours: the one-liner pipes this into `sh` (dash on Debian),
+# which doesn't understand bash's $'...' quoting.
+C_CYAN=$(printf '\033[36m')
+C_YELLOW=$(printf '\033[33m')
+C_RED=$(printf '\033[31m')
+C_GREEN=$(printf '\033[32m')
+C_OFF=$(printf '\033[0m')
 step()   { printf "%s[+]%s %s\n"  "$C_CYAN"   "$C_OFF" "$1"; }
 warn()   { printf "%s[!]%s %s\n"  "$C_YELLOW" "$C_OFF" "$1"; }
 errmsg() { printf "%s[x]%s %s\n"  "$C_RED"    "$C_OFF" "$1"; }
@@ -87,21 +89,45 @@ else
     AGENT_DIR="$INSTALL_DIR/$APP_NAME"
 fi
 
-# 4. Dependencies
+# 4. Dependencies — into a private venv. Arch, Debian 12+, Ubuntu 23.04+
+# and Homebrew Python refuse system-wide pip installs (PEP 668,
+# "externally-managed-environment").
 step "Installing Python dependencies..."
-(cd "$AGENT_DIR" && "$PYTHON" -m pip install --quiet --disable-pip-version-check -r requirements.txt)
+VENV_DIR="$AGENT_DIR/.venv"
+if [ ! -x "$VENV_DIR/bin/python" ]; then
+    echo "    Creating virtual environment at $VENV_DIR"
+    if ! "$PYTHON" -m venv "$VENV_DIR"; then
+        rm -rf "$VENV_DIR"
+        errmsg "Could not create a Python virtual environment."
+        case "$(uname -s)" in
+            Linux*) echo "    On Debian/Ubuntu: sudo apt install python3-venv  — then re-run." ;;
+        esac
+        exit 1
+    fi
+fi
+VPY="$VENV_DIR/bin/python"
+"$VPY" -m pip install --quiet --disable-pip-version-check --upgrade pip
+(cd "$AGENT_DIR" && "$VPY" -m pip install --quiet --disable-pip-version-check -r requirements.txt)
 echo "    Dependencies installed."
 
-# 5. First-run setup
+# 5. First-run setup. When run as `curl ... | sh`, stdin is this script,
+# so install.py's prompts would swallow the rest of it — read from the
+# terminal instead, or accept defaults if there isn't one.
 step "Running first-run setup..."
-(cd "$AGENT_DIR" && "$PYTHON" install.py)
+if [ -t 0 ]; then
+    (cd "$AGENT_DIR" && "$VPY" install.py)
+elif (: </dev/tty) 2>/dev/null; then
+    (cd "$AGENT_DIR" && "$VPY" install.py </dev/tty)
+else
+    (cd "$AGENT_DIR" && "$VPY" install.py </dev/null)
+fi
 
 echo
 ok "=== Setup complete ==="
 echo
 echo "Launch Nova:"
 echo "  cd \"$AGENT_DIR\""
-echo "  $PYTHON main.py --tray     # background daemon + tray icon"
-echo "  $PYTHON main.py --web      # foreground web UI at :5757"
-echo "  $PYTHON main.py            # interactive REPL"
+echo "  .venv/bin/python main.py --tray     # background daemon + tray icon"
+echo "  .venv/bin/python main.py --web      # foreground web UI at :5757"
+echo "  .venv/bin/python main.py            # interactive REPL"
 echo

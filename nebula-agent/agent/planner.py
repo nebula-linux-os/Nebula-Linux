@@ -221,7 +221,7 @@ def run_task(
             session.log("tool_call", "", tool_name=name, tool_args=args)
 
             if name in RISKY_TOOLS:
-                result = execute_tool(name, args, auto_approve=auto_approve)
+                result = execute_tool(name, args, auto_approve=auto_approve, functions=all_fns)
             elif name in all_fns:
                 try:
                     result = all_fns[name](**args)

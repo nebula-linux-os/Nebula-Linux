@@ -83,11 +83,24 @@ if (Test-Path $sourceMain) {
     $agentDir = Join-Path $InstallDir $AppName
 }
 
-# 4. Dependencies
+# 4. Dependencies — into a private venv so Nova's packages don't collide
+# with the user's global Python (and autostart uses the venv interpreter).
 Write-Step "Installing Python dependencies..."
+$venvDir = Join-Path $agentDir ".venv"
+$vpy = Join-Path $venvDir "Scripts\python.exe"
+if (-not (Test-Path $vpy)) {
+    Write-Host "    Creating virtual environment at $venvDir"
+    & $python.Source -m venv $venvDir
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path $vpy)) {
+        Write-ErrMsg "Could not create a Python virtual environment."
+        exit 1
+    }
+}
 Push-Location $agentDir
 try {
-    & $python.Source -m pip install --quiet --disable-pip-version-check -r requirements.txt
+    & $vpy -m pip install --quiet --disable-pip-version-check --upgrade pip
+    & $vpy -m pip install --quiet --disable-pip-version-check -r requirements.txt
+    if ($LASTEXITCODE -ne 0) { Write-ErrMsg "pip install failed."; exit 1 }
     Write-Host "    Dependencies installed."
 } finally {
     Pop-Location
@@ -97,7 +110,7 @@ try {
 Write-Step "Running first-run setup..."
 Push-Location $agentDir
 try {
-    & $python.Source install.py
+    & $vpy install.py
 } finally {
     Pop-Location
 }
@@ -107,7 +120,7 @@ Write-Host "=== Setup complete ===" -ForegroundColor Green
 Write-Host ""
 Write-Host "Launch Nova:"
 Write-Host "  cd `"$agentDir`""
-Write-Host "  python main.py --tray     # background daemon + tray icon"
-Write-Host "  python main.py --web      # foreground web UI at :5757"
-Write-Host "  python main.py            # interactive REPL"
+Write-Host "  .venv\Scripts\python main.py --tray     # background daemon + tray icon"
+Write-Host "  .venv\Scripts\python main.py --web      # foreground web UI at :5757"
+Write-Host "  .venv\Scripts\python main.py            # interactive REPL"
 Write-Host ""
