@@ -11,14 +11,19 @@ they're ever needed.
 from __future__ import annotations
 
 import html
+import ipaddress
 import re
-from urllib.parse import urlparse
+import socket
+from urllib.parse import urljoin, urlparse
 
 import requests
 
-_USER_AGENT = "Nova-Agent/0.7 (+https://github.com/nebula-linux-os/Nebula-Linux)"
+from .version import __version__
+
+_USER_AGENT = f"Nova-Agent/{__version__} (+https://github.com/nebula-linux-os/Nebula-Linux)"
 _MAX_BYTES = 2_000_000       # cap raw response at 2 MB
 _MAX_CHARS = 12_000          # cap text extract at ~12k chars (~3k tokens)
+_MAX_REDIRECTS = 5
 
 
 def _valid_http_url(url: str) -> bool:
@@ -27,6 +32,45 @@ def _valid_http_url(url: str) -> bool:
         return p.scheme in ("http", "https") and bool(p.netloc)
     except Exception:
         return False
+
+
+def _blocked_reason(url: str) -> str | None:
+    """Return why `url` must not be fetched, or None if it's a public host.
+
+    These tools are ungated and driven by model output (which can be
+    prompt-injected by a page it read), so they must not reach loopback
+    (Nova's own API, Ollama), the LAN (routers, NAS admin pages) or cloud
+    metadata endpoints. Every address the hostname resolves to is checked.
+    """
+    if not _valid_http_url(url):
+        return "url must start with http:// or https://"
+    host = urlparse(url).hostname
+    if not host:
+        return "url has no host"
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror as e:
+        return f"cannot resolve {host}: {e}"
+    for info in infos:
+        ip = ipaddress.ip_address(info[4][0].split("%")[0])
+        if not ip.is_global or ip.is_multicast:
+            return f"refusing to fetch non-public address {ip} ({host})"
+    return None
+
+
+def _safe_get(url: str, **kwargs) -> requests.Response:
+    """requests.get that re-validates the target on every redirect hop."""
+    for _ in range(_MAX_REDIRECTS + 1):
+        reason = _blocked_reason(url)
+        if reason:
+            raise requests.RequestException(reason)
+        resp = requests.get(url, allow_redirects=False, **kwargs)
+        if resp.is_redirect and "Location" in resp.headers:
+            url = urljoin(url, resp.headers["Location"])
+            resp.close()
+            continue
+        return resp
+    raise requests.RequestException(f"more than {_MAX_REDIRECTS} redirects")
 
 
 _SCRIPT_STYLE_RE = re.compile(
@@ -60,12 +104,11 @@ def fetch_page(url: str, max_chars: int = _MAX_CHARS) -> dict:
     if not _valid_http_url(url):
         return {"error": "url must start with http:// or https://"}
     try:
-        resp = requests.get(
+        resp = _safe_get(
             url,
             headers={"User-Agent": _USER_AGENT, "Accept": "text/html,*/*"},
             timeout=15,
             stream=True,
-            allow_redirects=True,
         )
     except requests.RequestException as e:
         return {"error": f"request failed: {e}"}
@@ -107,7 +150,7 @@ def fetch_json(url: str) -> dict:
     if not _valid_http_url(url):
         return {"error": "url must start with http:// or https://"}
     try:
-        resp = requests.get(
+        resp = _safe_get(
             url,
             headers={"User-Agent": _USER_AGENT, "Accept": "application/json"},
             timeout=15,

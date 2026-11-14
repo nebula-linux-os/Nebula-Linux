@@ -66,16 +66,30 @@ function addDoneTag(outcome, steps, duration) {
   scrollToBottom();
 }
 
+// Build an element with text content only. Everything shown in the UI that
+// can originate from the model (tool names/args, memories, task history)
+// MUST go through textContent, never innerHTML: a prompt-injected page can
+// get the model to emit HTML/JS, and this page can call /api/chat.
+function el(tag, className, text, children = []) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined && text !== null) node.textContent = String(text);
+  for (const c of children) node.appendChild(c);
+  return node;
+}
+
+function showEmpty(list, text) {
+  list.replaceChildren(el('div', 'empty', text));
+}
+
 function addToolBlock(step, name, args) {
-  const block = document.createElement('div');
-  block.className = 'tool-block pending';
-  block.innerHTML = `
-    <div class="tool-header">
-      <span class="step">[step ${step}]</span>
-      <span class="name">${name}</span>
-    </div>
-    <div class="tool-args">${escapeJson(args)}</div>
-  `;
+  const block = el('div', 'tool-block pending', null, [
+    el('div', 'tool-header', null, [
+      el('span', 'step', `[step ${step}]`),
+      el('span', 'name', name),
+    ]),
+    el('div', 'tool-args', escapeJson(args)),
+  ]);
   messagesEl.appendChild(block);
   scrollToBottom();
   return block;
@@ -93,13 +107,15 @@ function addToolResult(block, name, result) {
 }
 
 function addConfirmBox(block, name, args) {
-  const box = document.createElement('div');
-  box.className = 'confirm-box';
-  box.innerHTML = `
-    <span class="text">Allow <b>${name}</b>?</span>
-    <button class="deny">Deny</button>
-    <button class="allow">Allow</button>
-  `;
+  const box = el('div', 'confirm-box', null, [
+    el('span', 'text', null, [
+      document.createTextNode('Allow '),
+      el('b', null, name),
+      document.createTextNode('?'),
+    ]),
+    el('button', 'deny', 'Deny'),
+    el('button', 'allow', 'Allow'),
+  ]);
   block.appendChild(box);
   return new Promise(resolve => {
     box.querySelector('.allow').addEventListener('click', () => { box.remove(); resolve(true); });
@@ -113,11 +129,11 @@ function escapeJson(obj) {
 
 function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
-async function sendApproval(taskId, allowed) {
-  await fetch(`/api/approve/${taskId}`, {
+async function sendApproval(taskId, confirmId, allowed) {
+  await fetch(`/api/approve/${encodeURIComponent(taskId)}`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({allowed}),
+    body: JSON.stringify({allowed, confirm_id: confirmId}),
   });
 }
 
@@ -196,7 +212,7 @@ $('#composer').addEventListener('submit', async (e) => {
         break;
       case 'tool_awaiting_confirm': {
         const allowed = await addConfirmBox(currentBlock, evt.name, evt.args);
-        await sendApproval(currentTaskId, allowed);
+        await sendApproval(currentTaskId, evt.confirm_id, allowed);
         break;
       }
       case 'tool_result':
@@ -222,29 +238,28 @@ $('#input').addEventListener('keydown', (e) => {
 // Memory tab
 async function loadMemory() {
   const list = $('#memory-list');
-  list.innerHTML = '<div class="empty">Loading…</div>';
+  showEmpty(list, 'Loading…');
   const res = await fetch('/api/memory');
   const memories = await res.json();
   if (!memories.length) {
-    list.innerHTML = '<div class="empty">No memories saved yet.</div>';
+    showEmpty(list, 'No memories saved yet.');
     return;
   }
-  list.innerHTML = '';
+  list.replaceChildren();
   for (const m of memories) {
-    const row = document.createElement('div');
-    row.className = 'list-row';
-    row.innerHTML = `
-      <div>
-        <span class="tag">${m.category}</span>
-        <span>${m.content}</span>
-        <div class="meta">#${m.id} · used ${m.use_count}×</div>
-      </div>
-      <button data-id="${m.id}">Forget</button>
-    `;
-    row.querySelector('button').addEventListener('click', async () => {
-      await fetch(`/api/memory/${m.id}`, {method: 'DELETE'});
+    const forget = el('button', null, 'Forget');
+    forget.addEventListener('click', async () => {
+      await fetch(`/api/memory/${encodeURIComponent(m.id)}`, {method: 'DELETE'});
       loadMemory();
     });
+    const row = el('div', 'list-row', null, [
+      el('div', null, null, [
+        el('span', 'tag', m.category),
+        el('span', null, m.content),
+        el('div', 'meta', `#${m.id} · used ${m.use_count}×`),
+      ]),
+      forget,
+    ]);
     list.appendChild(row);
   }
 }
@@ -252,26 +267,24 @@ async function loadMemory() {
 // History tab
 async function loadHistory() {
   const list = $('#history-list');
-  list.innerHTML = '<div class="empty">Loading…</div>';
+  showEmpty(list, 'Loading…');
   const res = await fetch('/api/history');
   const tasks = await res.json();
   if (!tasks.length) {
-    list.innerHTML = '<div class="empty">No task history yet.</div>';
+    showEmpty(list, 'No task history yet.');
     return;
   }
-  list.innerHTML = '';
+  list.replaceChildren();
   for (const t of tasks) {
-    const row = document.createElement('div');
-    row.className = 'list-row';
     const status = t.outcome === 'completed' ? 'ok' : 'err';
     const when = new Date(t.created_at * 1000).toLocaleString();
-    row.innerHTML = `
-      <div>
-        <span class="tag ${status}">${t.outcome}</span>
-        <span>${t.task}</span>
-        <div class="meta">${when} · ${t.model} · ${t.steps} steps · ${t.duration_s}s</div>
-      </div>
-    `;
+    const row = el('div', 'list-row', null, [
+      el('div', null, null, [
+        el('span', `tag ${status}`, t.outcome),
+        el('span', null, t.task),
+        el('div', 'meta', `${when} · ${t.model} · ${t.steps} steps · ${t.duration_s}s`),
+      ]),
+    ]);
     list.appendChild(row);
   }
 }
@@ -279,22 +292,20 @@ async function loadHistory() {
 // Models tab
 async function loadModels() {
   const list = $('#models-list');
-  list.innerHTML = '<div class="empty">Loading…</div>';
+  showEmpty(list, 'Loading…');
   const res = await fetch('/api/models');
   const models = await res.json();
-  list.innerHTML = '';
+  list.replaceChildren();
   for (const m of models) {
-    const row = document.createElement('div');
-    row.className = 'list-row';
     const status = m.installed && m.fits_ram ? 'ok' : 'err';
     const statusLabel = !m.installed ? 'not installed' : !m.fits_ram ? 'too large for RAM' : 'ready';
-    row.innerHTML = `
-      <div>
-        <span class="tag ${status}">${statusLabel}</span>
-        <span>${m.model}</span>
-        <div class="meta">${m.speed} · ${m.ram_gb} GB · ${m.strengths.join(', ')}</div>
-      </div>
-    `;
+    const row = el('div', 'list-row', null, [
+      el('div', null, null, [
+        el('span', `tag ${status}`, statusLabel),
+        el('span', null, m.model),
+        el('div', 'meta', `${m.speed} · ${m.ram_gb} GB · ${(m.strengths || []).join(', ')}`),
+      ]),
+    ]);
     list.appendChild(row);
   }
 }

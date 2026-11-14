@@ -20,6 +20,7 @@ import tempfile
 import time
 import urllib.parse
 from pathlib import Path
+from xml.sax.saxutils import escape as xml_escape
 
 import requests
 
@@ -27,16 +28,26 @@ import requests
 _IS_WIN = platform.system() == "Windows"
 _IS_MAC = platform.system() == "Darwin"
 _IS_LINUX = platform.system() == "Linux"
+_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
+# Model-supplied strings never get spliced into PowerShell/AppleScript
+# source. They're passed as environment variables or argv instead, so a
+# quote or here-string terminator in the input can't become code.
+
+
+def _powershell(script: str, env_vars: dict[str, str], wait: bool = False):
+    env = {**os.environ, **env_vars}
+    cmd = ["powershell", "-NoProfile", "-NonInteractive", "-Command", script]
+    if wait:
+        return subprocess.run(cmd, env=env, check=False, creationflags=_NO_WINDOW)
+    return subprocess.Popen(cmd, env=env, creationflags=_NO_WINDOW)
 
 
 def open_app(name: str) -> dict:
     """Open an application by name. Falls through a chain of OS-native tricks."""
     try:
         if _IS_WIN:
-            subprocess.Popen(
-                ["powershell", "-NoProfile", "-Command", f"Start-Process '{name}'"],
-                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-            )
+            _powershell("Start-Process -FilePath $env:NOVA_APP", {"NOVA_APP": name})
         elif _IS_MAC:
             subprocess.Popen(["open", "-a", name])
         else:
@@ -53,12 +64,24 @@ def open_app(name: str) -> dict:
         return {"error": f"{type(e).__name__}: {e}"}
 
 
+_IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".bmp"}
+
+
 def take_screenshot(path: str = "") -> dict:
-    """Capture the primary screen. Returns the saved path."""
+    """Capture the primary screen. Returns the saved path.
+
+    Not confirmation-gated, so it may only create new image files: it
+    refuses non-image extensions and never overwrites an existing file
+    (otherwise the model could clobber e.g. ~/.bashrc without asking).
+    """
     if not path:
         out = Path(tempfile.gettempdir()) / f"nova-screenshot-{int(time.time())}.png"
     else:
-        out = Path(path).expanduser()
+        out = Path(path).expanduser().resolve()
+        if out.suffix.lower() not in _IMAGE_SUFFIXES:
+            return {"error": f"screenshot path must end in one of {sorted(_IMAGE_SUFFIXES)}"}
+        if out.exists():
+            return {"error": f"refusing to overwrite existing file: {out}"}
     out.parent.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -83,11 +106,10 @@ def take_screenshot(path: str = "") -> dict:
             "$b=[System.Windows.Forms.Screen]::PrimaryScreen.Bounds; "
             "$bmp=New-Object Drawing.Bitmap $b.Width,$b.Height; "
             "$g=[Drawing.Graphics]::FromImage($bmp); "
-            f"$g.CopyFromScreen($b.Location,[Drawing.Point]::Empty,$b.Size); "
-            f"$bmp.Save('{out}')"
+            "$g.CopyFromScreen($b.Location,[Drawing.Point]::Empty,$b.Size); "
+            "$bmp.Save($env:NOVA_OUT)"
         )
-        subprocess.run(["powershell", "-NoProfile", "-Command", ps],
-                       check=False, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        _powershell(ps, {"NOVA_OUT": str(out)}, wait=True)
         return {"path": str(out), "backend": "powershell"}
 
     return {"error": "no screenshot backend available (install pillow)"}
@@ -139,24 +161,33 @@ def write_clipboard(content: str) -> dict:
 def notify(title: str, message: str = "") -> dict:
     """Send a desktop notification."""
     if _IS_WIN:
+        toast_xml = (
+            '<toast><visual><binding template="ToastText02">'
+            f'<text id="1">{xml_escape(title)}</text>'
+            f'<text id="2">{xml_escape(message)}</text>'
+            "</binding></visual></toast>"
+        )
         ps = (
             "[Windows.UI.Notifications.ToastNotificationManager,Windows.UI.Notifications,ContentType=WindowsRuntime]|Out-Null;"
             "[Windows.Data.Xml.Dom.XmlDocument,Windows.Data.Xml.Dom.XmlDocument,ContentType=WindowsRuntime]|Out-Null;"
-            f"$t=@'\n<toast><visual><binding template=\"ToastText02\"><text id=\"1\">{title}</text><text id=\"2\">{message}</text></binding></visual></toast>\n'@;"
-            "$x=New-Object Windows.Data.Xml.Dom.XmlDocument;$x.LoadXml($t);"
+            "$x=New-Object Windows.Data.Xml.Dom.XmlDocument;$x.LoadXml($env:NOVA_TOAST_XML);"
             "$n=New-Object Windows.UI.Notifications.ToastNotification($x);"
             "[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Nova').Show($n);"
         )
-        subprocess.Popen(["powershell", "-NoProfile", "-Command", ps],
-                         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        _powershell(ps, {"NOVA_TOAST_XML": toast_xml})
         return {"sent": True, "backend": "windows-toast"}
     if _IS_MAC:
-        script = f'display notification "{message}" with title "{title}"'
-        subprocess.Popen(["osascript", "-e", script])
+        subprocess.Popen([
+            "osascript",
+            "-e", "on run argv",
+            "-e", "display notification (item 2 of argv) with title (item 1 of argv)",
+            "-e", "end run",
+            title, message,
+        ])
         return {"sent": True, "backend": "osascript"}
     if _IS_LINUX:
         if shutil.which("notify-send"):
-            subprocess.Popen(["notify-send", title, message])
+            subprocess.Popen(["notify-send", "--", title, message])
             return {"sent": True, "backend": "notify-send"}
         return {"error": "install libnotify-bin"}
     return {"error": f"unsupported platform: {platform.system()}"}
