@@ -1,9 +1,9 @@
 # Nebula Linux — Beta 1.0
 
-An Arch-based Linux distribution featuring the **Dank Linux** UI —
-[DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (Material 3
-desktop shell built on Quickshell) running on the **niri** scrollable-tiling
-Wayland compositor.
+An Arch-based Linux distribution featuring
+[Dux Modular Shell](https://github.com/duxlabs-dev/dux-shell) (DMS, formerly
+DankMaterialShell — a Material 3 desktop shell built on Quickshell) running on
+the **niri** scrollable-tiling Wayland compositor.
 
 **New in Beta 1.0:** 4 curated wallpaper themes with instant matugen retuning,
 Plymouth animated boot splash, full GRUB theme for installed systems,
@@ -52,7 +52,7 @@ in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
 
 ## What you get
 
-- **Live ISO** that boots straight into a full Dank Material Shell desktop
+- **Live ISO** that boots straight into a full Dux Modular Shell desktop
   (niri + DMS) as user `nebula` — no login required.
 - **Nebula branding everywhere**: os-release, hostname, boot menus + BIOS boot
   splash, MOTD, TTY login prompt, logo (hicolor icons + pixmaps, shown in DMS
@@ -64,14 +64,14 @@ in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
   (Super+Space) — a fully Nebula-branded **Calamares** GUI that installs by
   copying the live system, then strips the live-only pieces and sets up GRUB
   with the nebula background. (Calamares is built from the AUR during the ISO
-  build and cached in `out\pkgcache\`.) A CLI fallback, `nebula-install`
+  build and cached in `out\pkgcache-*\`.) A CLI fallback, `nebula-install`
   (archinstall wrapper), is also on the ISO.
 
 ## Desktop stack
 
 | Component     | Package(s)                                          |
 | ------------- | --------------------------------------------------- |
-| Shell / UI    | `dms-shell-niri` (DankMaterialShell from Arch extra) |
+| Shell / UI    | `dux-shell` (Dux Modular Shell / DMS from Arch extra) |
 | Compositor    | `niri` + `xwayland-satellite`                        |
 | Login         | `greetd` (autologin in live session)                 |
 | Audio         | PipeWire + WirePlumber                               |
@@ -81,7 +81,7 @@ in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
 | Theming       | `matugen` (wallpaper-based Material colors) + adw-gtk3-dark, Papirus icons, qt6ct |
 | Installer     | Calamares (Nebula-branded, AUR-built at ISO build time) |
 | Snapshots     | btrfs by default + snapper + snap-pac + grub-btrfs (boot old snapshots from GRUB) |
-| Login         | DMS graphical greeter on installed systems (`nebula greeter <dms\|text>` to switch) |
+| Login         | DMS graphical greeter (`dux-greeter-bin`, AUR-built at ISO build time) on installed systems (`nebula greeter <dms\|text>` to switch) |
 | Onboarding    | Nebula Welcome app (install, niri tour, app bundles, Flathub) |
 | Control       | `nebula` CLI: update / snapshots / rollback / drivers / doctor / windows / wallpaper / bugreport |
 | Themes        | 4 bundled wallpaper themes (`nebula wallpaper list`) — matugen retunes the whole desktop on switch |
@@ -103,6 +103,11 @@ container. You need **Docker Desktop** (WSL2 backend) with ~15 GB free space.
 The first build downloads several GB of packages (a named Docker volume
 `nebula-pacman-cache` caches them for subsequent builds). The finished ISO
 lands in `out\nebula-linux-YYYY.MM.DD-x86_64.iso`.
+
+Packages come from the live Arch mirrors. To build against a fixed
+[Arch Linux Archive](https://archive.archlinux.org/) date instead, set
+`$env:ARCH_SNAPSHOT = "YYYY/MM/DD"` before running `build.ps1` (the date must
+already have `dux-shell`).
 
 Test it in a VM (Hyper-V, VirtualBox, VMware, or QEMU). Give it **4+ GB RAM**
 and enable **EFI** if available. Boot, and the DMS desktop appears
@@ -160,12 +165,12 @@ profile/
 ## Roadmap
 
 - [x] Calamares graphical installer (AUR build + local pacman repo on the ISO)
-- [x] DankGreeter graphical login for installed systems (shipped inside `dms-shell`)
+- [x] DMS graphical greeter for installed systems (`dux-greeter-bin`, built from the AUR)
 - [x] Snapshot rollback stack (btrfs + snapper + snap-pac + grub-btrfs)
 - [x] Nebula Welcome onboarding app + niri tour
 - [x] `nebula` control-center CLI
 - [ ] `nebula-release` / `nebula-branding` pacman packages + own package repo
 - [ ] Plymouth boot splash, GRUB theme for installed systems
 - [ ] Custom Material icon theme & default DMS settings preset
-- [ ] Hyprland edition (`dms-shell-hyprland`)
+- [ ] Hyprland edition (`dux-shell` on Hyprland)
 - [ ] Weekly auto-built ISOs (GitHub Actions) + signed checksums

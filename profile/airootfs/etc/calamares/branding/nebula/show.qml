@@ -40,7 +40,7 @@ Presentation {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 48
-            text: "A Material You desktop — DankMaterialShell on niri"
+            text: "A Material You desktop — Dux Modular Shell on niri"
             color: "#efe6ff"
             font.pixelSize: 24
         }

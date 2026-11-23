@@ -11,7 +11,7 @@ set -u
 TARGET=/mnt/archinstall
 
 DESKTOP_PKGS=(
-    dms-shell-niri niri xwayland-satellite greetd
+    dux-shell niri xwayland-satellite greetd
     xdg-desktop-portal-gtk xdg-desktop-portal-gnome
     pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber sof-firmware
     networkmanager bluez bluez-utils
@@ -137,5 +137,5 @@ echo
 echo "════════════════════════════════════════════════════════"
 echo " Nebula Linux installed successfully."
 echo " Reboot, remove the live medium, and log in — niri +"
-echo " DankMaterialShell will start automatically."
+echo " Dux Modular Shell (DMS) will start automatically."
 echo "════════════════════════════════════════════════════════"

@@ -1,5 +1,5 @@
 # Nebula Linux — matugen config for `nebula wallpaper set`.
-# Renders a small color-scheme JSON that DankMaterialShell picks up
+# Renders a small color-scheme JSON that DMS (Dux Modular Shell) picks up
 # alongside its own matugen integration, so third-party integrations
 # (widgets, custom scripts) can read a canonical palette.
 
@@ -21,4 +21,4 @@ output_path = '~/.config/nebula/colors.json'
 # here so any custom Quickshell widget can import Material colors.
 [templates.dms-qml]
 input_path = '/etc/nebula/matugen/templates/dms-colors.qml'
-output_path = '~/.local/state/DankMaterialShell/nebula-colors.qml'
+output_path = '~/.local/state/dms/nebula-colors.qml'

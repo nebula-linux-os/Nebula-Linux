@@ -1,7 +1,6 @@
 {
-  "scheme": "{{scheme}}",
+  "scheme": "scheme-tonal-spot",
   "mode": "{{mode}}",
-  "generated_at": "{{now}}",
   "colors": {
     "primary": "{{colors.primary.default.hex}}",
     "on_primary": "{{colors.on_primary.default.hex}}",

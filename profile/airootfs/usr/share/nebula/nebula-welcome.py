@@ -35,7 +35,7 @@ NIRI_TIPS = (
     ("Super + ← / →", "Move between windows."),
     ("Super + O", "Bird's-eye overview of all workspaces."),
     ("Super + 1…9", "Jump between workspaces."),
-    ("Super + ,", "Open DankMaterialShell settings (wallpaper, theming…)."),
+    ("Super + ,", "Open DMS settings (wallpaper, theming…)."),
     ("Super + Shift + /", "The full keybinding cheat sheet, any time."),
 )
 
@@ -83,7 +83,7 @@ class WelcomeWindow(Adw.ApplicationWindow):
         title = Gtk.Label(label="Welcome to Nebula Linux")
         title.add_css_class("title-1")
         sub = Gtk.Label(label="A Material You desktop, powered by "
-                              "DankMaterialShell and niri")
+                              "Dux Modular Shell and niri")
         sub.add_css_class("dim-label")
         box.append(title)
         box.append(sub)
@@ -178,8 +178,8 @@ class WelcomeWindow(Adw.ApplicationWindow):
             "github", lambda: run_detached(["xdg-open", REPO_URL]),
             button_label="Open"))
         links.add(self._button_row(
-            "DankMaterialShell documentation", "danklinux.com/docs",
-            "docs", lambda: run_detached(["xdg-open", "https://danklinux.com/docs/"]),
+            "Dux Modular Shell (DMS) documentation", "duxlabs.dev/docs/dms",
+            "docs", lambda: run_detached(["xdg-open", "https://duxlabs.dev/docs/dms/"]),
             button_label="Open"))
         page.add(links)
 

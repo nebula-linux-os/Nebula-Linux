@@ -1,8 +1,8 @@
 
 # ─── Nebula Linux desktop stack (appended to releng packages) ───────────────
 
-# Dank Material Shell + niri compositor
-dms-shell-niri
+# Dux Modular Shell (DMS, formerly DankMaterialShell) + niri compositor
+dux-shell
 niri
 xwayland-satellite
 
@@ -64,6 +64,7 @@ plymouth
 snapper
 snap-pac
 grub-btrfs
+inotify-tools
 
 # Performance defaults
 zram-generator

@@ -17,7 +17,10 @@ Write-Host ">> Building Nebula Linux ISO (this takes a while on first run)..." -
 
 # --privileged: pacstrap needs to mount /proc, /dev etc. inside the chroot.
 # tr -d '\r' guards against CRLF line endings from Windows checkouts.
+# ARCH_SNAPSHOT (YYYY/MM/DD or "none") pins packages to an Arch Linux
+# Archive date; empty means build.sh's default (live mirrors).
 docker run --rm --privileged `
+    -e "ARCH_SNAPSHOT=$env:ARCH_SNAPSHOT" `
     -v "${root}:/src:ro" `
     -v "${out}:/out" `
     -v "nebula-pacman-cache:/var/cache/pacman/pkg" `

@@ -1,8 +1,8 @@
 // Nebula Linux — niri configuration
-// Pairs the niri scrollable-tiling compositor with DankMaterialShell.
+// Pairs the niri scrollable-tiling compositor with Dux Modular Shell (DMS).
 // Full niri docs: https://github.com/YaLTeR/niri/wiki
 
-// Start the Dank Material Shell (bar, launcher, notifications, lock, ...).
+// Start DMS, the Dux Modular Shell (bar, launcher, notifications, lock, ...).
 spawn-at-startup "dms" "run"
 
 // Welcome app (respects the "show on startup" toggle; exits fast if disabled).
@@ -77,7 +77,7 @@ binds {
     Mod+Q       { close-window; }
     Mod+Shift+E { quit; }
 
-    // ── DankMaterialShell ──────────────────────────────────────
+    // ── DMS (Dux Modular Shell) ────────────────────────────────
     Mod+Space      { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+Comma      { spawn "dms" "ipc" "call" "settings" "toggle"; }
     Mod+N          { spawn "dms" "ipc" "call" "notifications" "toggle"; }

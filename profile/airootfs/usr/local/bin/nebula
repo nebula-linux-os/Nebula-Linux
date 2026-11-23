@@ -83,7 +83,7 @@ cmd_doctor() {
     grep -E 'starting full system upgrade' /var/log/pacman.log 2>/dev/null | tail -1 || echo "no record"
     echo
     if command -v dms >/dev/null; then
-        echo "── DankMaterialShell doctor ─────────────────"
+        echo "── DMS (Dux Modular Shell) doctor ───────────"
         dms doctor 2>/dev/null || true
     fi
 }
@@ -141,17 +141,17 @@ cmd_wallpaper() {
     case "$action" in
         list)
             printf "${DIM}Bundled Nebula themes:${OFF}\n\n"
-            python3 -c '
-import json
-m = json.load(open("'"$manifest"'"))
+            python3 - "$manifest" <<'PY'
+import json, sys
+with open(sys.argv[1]) as f: m = json.load(f)
 for t in m["themes"]:
     tag = " (default)" if t["id"] == m["default"] else ""
-    print(f"  {t[\"id\"]:<16}  {t[\"name\"]}{tag}")
-    print(f"  {\"\":<16}  {t[\"tagline\"]}  [{t[\"mode\"]}]")
+    print("  %-16s  %s%s" % (t["id"], t["name"], tag))
+    print("  %-16s  %s  [%s]" % ("", t["tagline"], t["mode"]))
     print()
 print("Usage: nebula wallpaper set <id>       apply a bundled theme")
 print("       nebula wallpaper set <path>     apply an arbitrary image file")
-'
+PY
             ;;
         set)
             local target="${2:-}"
@@ -170,8 +170,13 @@ print("       nebula wallpaper set <path>     apply an arbitrary image file")
 
             # 1) Persist the choice into DMS's own state file. DMS reads
             #    wallpaperPath from here on startup — this makes the change
-            #    survive logout/reboot.
-            local dms_state="$HOME/.local/state/DankMaterialShell"
+            #    survive logout/reboot. (The lock screen follows it as long
+            #    as settings.json has no lockScreenWallpaperPath of its own.)
+            #    Any dms invocation first moves a pre-2.0 DankMaterialShell
+            #    state dir to "dms"; do that now so we don't create a
+            #    competing "dms" dir that blocks the merge.
+            command -v dms >/dev/null 2>&1 && dms version >/dev/null 2>&1
+            local dms_state="${XDG_STATE_HOME:-$HOME/.local/state}/dms"
             local dms_json="$dms_state/session.json"
             mkdir -p "$dms_state"
             [[ -f "$dms_json" ]] || echo '{}' > "$dms_json"
@@ -183,8 +188,6 @@ try:
 except Exception:
     data = {}
 data["wallpaperPath"] = wp
-data["lockScreenWallpaperPath"] = wp
-data.setdefault("wallpaperFillMode", "PreserveAspectCrop")
 with open(path, "w") as f: json.dump(data, f, indent=2)
 PY
 
@@ -192,7 +195,7 @@ PY
             #    our bundled DMS templates. This produces colors.json that DMS
             #    picks up on its next tick / redraw.
             if command -v matugen >/dev/null 2>&1; then
-                matugen --config /etc/nebula/matugen/config.toml image "$wp" >/dev/null 2>&1 \
+                matugen --config /etc/nebula/matugen/config.toml image "$wp" --prefer saturation >/dev/null 2>&1 \
                     && echo "  ✓ matugen palette regenerated"
             fi
 
@@ -213,12 +216,14 @@ PY
             if [[ $ipc_ok -eq 0 ]] && pgrep -x dms >/dev/null 2>&1; then
                 if [[ "${NEBULA_NO_RESTART:-0}" != "1" ]]; then
                     echo "  ↻ Restarting DMS to pick up new theme..."
-                    pkill -x dms 2>/dev/null || true
-                    sleep 0.4
-                    (setsid dms run </dev/null >/dev/null 2>&1 &)
+                    if ! dms restart >/dev/null 2>&1; then
+                        pkill -x dms 2>/dev/null || true
+                        sleep 0.4
+                        (setsid dms run </dev/null >/dev/null 2>&1 &)
+                    fi
                     echo "  ✓ DMS restarted"
                 else
-                    echo "  ⚠ IPC didn't respond; run 'pkill dms && dms run &' to reload"
+                    echo "  ⚠ IPC didn't respond; run 'dms restart' to reload"
                 fi
             fi
 
@@ -311,15 +316,20 @@ cmd_greeter() {
     banner "login greeter"
     case "${1:-}" in
         dms)
-            src=/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter
-            [[ -f "$src" ]] || { echo "dms-greeter asset not found."; exit 1; }
-            sudo install -Dm755 "$src" /usr/local/bin/dms-greeter
-            # dms-greeter looks for its Quickshell config under a directory
-            # literally named "dms-greeter"; the package only ships it under
-            # "dms". Without this symlink it fails its config lookup and
-            # exits instantly (silent, no error) every time it's launched.
-            if [[ ! -e /usr/share/quickshell/dms-greeter ]]; then
-                sudo ln -s /usr/share/quickshell/dms /usr/share/quickshell/dms-greeter
+            # dms-greeter comes from the dux-greeter-bin package (bundled on
+            # the Nebula ISO; on other installs it's in the AUR).
+            if [[ ! -x /usr/bin/dms-greeter ]]; then
+                echo "dms-greeter is not installed (package: dux-greeter-bin, from the AUR)."
+                exit 1
+            fi
+            # Installs from DankMaterialShell 1.5-based ISOs copied its greeter
+            # wrapper script here; it would shadow the real binary on PATH and
+            # points at /usr/share/quickshell/dms, which no longer exists.
+            if [[ -f /usr/local/bin/dms-greeter ]]; then
+                sudo rm -f /usr/local/bin/dms-greeter
+            fi
+            if [[ -L /usr/share/quickshell/dms-greeter ]]; then
+                sudo rm -f /usr/share/quickshell/dms-greeter
             fi
             if id greeter >/dev/null 2>&1; then
                 sudo mkdir -p /var/lib/greeter
@@ -333,10 +343,11 @@ cmd_greeter() {
 vt = 1
 
 [default_session]
-command = "dms-greeter --command niri"
+command = "/usr/bin/dms-greeter --command niri"
 user = "greeter"
 EOF
             echo "Switched to the DMS graphical greeter (takes effect next boot)."
+            echo "To give it your theme and wallpaper: dms-greeter sync"
             echo "If it misbehaves: Ctrl+Alt+F3, log in, run: nebula greeter text"
             ;;
         text)

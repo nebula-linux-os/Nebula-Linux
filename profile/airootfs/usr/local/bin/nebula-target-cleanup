@@ -34,31 +34,20 @@ fi
 
 # Real login instead of live autologin: DMS graphical greeter when available,
 # text greeter otherwise. (Switch any time with: nebula greeter <dms|text>)
-DMS_GREETER_SRC=/usr/share/quickshell/dms/Modules/Greetd/assets/dms-greeter
-if [[ -f "$DMS_GREETER_SRC" ]]; then
-    install -Dm755 "$DMS_GREETER_SRC" /usr/local/bin/dms-greeter
-
-    # dms-greeter's locate_dms_config() looks for a Quickshell config
-    # directory literally named "dms-greeter" (/usr/share/quickshell/
-    # dms-greeter/shell.qml), but the package only ships the real shell.qml
-    # under "dms" (/usr/share/quickshell/dms/shell.qml) — a naming mismatch
-    # between what the greeter script expects and what the package provides.
-    # Without this, dms-greeter's config lookup fails, its `set -e` causes
-    # an immediate silent exit (code 1, zero output), and greetd just
-    # restarts it in a loop until systemd's start-limit-hit kills it —
-    # observed as an indefinite hang on the Plymouth splash with no error
-    # ever reaching the console. Confirmed via bash -x trace on a real
-    # install. A symlink is enough; it also survives dms-shell package
-    # updates naturally since it just points at whatever "dms" contains.
-    if [[ ! -e /usr/share/quickshell/dms-greeter ]]; then
-        ln -s /usr/share/quickshell/dms /usr/share/quickshell/dms-greeter
-    fi
-
+# dms-greeter is a self-contained binary from the dux-greeter-bin package
+# (built from the AUR into the ISO; dux-shell itself no longer ships a
+# greeter). Its Quickshell UI is embedded, so unlike the DankMaterialShell
+# 1.5 wrapper script no /usr/share/quickshell/dms-greeter link is needed.
+if [[ -x /usr/bin/dms-greeter ]]; then
+    # Greeter cache, as the package's tmpfiles.d entry would create it
+    # (tmpfiles hasn't run inside this chroot). dms-greeter reads
+    # session.json/settings.json from here; until a user runs
+    # `dms-greeter sync`, this session.json gives it the Nebula wallpaper.
     mkdir -p /var/cache/dms-greeter
+    chmod 0750 /var/cache/dms-greeter
     cat > /var/cache/dms-greeter/session.json <<'EOF'
 {
-  "wallpaperPath": "/usr/share/backgrounds/nebula/nebula.png",
-  "wallpaperFillMode": "PreserveAspectCrop"
+  "wallpaperPath": "/usr/share/backgrounds/nebula/nebula.png"
 }
 EOF
     chown -R greeter:greeter /var/cache/dms-greeter 2>/dev/null || true
@@ -67,7 +56,7 @@ EOF
 vt = 1
 
 [default_session]
-command = "dms-greeter --command niri"
+command = "/usr/bin/dms-greeter --command niri"
 user = "greeter"
 EOF
 else
@@ -85,7 +74,7 @@ fi
 cat > /etc/motd <<'EOF'
 
     Welcome to Nebula Linux.
-    Docs: https://danklinux.com/docs/    Keybindings: Super+Shift+/
+    Docs: https://duxlabs.dev/docs/    Keybindings: Super+Shift+/
 
 EOF
 
