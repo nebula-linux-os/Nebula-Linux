@@ -12,7 +12,7 @@
       gtag('config', 'G-D0PYKB84EZ');
     </script>
     <title>Nebula Linux</title>
-    <meta name="description" content="Fast, Minimalist, and Beautiful. An Arch Linux distribution with the Dank Linux desktop — DankMaterialShell on the niri compositor, Material You theming generated from your wallpaper.">
+    <meta name="description" content="Fast, Minimalist, and Beautiful. An Arch Linux distribution with Dux Modular Shell (formerly DankMaterialShell) on the niri compositor, Material You theming generated from your wallpaper.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,9 +56,9 @@
                     <span class="prompt">$ </span><span class="typed-text"></span><span class="cursor">&nbsp;</span>
                 </div>
             </div>
-            <div class="hero-badge fade-in-up"><span class="dot-live"></span> Beta 1.0 out now — reliable install, wallpaper-driven theming, Plymouth splash</div>
+            <div class="hero-badge fade-in-up"><span class="dot-live"></span> Beta 1.0 refreshed — Dux Modular Shell 2.1, safer installs, current Arch packages</div>
             <h1 class="fade-in-up delay-1">The Linux Desktop,<br><span class="gradient-text">Reimagined.</span></h1>
-            <p class="fade-in-up delay-1">Fast, Minimalist, and Beautiful. Arch Linux with the Dank Linux Material desktop — DankMaterialShell on the niri compositor, themed live from your wallpaper.</p>
+            <p class="fade-in-up delay-1">Fast, Minimalist, and Beautiful. Arch Linux with Dux Modular Shell (formerly DankMaterialShell) on the niri compositor, themed live from your wallpaper.</p>
             <div class="cta-buttons fade-in-up delay-2">
                 <a href="#download" class="btn-primary" id="download-btn">Download Nebula Linux</a>
                 <a href="#features" class="btn-secondary">Explore Features</a>
@@ -70,24 +70,25 @@
     </header>
 
     <section id="whats-new" class="features-section">
-        <h2 class="section-title">What's New — Beta 1.0</h2>
+        <h2 class="section-title">What's New — Beta 1.0 Refresh</h2>
         <p style="text-align:center; max-width: 720px; margin: -1rem auto 2rem; color: var(--text-secondary);">
-            Released August 11, 2026. The headline fix: wallpapers now retune the
-            <em>entire</em> desktop automatically — bar, launcher, notifications, lock
-            screen, GTK/Qt apps, terminals — no manual toggle required.
+            New ISO released November 23, 2026, built from current Arch packages.
+            DankMaterialShell is now <strong>Dux Modular Shell 2.1</strong>, installs are
+            safer and harder to leave unbootable, and the wallpaper-driven auto theming
+            from Beta 1.0 (August 11, 2026) is all still here.
         </p>
         <div class="grid">
             <div class="card hover-effect">
-                <h3>🎨 Auto Theming, By Default</h3>
-                <p>Material color mode now defaults to <strong>Auto</strong> instead of a fixed palette. Pick a wallpaper — matugen derives and applies the whole desktop's colors instantly.</p>
+                <h3>🧩 Dux Modular Shell 2.1</h3>
+                <p>The same Material 3 desktop on niri under its new name, with the new dux-greeter login screen. Existing settings move to <code>~/.config/dms</code> automatically.</p>
             </div>
             <div class="card hover-effect">
-                <h3>🛠️ Reliable Install → Boot</h3>
-                <p>Dedicated ext4 <code>/boot</code> partition, fixed bootloader install, and a fixed graphical login screen that no longer hangs on first boot.</p>
+                <h3>🔒 Safer Installs</h3>
+                <p>Installed systems no longer accept root SSH password logins. The SSH server stays off until you enable it.</p>
             </div>
             <div class="card hover-effect">
-                <h3>🚀 Plymouth &amp; GRUB Theme</h3>
-                <p>Animated boot splash and a redesigned, overlap-free GRUB menu — branded from power-on to desktop.</p>
+                <h3>🛟 Boots Even If Firmware Forgets</h3>
+                <p>Installs add the standard EFI fallback loader, so the system still starts if your firmware loses its boot entries.</p>
             </div>
             <div class="card hover-effect">
                 <h3>⚠️ UEFI Required</h3>
@@ -100,7 +101,14 @@
             <img src="assets/theme-aurora-light.png" alt="Nebula Linux desktop themed with Aurora Light wallpaper — light Material color scheme" class="gallery-img">
             <img src="assets/theme-void-green.png" alt="Nebula Linux desktop themed with Void Green wallpaper — green Material colors, app launcher open" class="gallery-img">
         </div>
+        <p style="text-align:center; max-width: 720px; margin: 2rem auto 0; color: var(--text-secondary);">
+            ⚠️ <strong>Already running Beta 1.0?</strong> Updating replaces the login screen and
+            needs a one-time fix. Read the
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.0-2026.11.23" target="_blank">upgrade notes</a>
+            before running <code>pacman -Syu</code>.
+        </p>
         <p style="text-align:center; margin-top: 1rem;">
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.0-2026.11.23" class="btn-secondary" target="_blank">Release Notes →</a>
             <a href="roadmap.html" class="btn-secondary">Full Changelog →</a>
         </p>
     </section>
@@ -114,13 +122,13 @@
                 <p class="edition-tagline">Material You. Bleeding edge. Unbreakable.</p>
                 <ul class="edition-list">
                     <li>Arch Linux base — always up to date</li>
-                    <li>DankMaterialShell on the niri compositor</li>
+                    <li>Dux Modular Shell (formerly DankMaterialShell) on the niri compositor</li>
                     <li>Material 3 theming generated from your wallpaper</li>
                     <li>Btrfs snapshots — roll back updates from GRUB</li>
                     <li>Branded Calamares installer &amp; <code>nebula</code> CLI</li>
                 </ul>
                 <div class="cta-buttons">
-                    <a href="https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.08.11-x86_64.iso/download" class="btn-primary" target="_blank">Download ISO</a>
+                    <a href="https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.11.23-x86_64.iso/download" class="btn-primary" target="_blank">Download ISO</a>
                     <a href="https://github.com/nebula-linux-os/Nebula-Linux/tree/main#building-the-iso" class="btn-secondary" target="_blank">Build Guide</a>
                 </div>
             </div>
@@ -179,10 +187,10 @@
     <section id="gallery-arch" class="features-section">
         <h2 class="section-title">See it in Action</h2>
         <div class="gallery-grid">
-            <img src="assets/arch-desktop.png" alt="Nebula Arch desktop with DankMaterialShell" class="gallery-img">
+            <img src="assets/arch-desktop.png" alt="Nebula Arch desktop with Dux Modular Shell" class="gallery-img">
             <img src="assets/arch-welcome.png" alt="Nebula Welcome onboarding app" class="gallery-img">
             <img src="assets/arch-installer.png" alt="Branded Calamares installer" class="gallery-img">
-            <img src="assets/arch-settings.png" alt="DankMaterialShell settings" class="gallery-img">
+            <img src="assets/arch-settings.png" alt="Dux Modular Shell settings" class="gallery-img">
             <img src="assets/arch-desktop-1.png" alt="Apps on the scrollable-tiling desktop" class="gallery-img">
             <img src="assets/arch-boot.png" alt="Nebula boot menu" class="gallery-img">
         </div>
@@ -197,7 +205,7 @@
             </div>
             <div class="card hover-effect">
                 <h3>✨ Xray Blur</h3>
-                <p>DankMaterialShell adds automatic frosted-glass blur behind your windows on niri — the desktop underneath diffuses through, giving the whole shell a proper Material depth.</p>
+                <p>Dux Modular Shell adds automatic frosted-glass blur behind your windows on niri — the desktop underneath diffuses through, giving the whole shell a proper Material depth.</p>
             </div>
             <div class="card hover-effect">
                 <h3>🌌 4 Curated Themes (new)</h3>
@@ -225,7 +233,7 @@
             </div>
             <div class="card hover-effect">
                 <h3>🔒 Dank Greeter &amp; Lock</h3>
-                <p>Installed systems log in through the DankMaterialShell graphical greeter, and the lock screen carries your wallpaper, Material colors and avatar. Branded from power-on to desktop.</p>
+                <p>Installed systems log in through the Dux Modular Shell graphical greeter (dux-greeter), and the lock screen carries your wallpaper, Material colors and avatar. Branded from power-on to desktop.</p>
             </div>
             <div class="card hover-effect">
                 <h3>🖥️ VM-Friendly</h3>
@@ -331,6 +339,7 @@
                     <h3>Beta 1.0 (New!)</h3>
                     <p>4 curated wallpaper themes, defaulting to Auto (wallpaper-derived) Material color mode — no manual toggle needed. Plymouth animated boot splash, redesigned overlap-free GRUB theme, <code>nebula wallpaper</code> and <code>nebula bugreport</code> CLI, wallpaper picker in Nebula Welcome, weekly auto-built ISOs via GitHub Actions.</p>
                     <p style="margin-top:0.6rem;">Reliability: dedicated ext4 <code>/boot</code> partition for snapshot-safe booting, fixed graphical login crashing on every boot, fixed the full install→boot chain end to end.</p>
+                    <p style="margin-top:0.6rem;">November 23 refresh: Dux Modular Shell 2.1 (formerly DankMaterialShell) with the dux-greeter login screen, EFI fallback boot loader, no root SSH password login on installed systems, current Arch packages.</p>
                     <p style="margin-top:0.6rem; color: var(--cyan);">⚠️ UEFI required — legacy BIOS boot isn't supported this release (confirmed GRUB bug); the installer detects and warns.</p>
                 </div>
             </div>
@@ -356,7 +365,7 @@
         <div class="faq-container">
             <details class="faq-item">
                 <summary>What is Nebula Linux based on?</summary>
-                <div class="faq-content">Nebula Linux is built on Arch Linux with the Dank Linux desktop — DankMaterialShell running on the niri scrollable-tiling Wayland compositor, with a full Material You theme generated live from your wallpaper.</div>
+                <div class="faq-content">Nebula Linux is built on Arch Linux with Dux Modular Shell (formerly DankMaterialShell) running on the niri scrollable-tiling Wayland compositor, with a full Material You theme generated live from your wallpaper.</div>
             </details>
             <details class="faq-item">
                 <summary>How do I install it?</summary>

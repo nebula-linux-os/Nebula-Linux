@@ -30,9 +30,15 @@ in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
 ## Download
 
-**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.08.11-x86_64.iso/download)** (~2.2 GB)
+**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.11.23-x86_64.iso/download)** (~2.1 GB)
 
-`SHA256: d06345f24d7a6f84f1546e7fe035daad98421d75f5004e3e725fed851090f588`
+`SHA256: b452a7e86182e8251aa12514ad6e98fb6ad23baf7ebe5f5dd8be3693253c8848`
+
+This is the **November 23, 2026 refresh** of Beta 1.0: Dux Modular Shell 2.1
+(formerly DankMaterialShell), current Arch packages, and safer installs. See the
+[release notes](https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.0-2026.11.23).
+**Already on Beta 1.0?** Read the upgrade notes there before `pacman -Syu`:
+the old login screen needs a one-time fix.
 
 Flash it with [Rufus](https://rufus.ie) or [BalenaEtcher](https://etcher.balena.io), or boot it
 in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
@@ -113,6 +119,22 @@ Test it in a VM (Hyper-V, VirtualBox, VMware, or QEMU). Give it **4+ GB RAM**
 and enable **EFI** if available. Boot, and the DMS desktop appears
 automatically.
 
+### Publishing to SourceForge
+
+[upload.ps1](upload.ps1) writes `<iso>.sha256` next to the ISO and uploads both
+to the SourceForge project's Files area with `scp` (password prompt, or an SSH
+key added under SourceForge's *Shell Services*):
+
+```powershell
+$env:SF_USER = "your-sourceforge-username"
+.\upload.ps1 -DryRun     # check the ISO, target and download URL
+.\upload.ps1             # newest ISO in out\; -Iso <path> / -Folder <subdir> to override
+```
+
+Add `-SetDefault` (with `$env:SF_API_KEY` from *Account > Preferences*) to make
+it the project's "Download Latest Version". Then update the download link and
+SHA256 at the top of this README and in `docs/index.html`.
+
 ### Handy keys in the live session
 
 | Key                | Action                        |
@@ -150,6 +172,7 @@ automatically.
 ```
 build.ps1                        Windows entry point (Docker)
 build.sh                         Container-side build script
+upload.ps1                       Upload ISO + SHA256 to SourceForge
 profile/
   packages-extra.x86_64          Desktop packages appended to releng list
   airootfs/                      Files overlaid into the live filesystem
