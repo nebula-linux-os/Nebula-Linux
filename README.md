@@ -50,16 +50,16 @@ in a VM (4+ GB RAM). Or [build it yourself](#building-the-iso).
 
 ## Screenshots
 
-![Nebula Linux — fastfetch showing the Arch base on the niri compositor](screenshots/Homescreen.png)
+![Nebula Linux Beta 1.1 — fastfetch on the niri compositor](screenshots/Homescreen.png)
 
 | | |
 |---|---|
 | ![Desktop](screenshots/desktop.png) | ![Welcome app](screenshots/welcome.png) |
-| The live desktop — DMS bar on niri | Nebula Welcome onboarding |
-| ![Installer](screenshots/installer.png) | ![DMS settings](screenshots/settings-about.png) |
-| Branded Calamares installer | DankMaterialShell settings |
+| The live desktop — Cosmic Blue theme, DMS bar on niri | Nebula Welcome onboarding |
+| ![Installer](screenshots/installer.png) | ![DMS settings](screenshots/settings.png) |
+| Branded Calamares installer | Dux Modular Shell settings |
 | ![Desktop apps](screenshots/desktop-1.png) | ![Boot menu](screenshots/bootloader.png) |
-| Apps on the scrollable-tiling desktop | Boot menu with nebula background |
+| Apps tiled on the scrollable-tiling desktop | Boot menu with nebula background |
 
 ## What you get
 
