@@ -35,11 +35,11 @@ in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
 ## Download
 
-**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.11.23-x86_64.iso/download)** (~2.1 GB)
+**[⬇ Download the ISO from SourceForge](https://sourceforge.net/projects/nebula-linux-arch-edition-niri/files/nebula-linux-2026.11.24-x86_64.iso/download)** (~2.1 GB)
 
-`SHA256: b452a7e86182e8251aa12514ad6e98fb6ad23baf7ebe5f5dd8be3693253c8848`
+`SHA256: 82c1b4caf120ad151ff78594504590d7ba38f8e5e7de8b685c3d203b59dee2e6`
 
-This is **Beta 1.1** (November 23, 2026): Dux Modular Shell 2.1
+This is **Beta 1.1** (November 24, 2026): Dux Modular Shell 2.1
 (formerly DankMaterialShell), current Arch packages, and safer installs. See the
 [release notes](https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.1).
 **Already on Beta 1.0?** Read the upgrade notes there before `pacman -Syu`:
