@@ -146,8 +146,10 @@ macOS uses `~/Library/LaunchAgents/`.
 ## Updates
 
 Nova checks GitHub Releases for a newer version on every web UI load. A
-banner appears in the sidebar when an update is available. Check
-manually:
+banner appears in the sidebar when an update is available. It only
+considers Nova's own published `vMAJOR.MINOR.PATCH` releases, so Nebula
+Linux ISO releases in the same repository (for example `arch-beta-1.1`)
+never show up as a Nova update. Check manually:
 
 ```bash
 python install.py --update

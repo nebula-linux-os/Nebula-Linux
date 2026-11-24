@@ -3,6 +3,15 @@
 All notable changes to the Nebula Agent Engine. Dates use the commit
 day; version numbers follow SemVer.
 
+## [Unreleased]
+
+**Fixed**
+- Update check no longer trusts GitHub's "Latest" release. The repo also
+  publishes Nebula Linux ISO releases (`arch-beta-1.1`), and when one of
+  those is Latest, Nova reported it as a Nova update. `agent/updater.py`
+  now lists releases and picks the newest published, non-prerelease
+  `vMAJOR.MINOR.PATCH` tag.
+
 ## [0.8.0] — 2026-09-10
 
 Local RAG. The agent can index folders of code or docs and answer
