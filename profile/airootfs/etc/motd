@@ -1,5 +1,5 @@
 
-        Welcome to Nebula Linux Beta 1.0 (live session)
+        Welcome to Nebula Linux Beta 1.1 (live session)
         -----------------------------------------------
         Desktop : Dux Modular Shell (DMS) on niri (Wayland)
         User    : nebula (no password, passwordless sudo)
@@ -8,6 +8,6 @@
         "Install Nebula Linux", or run:  nebula-installer
 
         Press Super+Shift+/ to see all keybindings.
-        New in Beta 1.0: Plymouth splash, GRUB theme,
-        `nebula wallpaper`, `nebula bugreport`, 4 default themes.
+        New in Beta 1.1: Dux Modular Shell 2.1, dux-greeter login,
+        EFI fallback boot loader, current Arch packages.
 

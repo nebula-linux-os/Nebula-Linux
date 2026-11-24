@@ -2,7 +2,7 @@
 # Launches the graphical Nebula Linux installer from the live session.
 # sudo is passwordless in the live session; -E keeps the Wayland session env.
 
-# Legacy BIOS boot is not supported in Beta 1.0: grub-install's device-path
+# Legacy BIOS boot is not supported in Beta 1.1: grub-install's device-path
 # canonicalization has a confirmed bug in this GRUB build when /boot is on
 # its own partition (required for reliable btrfs booting — see README), so
 # BIOS installs fail at the very end of the bootloader step. UEFI installs
@@ -11,7 +11,7 @@
 if [[ ! -d /sys/firmware/efi ]]; then
     warn_file=$(mktemp)
     cat > "$warn_file" <<'EOF'
-Nebula Linux Beta 1.0 requires UEFI boot mode.
+Nebula Linux Beta 1.1 requires UEFI boot mode.
 
 This machine/VM booted in legacy BIOS mode. Installing now will very
 likely fail at the bootloader step (a known GRUB issue with our
