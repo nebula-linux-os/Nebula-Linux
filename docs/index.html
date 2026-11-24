@@ -56,7 +56,7 @@
                     <span class="prompt">$ </span><span class="typed-text"></span><span class="cursor">&nbsp;</span>
                 </div>
             </div>
-            <div class="hero-badge fade-in-up"><span class="dot-live"></span> Beta 1.0 refreshed — Dux Modular Shell 2.1, safer installs, current Arch packages</div>
+            <div class="hero-badge fade-in-up"><span class="dot-live"></span> Beta 1.1 out now — Dux Modular Shell 2.1, safer installs, current Arch packages</div>
             <h1 class="fade-in-up delay-1">The Linux Desktop,<br><span class="gradient-text">Reimagined.</span></h1>
             <p class="fade-in-up delay-1">Fast, Minimalist, and Beautiful. Arch Linux with Dux Modular Shell (formerly DankMaterialShell) on the niri compositor, themed live from your wallpaper.</p>
             <div class="cta-buttons fade-in-up delay-2">
@@ -70,7 +70,7 @@
     </header>
 
     <section id="whats-new" class="features-section">
-        <h2 class="section-title">What's New — Beta 1.0 Refresh</h2>
+        <h2 class="section-title">What's New — Beta 1.1</h2>
         <p style="text-align:center; max-width: 720px; margin: -1rem auto 2rem; color: var(--text-secondary);">
             New ISO released November 23, 2026, built from current Arch packages.
             DankMaterialShell is now <strong>Dux Modular Shell 2.1</strong>, installs are
@@ -104,11 +104,11 @@
         <p style="text-align:center; max-width: 720px; margin: 2rem auto 0; color: var(--text-secondary);">
             ⚠️ <strong>Already running Beta 1.0?</strong> Updating replaces the login screen and
             needs a one-time fix. Read the
-            <a href="https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.0-2026.11.23" target="_blank">upgrade notes</a>
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.1" target="_blank">upgrade notes</a>
             before running <code>pacman -Syu</code>.
         </p>
         <p style="text-align:center; margin-top: 1rem;">
-            <a href="https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.0-2026.11.23" class="btn-secondary" target="_blank">Release Notes →</a>
+            <a href="https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.1" class="btn-secondary" target="_blank">Release Notes →</a>
             <a href="roadmap.html" class="btn-secondary">Full Changelog →</a>
         </p>
     </section>
@@ -290,7 +290,7 @@
         <h2 class="section-title">Hardware Requirements</h2>
         <p style="text-align:center; max-width: 700px; margin: -1rem auto 2rem; color: var(--text-secondary);">
             ⚠️ <strong>Nebula Linux requires UEFI boot mode.</strong> Legacy BIOS boot is not
-            supported in Beta 1.0 (a confirmed GRUB bug with our btrfs + snapshot-safe partition
+            supported in Beta 1.1 (a confirmed GRUB bug with our btrfs + snapshot-safe partition
             layout). The installer will warn you if it detects BIOS mode — enable UEFI in your
             firmware/VM settings first.
         </p>
@@ -336,10 +336,16 @@
             <div class="timeline-item completed">
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
-                    <h3>Beta 1.0 (New!)</h3>
+                    <h3>Beta 1.0</h3>
                     <p>4 curated wallpaper themes, defaulting to Auto (wallpaper-derived) Material color mode — no manual toggle needed. Plymouth animated boot splash, redesigned overlap-free GRUB theme, <code>nebula wallpaper</code> and <code>nebula bugreport</code> CLI, wallpaper picker in Nebula Welcome, weekly auto-built ISOs via GitHub Actions.</p>
                     <p style="margin-top:0.6rem;">Reliability: dedicated ext4 <code>/boot</code> partition for snapshot-safe booting, fixed graphical login crashing on every boot, fixed the full install→boot chain end to end.</p>
-                    <p style="margin-top:0.6rem;">November 23 refresh: Dux Modular Shell 2.1 (formerly DankMaterialShell) with the dux-greeter login screen, EFI fallback boot loader, no root SSH password login on installed systems, current Arch packages.</p>
+                </div>
+            </div>
+            <div class="timeline-item completed">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Beta 1.1 (New!)</h3>
+                    <p>Dux Modular Shell 2.1 (formerly DankMaterialShell) with the dux-greeter login screen, EFI fallback boot loader, no root SSH password login on installed systems, current Arch packages.</p>
                     <p style="margin-top:0.6rem; color: var(--cyan);">⚠️ UEFI required — legacy BIOS boot isn't supported this release (confirmed GRUB bug); the installer detects and warns.</p>
                 </div>
             </div>

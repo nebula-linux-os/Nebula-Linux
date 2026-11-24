@@ -1,16 +1,21 @@
-# Nebula Linux — Beta 1.0
+# Nebula Linux — Beta 1.1
 
 An Arch-based Linux distribution featuring
 [Dux Modular Shell](https://github.com/duxlabs-dev/dux-shell) (DMS, formerly
 DankMaterialShell — a Material 3 desktop shell built on Quickshell) running on
 the **niri** scrollable-tiling Wayland compositor.
 
+**New in Beta 1.1:** Dux Modular Shell 2.1 (formerly DankMaterialShell) with
+the dux-greeter login screen, current Arch packages, no root SSH password login
+on installed systems, and an EFI fallback loader so installs survive lost
+firmware boot entries.
+
 **New in Beta 1.0:** 4 curated wallpaper themes with instant matugen retuning,
 Plymouth animated boot splash, full GRUB theme for installed systems,
 `nebula wallpaper` and `nebula bugreport` CLI subcommands, wallpaper picker
 in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
-> ⚠️ **UEFI required.** Legacy BIOS boot is not supported in Beta 1.0 —
+> ⚠️ **UEFI required.** Legacy BIOS boot is not supported in Beta 1.1 —
 > `grub-install`'s device-path canonicalization has a confirmed bug in this
 > GRUB build when `/boot` is on its own partition (required for reliable
 > btrfs booting; see [Desktop stack](#desktop-stack) below). UEFI installs
@@ -34,9 +39,9 @@ in Nebula Welcome, and weekly auto-built ISOs via GitHub Actions.
 
 `SHA256: b452a7e86182e8251aa12514ad6e98fb6ad23baf7ebe5f5dd8be3693253c8848`
 
-This is the **November 23, 2026 refresh** of Beta 1.0: Dux Modular Shell 2.1
+This is **Beta 1.1** (November 23, 2026): Dux Modular Shell 2.1
 (formerly DankMaterialShell), current Arch packages, and safer installs. See the
-[release notes](https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.0-2026.11.23).
+[release notes](https://github.com/nebula-linux-os/Nebula-Linux/releases/tag/arch-beta-1.1).
 **Already on Beta 1.0?** Read the upgrade notes there before `pacman -Syu`:
 the old login screen needs a one-time fix.
 
