@@ -179,6 +179,56 @@ header {
 }
 @keyframes livepulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
 
+/* Big current-release callout at the top of the hero */
+.release-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    max-width: 760px;
+    margin: 0 auto 2.5rem;
+    padding: 1.8rem 2rem 1.6rem;
+    border-radius: 28px;
+    background: rgba(149, 128, 255, 0.10);
+    border: 1px solid rgba(149, 128, 255, 0.35);
+    box-shadow: 0 0 60px -18px var(--accent-glow);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.release-hero:hover { transform: translateY(-3px); box-shadow: 0 0 80px -14px var(--accent-glow); }
+.release-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+.release-kicker .dot-live {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 10px var(--accent-green);
+    animation: livepulse 2s infinite;
+}
+.release-version {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 11vw, 7.5rem);
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    letter-spacing: -0.03em;
+}
+.release-sub { font-size: 1.05rem; color: var(--text-secondary); }
+.release-link { font-size: 0.95rem; font-weight: 600; color: var(--accent-blue); }
+body.light-mode .release-hero { background: rgba(149, 128, 255, 0.08); }
+@media (max-width: 768px) {
+    .release-hero { padding: 1.4rem 1.2rem 1.3rem; border-radius: 22px; }
+    .release-sub { font-size: 0.95rem; }
+}
+
 h1 {
     font-size: clamp(2.8rem, 6vw, 5rem);
     line-height: 1.05;
