@@ -608,15 +608,35 @@ header p {
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* ---- Alpha warning --------------------------------------------- */
+/* Status banner: pinned above the fixed nav, always one line high.
+   The nav and page content are pushed down by --banner-h. */
+:root { --banner-h: 36px; }
 .alpha-warning {
     background: linear-gradient(90deg, #ff5ea8, #9580ff);
     color: #fff;
     text-align: center;
-    padding: 9px;
+    padding: 0 12px;
+    height: var(--banner-h);
+    line-height: var(--banner-h);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: 600;
     font-size: 0.9rem;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 200;
+}
+.alpha-warning .banner-short { display: none; }
+body:has(> .alpha-warning) { padding-top: var(--banner-h); }
+body:has(> .alpha-warning) nav { top: var(--banner-h); }
+html:has(.alpha-warning) { scroll-padding-top: calc(90px + var(--banner-h)); }
+@media (max-width: 900px) {
+    .alpha-warning { font-size: 0.85rem; }
+    .alpha-warning .banner-long { display: none; }
+    .alpha-warning .banner-short { display: inline; }
 }
 
 /* ---- Terminal --------------------------------------------------- */
@@ -933,7 +953,19 @@ body.light-mode .agent-edition-teaser {
 
 /* ---- Responsive ------------------------------------------------- */
 @media (max-width: 768px) {
-    .links a { margin-left: 1.1rem; font-size: 0.9rem; }
+    nav { gap: 0.8rem; }
+    .links {
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+        mask-image: linear-gradient(90deg, #000 85%, transparent);
+        padding-right: 1.5rem;
+    }
+    .links::-webkit-scrollbar { display: none; }
+    .links a { margin-left: 1.1rem; font-size: 0.9rem; white-space: nowrap; }
+    .links a:first-child { margin-left: 0; }
+    .theme-btn { margin-left: 1.1rem; }
     .logo span { display: none; }
     header { padding-top: 7rem; }
     .glass-img { transform: none; }
